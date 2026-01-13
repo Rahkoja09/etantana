@@ -49,7 +49,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
               context: context,
               fontWeight: FontWeight.w900,
               fontSize: 18,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
 
