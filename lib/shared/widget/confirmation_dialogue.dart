@@ -115,7 +115,7 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                           ? Theme.of(
                             context,
                           ).colorScheme.error.withValues(alpha: 0.2)
-                          : Theme.of(context).colorScheme.primary,
+                          : Colors.lightGreen.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: HugeIcon(
@@ -125,7 +125,7 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                           ? Theme.of(
                             context,
                           ).colorScheme.error.withValues(alpha: 0.9)
-                          : Theme.of(context).colorScheme.primary,
+                          : Colors.white,
                   size: 40.sp,
                 ),
               ),
@@ -170,9 +170,7 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                     child: _buildButton(
                       context,
                       widget.btnColor ??
-                          Theme.of(
-                            context,
-                          ).colorScheme.error.withValues(alpha: 0.6),
+                          Colors.lightGreenAccent.withValues(alpha: 0.6),
                       Colors.white,
                       widget.rightButtonTitle,
                       widget.onTapRightBtn ??

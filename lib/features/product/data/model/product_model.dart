@@ -19,7 +19,7 @@ class ProductModel extends ProductEntities {
       id: data['id'],
       name: data['name'],
       quantity: data["quantity"],
-      createdAt: data['created_at'],
+      createdAt: DateTime.parse(data['created_at']),
       description: data['description'],
       details: data['details'],
       eId: data['e_id'],
@@ -63,7 +63,7 @@ class ProductModel extends ProductEntities {
     DateTime? createdAt,
     String? description,
     String? details,
-    MapData? images,
+    String? images,
     String? type,
     String? eId,
   }) {

@@ -88,14 +88,7 @@ class MediaServiceImpl implements MediaServices {
 
     final bool isImage = mimeType?.startsWith('image/') ?? false;
     final bool isVideo = mimeType?.startsWith('video/') ?? false;
-
-    if ((type == AppMediaType.presentationVideo ||
-            type == AppMediaType.houseVideo) &&
-        !isVideo) {
-      throw ApiException(message: "Le fichier doit être une vidéo.");
-    }
-    if ((type != AppMediaType.presentationVideo &&
-            type != AppMediaType.houseVideo) &&
+    if ((type != AppMediaType.product && type != AppMediaType.invoice) &&
         !isImage) {
       throw ApiException(message: "Le fichier doit être une image.");
     }
@@ -235,18 +228,10 @@ class MediaServiceImpl implements MediaServices {
         "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour}${now.minute}${now.second}";
 
     switch (type) {
-      case AppMediaType.profileImage:
-        return 'profil_$timestamp$suffix$extension';
-      case AppMediaType.presentationVideo:
-        return 'video_pres_$timestamp$suffix$extension';
-      case AppMediaType.visitingCard:
-        return 'vcard_$timestamp$suffix$extension';
-      case AppMediaType.houseImage:
-        return 'house_img_$timestamp$suffix$extension';
-      case AppMediaType.houseVideo:
-        return 'house_vid_$timestamp$suffix$extension';
-      case AppMediaType.housePanoramic:
-        return 'house_pano_$timestamp$suffix$extension';
+      case AppMediaType.product:
+        return 'product_$timestamp$suffix$extension';
+      case AppMediaType.invoice:
+        return 'invoice_$timestamp$suffix$extension';
     }
   }
 }

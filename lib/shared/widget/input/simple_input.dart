@@ -55,7 +55,9 @@ class _SimpleInputState extends State<SimpleInput> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
             width: 0.5,
           ),
         ),

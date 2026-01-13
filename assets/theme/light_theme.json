@@ -98,7 +98,7 @@
   "cardColor": "#fff8f9ff",
   "colorScheme": {
     "brightness": "light",
-    "error": "#FC0202D6",
+    "error": "#f44336",
     "errorContainer": "#ffffdad6",
     "inversePrimary": "#ffa0cafd",
     "inverseSurface": "#ff2e3135",

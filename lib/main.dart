@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:e_tantana/config/constants/app_const.dart';
+import 'package:e_tantana/config/constants/supabase_api_constants.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart' as di;
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_theme/json_theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +26,11 @@ Future<void> main() async {
 
   lightTheme = ThemeDecoder.decodeThemeData(lightJson)!;
   darkTheme = ThemeDecoder.decodeThemeData(darkJson)!;
+
+  await Supabase.initialize(
+    url: SupabaseApiConstants.apiUrl,
+    anonKey: SupabaseApiConstants.apiKey,
+  );
 
   await di.init();
 

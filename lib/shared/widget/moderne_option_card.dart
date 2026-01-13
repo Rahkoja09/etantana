@@ -47,7 +47,9 @@ class ModerneOptionCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: HugeIcon(

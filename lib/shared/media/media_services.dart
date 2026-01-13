@@ -1,13 +1,6 @@
 import 'dart:io';
 
-enum AppMediaType {
-  profileImage,
-  presentationVideo,
-  visitingCard,
-  houseImage,
-  houseVideo,
-  housePanoramic,
-}
+enum AppMediaType { product, invoice }
 
 abstract class MediaServices {
   // --- PICKING ---

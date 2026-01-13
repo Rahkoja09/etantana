@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
@@ -10,9 +12,9 @@ class ProductController extends StateNotifier<ProductState> {
   final ProductUsecases _productUsecases;
   ProductController(this._productUsecases) : super(ProductState());
 
-  Future<void> addProduct(ProductEntities entities) async {
+  Future<void> addProduct(ProductEntities entities, File? productImage) async {
     _setLoadingState();
-    final res = await _productUsecases.insertProduct(entities);
+    final res = await _productUsecases.insertProduct(entities, productImage);
     _setSuccesOrErrorState<ProductEntities>(res);
   }
 

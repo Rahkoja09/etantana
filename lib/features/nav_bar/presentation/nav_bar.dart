@@ -3,6 +3,7 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
+import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/shared/widget/moderne_option_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -219,6 +220,9 @@ void _showEditOptionsDialog(BuildContext context) {
                   subtitle: 'Le produit est déjà en arrivé',
                   onTap: () {
                     Navigator.pop(sheetContext);
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => AddProduct()));
                   },
                   isActive: true,
                 ),
