@@ -22,6 +22,7 @@ class AppRefreshIndicator extends StatelessWidget {
         return Stack(
           alignment: Alignment.topCenter,
           children: [
+            child,
             AnimatedBuilder(
               animation: controller,
               builder: (context, _) {
@@ -36,7 +37,6 @@ class AppRefreshIndicator extends StatelessWidget {
                 );
               },
             ),
-            child,
           ],
         );
       },

@@ -6,10 +6,10 @@ class LoadingEffect {
     return ShimmerEffect(
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,
-      baseColor: Theme.of(context).colorScheme.surfaceContainer,
+      baseColor: Theme.of(context).colorScheme.surfaceContainerHigh,
       highlightColor: Theme.of(
         context,
-      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+      ).colorScheme.onSurface.withValues(alpha: 0.5),
       duration: Duration(seconds: 3),
     );
   }

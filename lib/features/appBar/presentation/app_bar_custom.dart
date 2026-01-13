@@ -28,13 +28,13 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
     return AppBar(
       actions: <Widget>[Container()],
       automaticallyImplyLeading: false,
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
             bottom: BorderSide(
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(context).colorScheme.primary,
               width: 2,
             ),
           ),
@@ -49,7 +49,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
               context: context,
               fontWeight: FontWeight.w900,
               fontSize: 18,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
 
@@ -61,7 +61,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   onTap: () {},
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedSearch01,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -73,7 +73,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   onTap: () {},
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedSorting01,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -85,7 +85,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   onTap: () {},
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedMoon02,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),

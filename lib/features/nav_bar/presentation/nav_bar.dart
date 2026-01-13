@@ -4,6 +4,7 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
+import 'package:e_tantana/features/product/presentation/pages/product.dart';
 import 'package:e_tantana/shared/widget/moderne_option_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -87,7 +88,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
             onNotification: onScrollNotification,
             child: IndexedStack(
               index: _bottomNavIndex,
-              children: const [Exemple(), Exemple(), Exemple(), Exemple()],
+              children: const [Product(), Exemple(), Exemple(), Exemple()],
             ),
           ),
 
