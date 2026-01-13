@@ -61,7 +61,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   onTap: () {},
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedSearch01,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -73,7 +73,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   onTap: () {},
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedSorting01,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -85,7 +85,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   onTap: () {},
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedMoon02,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
               ),

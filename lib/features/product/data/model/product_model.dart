@@ -3,8 +3,8 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 
 class ProductModel extends ProductEntities {
   const ProductModel({
-    required super.name,
-    required super.quantity,
+    super.name,
+    super.quantity,
     super.createdAt,
     super.eId,
     super.details,

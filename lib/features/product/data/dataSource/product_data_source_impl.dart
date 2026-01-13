@@ -1,0 +1,108 @@
+import 'package:e_tantana/core/error/exceptions.dart';
+import 'package:e_tantana/features/product/data/dataSource/product_data_source.dart';
+import 'package:e_tantana/features/product/data/model/product_model.dart';
+import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class ProductDataSourceImpl implements ProductDataSource {
+  final SupabaseClient _client;
+  ProductDataSourceImpl(this._client);
+
+  @override
+  Future<void> deleteProductById(String productId) async {
+    try {
+      final res = await _client.from("product").delete().eq("id", productId);
+      if (res == null) {
+        throw ApiException(
+          message: "Erreur de suppression du produit : $productId",
+        );
+      }
+    } on PostgrestException catch (e) {
+      throw ApiException(message: e.message);
+    } catch (e) {
+      throw UnexceptedException(message: "$e");
+    }
+  }
+
+  @override
+  Future<ProductModel> getProductById(String productId) async {
+    try {
+      final res =
+          await _client.from("product").select().eq("id", productId).single();
+      return ProductModel.fromMap(res);
+    } on PostgrestException catch (e) {
+      throw ApiException(message: e.message);
+    } catch (e) {
+      throw UnexceptedException(message: "$e");
+    }
+  }
+
+  @override
+  Future<ProductModel> insertProduct(ProductEntities entities) async {
+    try {
+      final res =
+          await _client
+              .from("product")
+              .insert({
+                'name': entities.name,
+                'quantity': entities.quantity,
+                'description': entities.description,
+                'type': entities.type,
+                'details': entities.details,
+                'images': entities.images,
+                'e_id': entities.eId,
+              })
+              .select()
+              .single();
+      return ProductModel.fromMap(res);
+    } on PostgrestException catch (e) {
+      throw ApiException(message: e.message);
+    } catch (e) {
+      throw UnexceptedException(message: "$e");
+    }
+  }
+
+  @override
+  Future<List<ProductModel>> researchProduct(ProductEntities? criterial) async {
+    try {
+      var query = _client.from("product").select("*");
+
+      if (criterial != null) {
+        final eId = criterial.eId;
+        final name = criterial.name;
+        final quantity = criterial.quantity;
+        final description = criterial.description;
+        final type = criterial.type;
+        final details = criterial.details;
+
+        if (eId != null) query = query.eq("e_id", eId);
+        if (name != null) query = query.eq("name", name);
+        if (quantity != null) query = query.eq("quantity", quantity);
+        if (description != null) query = query.eq("description", description);
+        if (type != null) query = query.eq("type", type);
+        if (details != null) query = query.eq("details", details);
+      }
+
+      final res = await query;
+      return (res as List).map((data) => ProductModel.fromMap(data)).toList();
+    } on PostgrestException catch (e) {
+      throw ApiException(message: e.message);
+    } catch (e) {
+      throw UnexceptedException(message: "$e");
+    }
+  }
+
+  @override
+  Future<ProductModel> updateProduct(ProductEntities entities) async {
+    try {
+      final updates = ProductModel.fromEntity(entities).toMap();
+      final res =
+          await _client.from("product").update(updates).select().single();
+      return ProductModel.fromMap(res);
+    } on PostgrestException catch (e) {
+      throw ApiException(message: e.message);
+    } catch (e) {
+      throw UnexceptedException(message: "$e");
+    }
+  }
+}

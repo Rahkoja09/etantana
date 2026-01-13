@@ -5,8 +5,8 @@ class ProductEntities extends Equatable {
   final String? id;
   final String? eId;
   final DateTime? createdAt;
-  final String name;
-  final int quantity;
+  final String? name;
+  final int? quantity;
   final String? description;
   final String? type;
   final String? details;

@@ -1,0 +1,70 @@
+import 'package:dartz/dartz.dart';
+import 'package:e_tantana/core/error/exceptions.dart';
+import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
+import 'package:e_tantana/features/product/data/dataSource/product_data_source.dart';
+import 'package:e_tantana/features/product/data/model/product_model.dart';
+import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
+import 'package:e_tantana/features/product/domain/repository/product_repository.dart';
+
+class ProductRepositoryImpl implements ProductRepository {
+  final NetworkInfo _networkInfo;
+  final ProductDataSource _productDataSource;
+  ProductRepositoryImpl(this._networkInfo, this._productDataSource);
+
+  @override
+  ResultVoid deleteProductById(String productId) async {
+    return await _executeAction<void>(
+      () => _productDataSource.deleteProductById(productId),
+    );
+  }
+
+  @override
+  ResultFuture<ProductEntities> getProductById(String productId) async {
+    return await _executeAction<ProductEntities>(
+      () => _productDataSource.getProductById(productId),
+    );
+  }
+
+  @override
+  ResultFuture<ProductEntities> insertProduct(ProductEntities entities) async {
+    return await _executeAction<ProductEntities>(
+      () => _productDataSource.insertProduct(entities),
+    );
+  }
+
+  @override
+  ResultFuture<List<ProductEntities>> researchProduct(
+    ProductEntities? criterial,
+  ) async {
+    return await _executeAction<List<ProductEntities>>(
+      () => _productDataSource.researchProduct(criterial),
+    );
+  }
+
+  @override
+  ResultFuture<ProductEntities> updateProduct(ProductEntities entities) async {
+    return await _executeAction<ProductEntities>(
+      () => _productDataSource.updateProduct(entities),
+    );
+  }
+
+  Future<Either<Failure, T>> _executeAction<T>(
+    Future<T> Function() action,
+  ) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final res = await action();
+        return Right(res);
+      } on ApiException catch (e) {
+        return Left(ApiFailure.fromException(e));
+      } on AuthUserException catch (e) {
+        return Left(AuthFailure.fromException(e));
+      } catch (e) {
+        return Left(UnexceptedFailure(e.toString()));
+      }
+    }
+    return const Left(NetworkFailure("Pas de connexion internet"));
+  }
+}
