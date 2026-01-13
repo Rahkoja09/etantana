@@ -1,0 +1,46 @@
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:e_tantana/shared/widget/loading_animation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class AppRefreshIndicator extends StatelessWidget {
+  final Widget child;
+  final Future<void> Function() onRefresh;
+
+  const AppRefreshIndicator({
+    super.key,
+    required this.child,
+    required this.onRefresh,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomRefreshIndicator(
+      onRefresh: onRefresh,
+      offsetToArmed: 60.h,
+      builder: (context, child, controller) {
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            AnimatedBuilder(
+              animation: controller,
+              builder: (context, _) {
+                if (controller.isIdle) return const SizedBox.shrink();
+
+                return Positioned(
+                  top: 20.h * controller.value,
+                  child: Opacity(
+                    opacity: controller.value.clamp(0.0, 1.0),
+                    child: LoadingAnimation.primary(context, size: 25.w),
+                  ),
+                );
+              },
+            ),
+            child,
+          ],
+        );
+      },
+      child: child,
+    );
+  }
+}

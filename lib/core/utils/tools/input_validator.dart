@@ -1,0 +1,10 @@
+bool isNameValid(String name) => name.trim().isNotEmpty;
+
+bool isEmailValid(String email) {
+  final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
+  return regex.hasMatch(email.trim().toLowerCase());
+}
+
+bool isPasswordValid(String password) => password.length >= 6;
+
+bool doPasswordsMatch(String pw, String confirmPw) => pw == confirmPw;

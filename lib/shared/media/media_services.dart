@@ -1,0 +1,47 @@
+import 'dart:io';
+
+enum AppMediaType {
+  profileImage,
+  presentationVideo,
+  visitingCard,
+  houseImage,
+  houseVideo,
+  housePanoramic,
+}
+
+abstract class MediaServices {
+  // --- PICKING ---
+  Future<File?> pickImage({required bool fromGallery});
+  Future<List<File>> pickMultiImages();
+  Future<File?> pickVideo({required bool fromGallery});
+  Future<File?> generateVideoThumbnail(dynamic videoFile);
+
+  // --- PROCESSING & VALIDATION ---
+  Future<File> compressImage(File file, {int quality = 80});
+  Future<File?> compressVideo(File file);
+
+  void validateMedia(File file, AppMediaType type);
+
+  // --- UPLOAD OPERATIONS ---
+
+  Future<String> uploadMedia({
+    required File file,
+    required String uid,
+    required AppMediaType type,
+    String? entityId,
+    String bucketName = 'agency',
+  });
+
+  Future<String> uploadMultipleMedia({
+    required List<File> files,
+    required String uid,
+    required AppMediaType type,
+    String? entityId,
+    String bucketName = 'agency',
+  });
+
+  // --- UTILS ---
+  String getPublicUrl(String filePath, String bucketName);
+  Future<void> deleteFile(String filePath, String bucketName);
+  Future<void> clearTemporaryCache();
+}
