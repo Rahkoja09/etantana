@@ -1,10 +1,12 @@
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/repository/order_repository.dart';
+import 'package:e_tantana/shared/media/media_services.dart';
 
 class OrderUsecases {
   final OrderRepository _orderRepository;
-  OrderUsecases(this._orderRepository);
+  final MediaServices _mediaServices;
+  OrderUsecases(this._orderRepository, this._mediaServices);
 
   ResultFuture<OrderEntities> getOrderById(String orderId) =>
       _orderRepository.getOrderById(orderId);

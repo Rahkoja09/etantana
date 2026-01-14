@@ -1,4 +1,9 @@
 import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/features/order/data/dataSource/order_data_source.dart';
+import 'package:e_tantana/features/order/data/dataSource/order_data_source_impl.dart';
+import 'package:e_tantana/features/order/data/repository/order_repository_impl.dart';
+import 'package:e_tantana/features/order/domain/repository/order_repository.dart';
+import 'package:e_tantana/features/order/domain/usecases/order_usecases.dart';
 import 'package:e_tantana/features/product/data/dataSource/product_data_source.dart';
 import 'package:e_tantana/features/product/data/dataSource/product_data_source_impl.dart';
 import 'package:e_tantana/features/product/data/repository/product_repository_impl.dart';
@@ -19,6 +24,7 @@ Future<void> init() async {
 
   // inject per features -----------
   _initProduct();
+  _initOrder();
   _initMediaService();
 }
 
@@ -37,6 +43,14 @@ Future<void> _initProduct() async {
     () => ProductDataSourceImpl(sl()),
   );
   sl.registerLazySingleton(() => ProductUsecases(sl(), sl()));
+}
+
+Future<void> _initOrder() async {
+  sl.registerLazySingleton<OrderRepository>(
+    () => OrderRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton<OrderDataSource>(() => OrderDataSourceImpl(sl()));
+  sl.registerLazySingleton(() => OrderUsecases(sl(), sl()));
 }
 
 // media services -------
