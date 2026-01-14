@@ -1,5 +1,5 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
-import 'package:e_tantana/shared/widget/loading_animation.dart';
+import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

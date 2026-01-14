@@ -5,17 +5,18 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class MinimalProductView extends StatelessWidget {
   final ProductEntities product;
   final VoidCallback onEdit;
-  final VoidCallback onDelete;
+  final VoidCallback order;
 
   const MinimalProductView({
     super.key,
     required this.product,
     required this.onEdit,
-    required this.onDelete,
+    required this.order,
   });
 
   @override
@@ -106,11 +107,14 @@ class MinimalProductView extends StatelessWidget {
                     visualDensity: VisualDensity.compact,
                   ),
                   IconButton(
-                    onPressed: onDelete,
+                    onPressed: order,
                     icon: Icon(
-                      Icons.delete_outline,
+                      HugeIcons.strokeRoundedShoppingBasketCheckIn01,
                       size: 20.sp,
-                      color: Theme.of(context).colorScheme.error,
+                      color:
+                          product.quantity! <= 0
+                              ? Theme.of(context).colorScheme.error
+                              : Colors.green,
                     ),
                     visualDensity: VisualDensity.compact,
                   ),

@@ -3,9 +3,9 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
-import 'package:e_tantana/shared/widget/app_refresh_indicator.dart';
-import 'package:e_tantana/shared/widget/custom_dialog.dart';
-import 'package:e_tantana/shared/widget/loading_effect.dart';
+import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
+import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
+import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -81,7 +81,7 @@ class _ProductState extends ConsumerState<Product> {
                       return MinimalProductView(
                         product: item,
                         onEdit: () {},
-                        onDelete: () {},
+                        order: () {},
                       );
                     },
                   ),

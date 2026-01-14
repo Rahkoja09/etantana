@@ -5,7 +5,7 @@ import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
-import 'package:e_tantana/shared/widget/moderne_option_card.dart';
+import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,5 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
-import 'package:e_tantana/shared/widget/unique_selectable_option.dart';
+import 'package:e_tantana/shared/widget/selectableOption/unique_selectable_option.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 

@@ -1,5 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
-import 'package:e_tantana/shared/widget/button.dart';
+import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

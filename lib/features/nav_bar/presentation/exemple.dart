@@ -1,4 +1,4 @@
-import 'package:e_tantana/shared/widget/app_refresh_indicator.dart';
+import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 
 class Exemple extends StatelessWidget {

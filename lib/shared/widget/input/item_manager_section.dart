@@ -1,7 +1,7 @@
 import 'package:e_tantana/core/utils/tools/variante_parser.dart';
 import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
-import 'package:e_tantana/shared/widget/show_custom_popup.dart';
+import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
