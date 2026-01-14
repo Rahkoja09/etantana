@@ -21,7 +21,20 @@ class ProductController extends StateNotifier<ProductState> {
   Future<void> updateProduct(ProductEntities entities) async {
     _setLoadingState();
     final res = await _productUsecases.updateProduct(entities);
-    _setSuccesOrErrorState<ProductEntities>(res);
+
+    res.fold((error) => _setError(error), (updatedProduct) {
+      final List<ProductEntities> currentProducts = state.product ?? [];
+      final newProductList =
+          currentProducts.map<ProductEntities>((p) {
+            return p.id == updatedProduct.id ? updatedProduct : p;
+          }).toList();
+
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: null,
+        product: newProductList,
+      );
+    });
   }
 
   Future<void> deleteProductById(String productId) async {
@@ -44,24 +57,14 @@ class ProductController extends StateNotifier<ProductState> {
 
   // set new state by folding (error and success) -----------
   void _setSuccesOrErrorState<T>(Either<Failure, T> res) {
-    res.fold(
-      (error) {
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: false,
-          errorMessage: error.message,
-          product: null,
-        );
-      },
-      (successData) {
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: false,
-          errorMessage: null,
-          product: successData,
-        );
-      },
-    );
+    res.fold((error) => _setError(error), (successData) {
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: false,
+        errorMessage: null,
+        product: successData as dynamic,
+      );
+    });
   }
 
   // set loading state ----------
@@ -70,6 +73,14 @@ class ProductController extends StateNotifier<ProductState> {
       isLoading: true,
       isClearError: false,
       errorMessage: null,
+    );
+  }
+
+  void _setError(Failure error) {
+    state = state.copyWith(
+      isLoading: false,
+      isClearError: false,
+      errorMessage: error.message,
     );
   }
 }

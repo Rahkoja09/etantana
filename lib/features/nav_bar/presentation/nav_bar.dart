@@ -3,6 +3,8 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
+import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
+import 'package:e_tantana/features/order/presentation/pages/order.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
@@ -88,7 +90,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
             onNotification: onScrollNotification,
             child: IndexedStack(
               index: _bottomNavIndex,
-              children: const [Product(), Exemple(), Exemple(), Exemple()],
+              children: const [Product(), Order(), Exemple(), Exemple()],
             ),
           ),
 
@@ -246,6 +248,9 @@ void _showEditOptionsDialog(BuildContext context) {
                   subtitle: 'Passer la commande d\'un Client',
                   onTap: () {
                     Navigator.pop(sheetContext);
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => const AddOrder()));
                   },
                   isActive: true,
                 ),

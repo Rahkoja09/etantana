@@ -13,6 +13,7 @@ class OrderModel extends OrderEntities {
     super.clientName,
     super.clientTel,
     super.clientAdrs,
+    super.deliveryCosts,
   });
 
   factory OrderModel.fromMap(MapData data) {
@@ -27,6 +28,7 @@ class OrderModel extends OrderEntities {
       clientTel: data['client_tel'],
       clientAdrs: data['client_adrs'],
       details: data['details'],
+      deliveryCosts: data['delivery_costs'],
     );
   }
 
@@ -42,6 +44,7 @@ class OrderModel extends OrderEntities {
       'client_tel': clientTel,
       'client_adrs': clientAdrs,
       'details': details,
+      'delivery_costs': deliveryCosts,
     };
   }
 
@@ -57,6 +60,7 @@ class OrderModel extends OrderEntities {
       clientTel: entity.clientTel,
       clientAdrs: entity.clientAdrs,
       invoiceLink: entity.invoiceLink,
+      deliveryCosts: entity.deliveryCosts,
     );
   }
 
@@ -71,6 +75,7 @@ class OrderModel extends OrderEntities {
     String? clientName,
     String? clientTel,
     String? clientAdrs,
+    String? deliveryCosts,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -83,6 +88,7 @@ class OrderModel extends OrderEntities {
       productId: productId ?? this.productId,
       quantity: quantity ?? this.quantity,
       status: status ?? this.status,
+      deliveryCosts: deliveryCosts ?? this.deliveryCosts,
     );
   }
 }

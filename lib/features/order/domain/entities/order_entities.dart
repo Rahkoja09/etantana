@@ -11,6 +11,8 @@ class OrderEntities extends Equatable {
   final String? clientName;
   final String? clientTel;
   final String? clientAdrs;
+  final String? deliveryCosts;
+
   const OrderEntities({
     this.id,
     this.createdAt,
@@ -22,6 +24,7 @@ class OrderEntities extends Equatable {
     this.clientName,
     this.clientTel,
     this.clientAdrs,
+    this.deliveryCosts,
   });
 
   @override

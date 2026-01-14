@@ -47,6 +47,7 @@ class OrderDataSourceImpl implements OrderDataSource {
                 'client_tel': entity.clientTel,
                 'client_adrs': entity.clientAdrs,
                 'details': entity.details,
+                'delivery_costs': entity.deliveryCosts,
               })
               .select()
               .single();

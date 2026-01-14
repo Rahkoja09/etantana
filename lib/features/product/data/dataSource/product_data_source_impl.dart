@@ -97,7 +97,12 @@ class ProductDataSourceImpl implements ProductDataSource {
     try {
       final updates = ProductModel.fromEntity(entities).toMap();
       final res =
-          await _client.from("product").update(updates).select().single();
+          await _client
+              .from("product")
+              .update(updates)
+              .eq('id', entities.id as Object)
+              .select()
+              .single();
       return ProductModel.fromMap(res);
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message);

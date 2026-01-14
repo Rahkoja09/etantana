@@ -1,11 +1,11 @@
-import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
+import 'package:equatable/equatable.dart';
 
-class ProductState<T> {
-  bool isLoading;
-  String? errorMessage;
-  T? product;
+class ProductState<T> extends Equatable {
+  final bool isLoading;
+  final String? errorMessage;
+  final T? product;
 
-  ProductState({this.isLoading = false, this.errorMessage, this.product});
+  const ProductState({this.isLoading = false, this.errorMessage, this.product});
 
   ProductState copyWith({
     bool? isLoading,
@@ -19,4 +19,7 @@ class ProductState<T> {
       product: product ?? this.product,
     );
   }
+
+  @override
+  List<Object?> get props => [errorMessage, product, isLoading];
 }

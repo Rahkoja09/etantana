@@ -10,6 +10,7 @@ class CustomDropdown extends StatelessWidget {
   final String? value;
   final List<String> items;
   final Function(String?) onChanged;
+  final String Function(String)? itemLabelBuilder;
 
   const CustomDropdown({
     super.key,
@@ -18,6 +19,7 @@ class CustomDropdown extends StatelessWidget {
     required this.items,
     required this.onChanged,
     this.value,
+    this.itemLabelBuilder,
   });
 
   @override
@@ -25,6 +27,7 @@ class CustomDropdown extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: value,
       isExpanded: true,
+      onSaved: (val) {},
       icon: HugeIcon(
         icon: HugeIcons.strokeRoundedArrowDown01,
         color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
@@ -37,12 +40,16 @@ class CustomDropdown extends StatelessWidget {
       decoration: InputDecoration(
         filled: true,
         fillColor: Theme.of(context).colorScheme.surface,
-        prefixIcon: HugeIcon(
-          icon: iconData,
-          color: Theme.of(context).colorScheme.onSurface,
-          size: 18.w,
+        prefixIcon: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: HugeIcon(
+            icon: iconData,
+            color: Theme.of(context).colorScheme.onSurface,
+            size: 18.w,
+          ),
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+        prefixIconConstraints: BoxConstraints(minWidth: 40.w),
+        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
         hintText: textHint.toUpperCase(),
         hintStyle: TextStyles.bodyText(
           context: context,
@@ -57,8 +64,20 @@ class CustomDropdown extends StatelessWidget {
             width: 0.5,
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+          borderSide: BorderSide(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.primary,
+            width: 1.5,
+          ),
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
         ),
       ),
@@ -67,7 +86,7 @@ class CustomDropdown extends StatelessWidget {
             return DropdownMenuItem<String>(
               value: item,
               child: Text(
-                item,
+                itemLabelBuilder != null ? itemLabelBuilder!(item) : item,
                 style: TextStyles.bodyText(
                   context: context,
                   color: Theme.of(context).colorScheme.onSurface,

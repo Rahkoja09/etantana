@@ -31,7 +31,7 @@ class ProductModel extends ProductEntities {
   MapData toMap() {
     return {
       'id': id,
-      'created_at': createdAt,
+      'created_at': createdAt?.toIso8601String(),
       'name': name,
       'quantity': quantity,
       'description': description,
