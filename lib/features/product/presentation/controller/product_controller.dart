@@ -60,7 +60,7 @@ class ProductController extends StateNotifier<ProductState> {
     res.fold((error) => _setError(error), (successData) {
       state = state.copyWith(
         isLoading: false,
-        isClearError: false,
+        isClearError: true,
         errorMessage: null,
         product: successData as dynamic,
       );
@@ -69,11 +69,7 @@ class ProductController extends StateNotifier<ProductState> {
 
   // set loading state ----------
   void _setLoadingState() {
-    state = state.copyWith(
-      isLoading: true,
-      isClearError: false,
-      errorMessage: null,
-    );
+    state = state.copyWith(isLoading: true);
   }
 
   void _setError(Failure error) {

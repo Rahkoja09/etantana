@@ -11,7 +11,7 @@ class OrderStates<T> extends Equatable {
     bool? isLoading,
     String? errorMessage,
     T? order,
-    bool? isClearError = true,
+    bool? isClearError = false,
   }) {
     return OrderStates(
       isLoading: isLoading ?? this.isLoading,

@@ -37,7 +37,8 @@ class _ProductState extends ConsumerState<Product> {
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
     ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
+      if (next.errorMessage != null &&
+          next.errorMessage != prev?.errorMessage) {
         showDialog(
           context: context,
           builder:
@@ -54,8 +55,8 @@ class _ProductState extends ConsumerState<Product> {
     final displayList =
         productState.isLoading
             ? List.generate(
-              5,
-              (index) => ProductEntities(name: "Chargement...", quantity: 0),
+              10,
+              (index) => ProductEntities(name: "Chargement...", quantity: 1),
             )
             : myProducts;
 
@@ -70,6 +71,9 @@ class _ProductState extends ConsumerState<Product> {
             (displayList.isEmpty && !productState.isLoading)
                 ? _buildEmptyState()
                 : Skeletonizer(
+                  ignoreContainers: true,
+                  justifyMultiLineText: true,
+                  enableSwitchAnimation: true,
                   enabled: productState.isLoading,
                   effect: LoadingEffect.getCommonEffect(context),
                   child: ListView.builder(
@@ -91,14 +95,21 @@ class _ProductState extends ConsumerState<Product> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.inventory_2_outlined, size: 60.sp, color: Colors.grey),
-          SizedBox(height: 16.h),
-          const Text("Aucun produit en stock"),
-        ],
+    return AppRefreshIndicator(
+      onRefresh: () async {
+        await ref
+            .read(productControllerProvider.notifier)
+            .researchProduct(null);
+      },
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inventory_2_outlined, size: 60.sp, color: Colors.grey),
+            SizedBox(height: 16.h),
+            const Text("Aucun produit en stock"),
+          ],
+        ),
       ),
     );
   }

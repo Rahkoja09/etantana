@@ -55,7 +55,7 @@ class OrderController extends StateNotifier<OrderStates> {
       (successData) {
         state = state.copyWith(
           isLoading: false,
-          isClearError: false,
+          isClearError: true,
           errorMessage: null,
           order: successData,
         );
@@ -65,11 +65,7 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // set loading state -------------------------------
   void _setLoadingState() {
-    state = state.copyWith(
-      isLoading: true,
-      isClearError: false,
-      errorMessage: null,
-    );
+    state = state.copyWith(isLoading: true);
   }
 }
 

@@ -11,11 +11,12 @@ class ProductState<T> extends Equatable {
     bool? isLoading,
     String? errorMessage,
     T? product,
-    bool isClearError = true,
+    bool isClearError = false,
   }) {
     return ProductState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: isClearError ? null : (errorMessage ?? this.errorMessage),
+      errorMessage:
+          isClearError == true ? null : (errorMessage ?? this.errorMessage),
       product: product ?? this.product,
     );
   }
