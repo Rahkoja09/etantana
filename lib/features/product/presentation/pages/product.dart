@@ -49,7 +49,7 @@ class _ProductState extends ConsumerState<Product> {
         );
       }
       if (next.product != null && next.isLoading == false) {
-        myProducts = next.product;
+        myProducts = next.product!;
       }
     });
     final displayList =

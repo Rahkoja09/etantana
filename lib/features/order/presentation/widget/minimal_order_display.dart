@@ -16,13 +16,15 @@ class MinimalOrderDisplay extends ConsumerWidget {
     final productState = ref.watch(productControllerProvider);
 
     String getProductName(String productId) {
-      String productName = "";
-      for (ProductEntities product in productState.product) {
-        if (product.id == productId) {
-          productName = product.name!;
-        }
+      if (productState.product == null) return "Chargement...";
+
+      try {
+        final product = (productState.product as List<ProductEntities>)
+            .firstWhere((p) => p.id == productId);
+        return product.name ?? "Sans nom";
+      } catch (e) {
+        return "Produit inconnu";
       }
-      return productName;
     }
 
     return Container(
@@ -121,7 +123,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
                     "${order.createdAt!.day}/${order.createdAt!.month}/${order.createdAt!.year}",
                     style: TextStyles.bodySmall(
                       context: context,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

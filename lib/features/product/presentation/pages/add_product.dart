@@ -300,6 +300,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   type: selectedType,
                 );
                 await productAction.addProduct(addMe, _productImage);
+                await productAction.researchProduct(null);
 
                 // vider les input apres ajout -----------
                 _productImage = null;

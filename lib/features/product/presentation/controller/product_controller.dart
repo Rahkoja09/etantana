@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:dartz/dartz.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
@@ -15,7 +13,14 @@ class ProductController extends StateNotifier<ProductState> {
   Future<void> addProduct(ProductEntities entities, File? productImage) async {
     _setLoadingState();
     final res = await _productUsecases.insertProduct(entities, productImage);
-    _setSuccesOrErrorState<ProductEntities>(res);
+    res.fold((error) => _setError(error), (success) {
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        errorMessage: null,
+        product: [success, ...?state.product],
+      );
+    });
   }
 
   Future<void> updateProduct(ProductEntities entities) async {
@@ -40,29 +45,36 @@ class ProductController extends StateNotifier<ProductState> {
   Future<void> deleteProductById(String productId) async {
     _setLoadingState();
     final res = await _productUsecases.deleteProductById(productId);
-    _setSuccesOrErrorState<void>(res);
+
+    res.fold((error) => _setError(error), (success) {
+      final newList = state.product!.where((p) => p.id != productId).toList();
+      state = state.copyWith(isLoading: false, product: newList);
+    });
   }
 
   Future<void> getProductById(String productId) async {
     _setLoadingState();
     final res = await _productUsecases.getProductById(productId);
-    _setSuccesOrErrorState<ProductEntities>(res);
+
+    res.fold((error) => _setError(error), (success) {
+      final otherProducts =
+          state.product?.where((p) => p.id != success.id).toList() ?? [];
+      state = state.copyWith(
+        isLoading: false,
+        product: [success, ...otherProducts],
+      );
+    });
   }
 
   Future<void> researchProduct(ProductEntities? criterial) async {
     _setLoadingState();
     final res = await _productUsecases.researchProduct(criterial);
-    _setSuccesOrErrorState<List<ProductEntities>>(res);
-  }
-
-  // set new state by folding (error and success) -----------
-  void _setSuccesOrErrorState<T>(Either<Failure, T> res) {
-    res.fold((error) => _setError(error), (successData) {
+    res.fold((error) => _setError(error), (success) {
       state = state.copyWith(
         isLoading: false,
         isClearError: true,
         errorMessage: null,
-        product: successData as dynamic,
+        product: success,
       );
     });
   }

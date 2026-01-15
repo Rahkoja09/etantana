@@ -64,7 +64,7 @@ class _OrderState extends ConsumerState<Order> {
         );
       }
       if (next.order != null && next.isLoading == false) {
-        allOrder = next.order;
+        allOrder = next.order!;
       }
     });
     return Scaffold(

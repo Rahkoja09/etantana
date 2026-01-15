@@ -34,7 +34,7 @@ class FloatingSearchBar extends StatelessWidget {
           ),
         ],
         border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
           width: 1,
         ),
       ),
@@ -70,17 +70,15 @@ class FloatingSearchBar extends StatelessWidget {
             ),
           ),
 
-          // Séparateur vertical discret
           Container(
             height: 20.h,
             width: 1,
             color: Theme.of(
               context,
-            ).colorScheme.onSurface.withValues(alpha: 0.1),
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
             margin: EdgeInsets.symmetric(horizontal: 8.w),
           ),
 
-          // Bouton de tri
           IconButton(
             onPressed: onSortTap,
             icon: HugeIcon(

@@ -1,16 +1,17 @@
+import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:equatable/equatable.dart';
 
 class OrderStates<T> extends Equatable {
   final bool isLoading;
   final String? errorMessage;
-  final T? order;
+  final List<OrderEntities>? order;
 
   const OrderStates({this.isLoading = false, this.errorMessage, this.order});
 
   OrderStates copyWith({
     bool? isLoading,
     String? errorMessage,
-    T? order,
+    List<OrderEntities>? order,
     bool? isClearError = false,
   }) {
     return OrderStates(
