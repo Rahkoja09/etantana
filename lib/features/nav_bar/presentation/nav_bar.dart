@@ -3,8 +3,10 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
+import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
+import 'package:e_tantana/features/printer/presentation/pages/printer.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
@@ -16,7 +18,8 @@ import 'package:hugeicons/hugeicons.dart';
 
 class NavBar extends ConsumerStatefulWidget {
   final int selectedIndex;
-  const NavBar({super.key, this.selectedIndex = 0});
+  final OrderEntities? order;
+  const NavBar({super.key, this.selectedIndex = 0, this.order});
 
   @override
   ConsumerState<NavBar> createState() => _NavBarState();
@@ -90,7 +93,28 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
             onNotification: onScrollNotification,
             child: IndexedStack(
               index: _bottomNavIndex,
-              children: const [Product(), Order(), Exemple(), Exemple()],
+              children: [
+                Exemple(),
+                Product(),
+                Order(),
+                Printer(
+                  order:
+                      widget.order ??
+                      OrderEntities(
+                        id: "Null",
+                        createdAt: DateTime.now(),
+                        status: "Null",
+                        productId: "Null",
+                        quantity: 0,
+                        details: "Null",
+                        clientName: "Rakoto",
+                        clientTel: "03x xx xxx xx",
+                        clientAdrs: "xxxx, xxx, Antananarivo",
+                        deliveryCosts: "xxxx.x Ar",
+                        invoiceLink: "",
+                      ),
+                ),
+              ],
             ),
           ),
 

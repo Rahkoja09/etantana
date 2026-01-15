@@ -1,9 +1,11 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/order/presentation/widget/minimal_order_display.dart';
+import 'package:e_tantana/features/printer/presentation/pages/printer.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
@@ -138,7 +140,7 @@ class _OrderState extends ConsumerState<Order> {
                                     ? 1
                                     : 0),
                             itemBuilder: (context, index) {
-                              // --- GARDER TA LOGIQUE DE SKELETON (Pagination) ---
+                              // GARDER TA LOGIQUE DE SKELETON (Pagination) ----------
                               if (index == displayData.length - 1 &&
                                   isFetching) {
                                 return Skeletonizer(
@@ -148,6 +150,7 @@ class _OrderState extends ConsumerState<Order> {
                                   ),
                                   child: MinimalOrderDisplay(
                                     order: skeletonData[0],
+                                    onTap: () {},
                                   ),
                                 );
                               }
@@ -188,7 +191,19 @@ class _OrderState extends ConsumerState<Order> {
                                     _buildDateHeader(item.createdAt!, context),
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 8.h),
-                                    child: MinimalOrderDisplay(order: item),
+                                    child: MinimalOrderDisplay(
+                                      order: item,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => Printer(
+                                                  order: displayData[index],
+                                                ),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ],
                               );

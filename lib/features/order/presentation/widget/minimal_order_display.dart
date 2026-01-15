@@ -9,7 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MinimalOrderDisplay extends ConsumerWidget {
   final OrderEntities order;
-  const MinimalOrderDisplay({super.key, required this.order});
+  final VoidCallback onTap;
+  const MinimalOrderDisplay({
+    super.key,
+    required this.order,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -106,7 +111,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
                 ],
               ),
               InkWell(
-                onTap: () {},
+                onTap: onTap,
                 child: Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
@@ -120,7 +125,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
                     ),
                   ),
                   child: Text(
-                    "${order.createdAt!.day}/${order.createdAt!.month}/${order.createdAt!.year}",
+                    "Facturer",
                     style: TextStyles.bodySmall(
                       context: context,
                       color: Theme.of(context).colorScheme.onSurface,
