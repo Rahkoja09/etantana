@@ -28,7 +28,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
     }
 
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.only(top: 10, bottom: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(

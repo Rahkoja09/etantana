@@ -36,10 +36,13 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   ResultFuture<List<ProductEntities>> researchProduct(
-    ProductEntities? criterial,
-  ) async {
+    ProductEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  }) async {
     return await _executeAction<List<ProductEntities>>(
-      () => _productDataSource.researchProduct(criterial),
+      () =>
+          _productDataSource.researchProduct(criterial, start: start, end: end),
     );
   }
 

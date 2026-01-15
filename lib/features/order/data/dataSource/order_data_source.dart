@@ -6,5 +6,9 @@ abstract class OrderDataSource {
   Future<OrderModel> insertOrder(OrderEntities entity);
   Future<void> deleteOrderById(String orderId);
   Future<OrderModel> updateOrder(OrderEntities entity);
-  Future<List<OrderModel>> researchOrder(OrderEntities? criterial);
+  Future<List<OrderModel>> researchOrder(
+    OrderEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  });
 }

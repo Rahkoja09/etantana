@@ -6,5 +6,9 @@ abstract class OrderRepository {
   ResultFuture<OrderEntities> insertOrder(OrderEntities entity);
   ResultVoid deleteOrderById(String orderId);
   ResultFuture<OrderEntities> updateOrder(OrderEntities entity);
-  ResultFuture<List<OrderEntities>> researchOrder(OrderEntities? criterial);
+  ResultFuture<List<OrderEntities>> researchOrder(
+    OrderEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  });
 }

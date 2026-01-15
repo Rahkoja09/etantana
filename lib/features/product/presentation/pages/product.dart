@@ -3,6 +3,7 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
+import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
@@ -19,17 +20,43 @@ class Product extends ConsumerStatefulWidget {
 }
 
 class _ProductState extends ConsumerState<Product> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
   List<ProductEntities> myProducts = [];
+  bool isFetching = false;
+
+  // criterial variable -----------
+  String? productNameCriterial;
+  ProductEntities? criteriales;
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getProduct();
     });
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.9) {
+      if (!ref.read(productControllerProvider).isLoading) {
+        setState(() => _currentPage++);
+        setState(() {
+          isFetching = false;
+        });
+        ref.read(productControllerProvider.notifier).loadNextPage(null);
+        setState(() {
+          isFetching = false;
+        });
+      }
+    }
+  }
+
   Future<void> getProduct() async {
+    setState(() => _currentPage = 0);
     await ref.read(productControllerProvider.notifier).researchProduct(null);
   }
 
@@ -52,8 +79,9 @@ class _ProductState extends ConsumerState<Product> {
         myProducts = next.product!;
       }
     });
+
     final displayList =
-        productState.isLoading
+        myProducts.isEmpty
             ? List.generate(
               10,
               (index) => ProductEntities(name: "Chargement...", quantity: 1),
@@ -61,35 +89,74 @@ class _ProductState extends ConsumerState<Product> {
             : myProducts;
 
     return Scaffold(
-      body: AppRefreshIndicator(
-        onRefresh: () async {
-          await ref
-              .read(productControllerProvider.notifier)
-              .researchProduct(null);
-        },
-        child:
-            (displayList.isEmpty && !productState.isLoading)
-                ? _buildEmptyState()
-                : Skeletonizer(
-                  ignoreContainers: true,
-                  justifyMultiLineText: true,
-                  enableSwitchAnimation: true,
-                  enabled: productState.isLoading,
-                  effect: LoadingEffect.getCommonEffect(context),
-                  child: ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(StylesConstants.spacerContent - 6),
-                    itemCount: displayList.length,
-                    itemBuilder: (context, index) {
-                      final item = displayList[index];
-                      return MinimalProductView(
-                        product: item,
-                        onEdit: () {},
-                        order: () {},
-                      );
-                    },
-                  ),
-                ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(StylesConstants.spacerContent),
+              child: FloatingSearchBar(
+                controller: _searchController,
+                onSortTap: () {},
+                hintText: "Rechercher un produit (par son nom)",
+                onChanged: (val) {
+                  ref
+                      .read(productControllerProvider.notifier)
+                      .researchProduct(ProductEntities(name: val));
+                },
+              ),
+            ),
+
+            Expanded(
+              child: AppRefreshIndicator(
+                onRefresh: getProduct,
+                child:
+                    (displayList.isEmpty && !productState.isLoading)
+                        ? _buildEmptyState()
+                        : Skeletonizer(
+                          enabled: productState.isLoading,
+                          effect: LoadingEffect.getCommonEffect(context),
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            physics: const ClampingScrollPhysics(),
+                            padding: EdgeInsets.all(
+                              StylesConstants.spacerContent,
+                            ),
+                            itemCount:
+                                displayList.length +
+                                (productState.isLoading && myProducts.isNotEmpty
+                                    ? 1
+                                    : 0),
+                            itemBuilder: (context, index) {
+                              if (index == displayList.length && isFetching) {
+                                return Skeletonizer(
+                                  enabled: true,
+                                  effect: LoadingEffect.getCommonEffect(
+                                    context,
+                                  ),
+                                  child: MinimalProductView(
+                                    product: displayList[0],
+                                    onEdit: () {},
+                                    order: () {},
+                                  ),
+                                );
+                              }
+                              if (index >= displayList.length) {
+                                return const SizedBox.shrink();
+                              }
+
+                              final item = displayList[index];
+                              return MinimalProductView(
+                                product: item,
+                                onEdit: () {},
+                                order: () {},
+                              );
+                            },
+                          ),
+                        ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

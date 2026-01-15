@@ -25,18 +25,20 @@ class MinimalProductView extends StatelessWidget {
     bool outOfStock = (product.quantity ?? 0) <= 0;
 
     return Container(
-      height: 70.h,
-      margin: EdgeInsets.only(bottom: 10.h),
+      height: 65.h,
+      margin: EdgeInsets.only(bottom: 15.h),
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
         color:
             outOfStock
                 ? Theme.of(
                   context,
-                ).colorScheme.errorContainer.withValues(alpha: 0.3)
-                : Theme.of(context).colorScheme.surfaceContainerLow,
+                ).colorScheme.errorContainer.withValues(alpha: 0.09)
+                : Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerLow.withValues(alpha: 0.3),
         border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
           width: 0.5,
         ),
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
@@ -102,9 +104,19 @@ class MinimalProductView extends StatelessWidget {
                     icon: Icon(
                       Icons.edit_outlined,
                       size: 20.sp,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.6),
                     ),
                     visualDensity: VisualDensity.compact,
+                  ),
+                  Container(
+                    height: 20.h,
+                    width: 1,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.3),
+                    margin: EdgeInsets.symmetric(horizontal: 8.w),
                   ),
                   IconButton(
                     onPressed: order,

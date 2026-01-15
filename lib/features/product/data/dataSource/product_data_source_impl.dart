@@ -63,9 +63,13 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<List<ProductModel>> researchProduct(ProductEntities? criterial) async {
+  Future<List<ProductModel>> researchProduct(
+    ProductEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  }) async {
     try {
-      var query = _client.from("product").select("*");
+      dynamic query = _client.from("product").select("*");
 
       if (criterial != null) {
         final eId = criterial.eId;
@@ -76,12 +80,18 @@ class ProductDataSourceImpl implements ProductDataSource {
         final details = criterial.details;
 
         if (eId != null) query = query.eq("e_id", eId);
-        if (name != null) query = query.eq("name", name);
+        if (name != null) query = query.ilike("name", '%$name%');
         if (quantity != null) query = query.eq("quantity", quantity);
         if (description != null) query = query.eq("description", description);
         if (type != null) query = query.eq("type", type);
         if (details != null) query = query.eq("details", details);
       }
+
+      // trier par date ---------
+      query = query.order("created_at", ascending: false);
+
+      // lazy loading -----------
+      query = query.range(start, end);
 
       final res = await query;
       return (res as List).map((data) => ProductModel.fromMap(data)).toList();

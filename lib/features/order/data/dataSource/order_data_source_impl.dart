@@ -60,9 +60,13 @@ class OrderDataSourceImpl implements OrderDataSource {
   }
 
   @override
-  Future<List<OrderModel>> researchOrder(OrderEntities? criterial) async {
+  Future<List<OrderModel>> researchOrder(
+    OrderEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  }) async {
     try {
-      var query = _client.from("order").select("*");
+      dynamic query = _client.from("order").select("*");
 
       if (criterial != null) {
         final status = criterial.status;
@@ -75,14 +79,19 @@ class OrderDataSourceImpl implements OrderDataSource {
         final clientAdrs = criterial.clientAdrs;
 
         if (status != null) query = query.eq("status", status);
-        if (invoiceLink != null) query = query.eq("status", invoiceLink);
-        if (productId != null) query = query.eq("status", productId);
-        if (quantity != null) query = query.eq("status", quantity);
-        if (details != null) query = query.eq("status", details);
-        if (clientName != null) query = query.eq("status", clientName);
-        if (clientTel != null) query = query.eq("status", clientTel);
-        if (clientAdrs != null) query = query.eq("status", clientAdrs);
+        if (invoiceLink != null) query = query.eq("invoice_link", invoiceLink);
+        if (productId != null) query = query.eq("product_id", productId);
+        if (quantity != null) query = query.eq("quantity", quantity);
+        if (details != null) query = query.eq("details", details);
+        if (clientName != null) {
+          query = query.ilike("client_name", '%$clientName%');
+        }
+        if (clientTel != null) query = query.eq("client_tel", clientTel);
+        if (clientAdrs != null) query = query.eq("client_adrs", clientAdrs);
       }
+
+      query = query.order("created_at", ascending: false);
+      query = query.range(start, end);
       final res = await query;
       return (res as List).map((data) => OrderModel.fromMap(data)).toList();
     } on PostgrestException catch (e) {

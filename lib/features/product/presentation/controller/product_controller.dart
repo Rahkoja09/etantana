@@ -8,6 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductController extends StateNotifier<ProductState> {
   final ProductUsecases _productUsecases;
+
+  int _currentPage = 0;
+  final int _pageSize = 10;
+  bool _isLastPage = false;
+
   ProductController(this._productUsecases) : super(ProductState());
 
   Future<void> addProduct(ProductEntities entities, File? productImage) async {
@@ -16,8 +21,6 @@ class ProductController extends StateNotifier<ProductState> {
     res.fold((error) => _setError(error), (success) {
       state = state.copyWith(
         isLoading: false,
-        isClearError: true,
-        errorMessage: null,
         product: [success, ...?state.product],
       );
     });
@@ -26,28 +29,22 @@ class ProductController extends StateNotifier<ProductState> {
   Future<void> updateProduct(ProductEntities entities) async {
     _setLoadingState();
     final res = await _productUsecases.updateProduct(entities);
-
     res.fold((error) => _setError(error), (updatedProduct) {
-      final List<ProductEntities> currentProducts = state.product ?? [];
-      final newProductList =
-          currentProducts.map<ProductEntities>((p) {
-            return p.id == updatedProduct.id ? updatedProduct : p;
-          }).toList();
-
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: null,
-        product: newProductList,
-      );
+      final newList =
+          state.product
+              ?.map((p) => p.id == updatedProduct.id ? updatedProduct : p)
+              .toList() ??
+          [];
+      state = state.copyWith(isLoading: false, product: newList);
     });
   }
 
   Future<void> deleteProductById(String productId) async {
     _setLoadingState();
     final res = await _productUsecases.deleteProductById(productId);
-
     res.fold((error) => _setError(error), (success) {
-      final newList = state.product!.where((p) => p.id != productId).toList();
+      final newList =
+          state.product?.where((p) => p.id != productId).toList() ?? [];
       state = state.copyWith(isLoading: false, product: newList);
     });
   }
@@ -67,16 +64,61 @@ class ProductController extends StateNotifier<ProductState> {
   }
 
   Future<void> researchProduct(ProductEntities? criterial) async {
+    _currentPage = 0;
+    _isLastPage = false;
+
     _setLoadingState();
-    final res = await _productUsecases.researchProduct(criterial);
+
+    // On mémorise les critères dans le state --------------------------<<
+    state = state.copyWith(currentCriteria: criterial);
+
+    // On demande les index 0 à 9 ---------
+    final res = await _productUsecases.researchProduct(
+      state.currentCriteria,
+      start: 0,
+      end: _pageSize - 1,
+    );
+
     res.fold((error) => _setError(error), (success) {
+      if (success.length < _pageSize) _isLastPage = true;
       state = state.copyWith(
         isLoading: false,
         isClearError: true,
-        errorMessage: null,
         product: success,
       );
     });
+  }
+
+  // page suivante du lazy loading ------
+  Future<void> loadNextPage(ProductEntities? criterial) async {
+    if (state.isLoading || _isLastPage) return;
+
+    _currentPage++;
+    final int start = _currentPage * _pageSize;
+    final int end = start + _pageSize - 1;
+
+    final res = await _productUsecases.researchProduct(
+      state.currentCriteria,
+      start: start,
+      end: end,
+    );
+
+    res.fold((error) => _setError(error), (newProducts) {
+      if (newProducts.isEmpty) {
+        _isLastPage = true;
+      } else {
+        if (newProducts.length < _pageSize) _isLastPage = true;
+
+        state = state.copyWith(
+          isLoading: false,
+          product: [...?state.product, ...newProducts],
+        );
+      }
+    });
+  }
+
+  void updateCriterial(ProductEntities updateCriterial) {
+    state = state.copyWith(currentCriteria: updateCriterial);
   }
 
   // set loading state ----------

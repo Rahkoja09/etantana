@@ -37,6 +37,8 @@ class ProductUsecases {
   ResultFuture<ProductEntities> getProductById(String productId) =>
       _productRepository.getProductById(productId);
   ResultFuture<List<ProductEntities>> researchProduct(
-    ProductEntities? criterial,
-  ) => _productRepository.researchProduct(criterial);
+    ProductEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  }) => _productRepository.researchProduct(criterial, start: start, end: end);
 }

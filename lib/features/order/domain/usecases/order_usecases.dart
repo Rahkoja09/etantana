@@ -16,6 +16,9 @@ class OrderUsecases {
       _orderRepository.deleteOrderById(orderId);
   ResultFuture<OrderEntities> updateOrder(OrderEntities entity) =>
       _orderRepository.updateOrder(entity);
-  ResultFuture<List<OrderEntities>> researchOrder(OrderEntities? criterial) =>
-      _orderRepository.researchOrder(criterial);
+  ResultFuture<List<OrderEntities>> researchOrder(
+    OrderEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  }) => _orderRepository.researchOrder(criterial, start: start, end: end);
 }

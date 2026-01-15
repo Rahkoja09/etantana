@@ -31,10 +31,12 @@ class OrderRepositoryImpl implements OrderRepository {
 
   @override
   ResultFuture<List<OrderEntities>> researchOrder(
-    OrderEntities? criterial,
-  ) async {
+    OrderEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  }) async {
     return await _executeAction(
-      () => _orderDataSource.researchOrder(criterial),
+      () => _orderDataSource.researchOrder(criterial, start: start, end: end),
     );
   }
 

@@ -7,6 +7,8 @@ abstract class ProductRepository {
   ResultVoid deleteProductById(String productId);
   ResultFuture<ProductEntities> getProductById(String productId);
   ResultFuture<List<ProductEntities>> researchProduct(
-    ProductEntities? criterial,
-  );
+    ProductEntities? criterial, {
+    int start = 0,
+    int end = 9,
+  });
 }
