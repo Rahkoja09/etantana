@@ -2,12 +2,11 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
+import 'package:e_tantana/features/home/presentation/pages/home.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
-import 'package:e_tantana/features/printer/presentation/pages/printer.dart';
-import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
@@ -95,7 +94,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
             child: IndexedStack(
               index: _bottomNavIndex,
               children: [
-                Exemple(),
+                Home(),
                 Product(),
                 Order(),
                 Exemple(),

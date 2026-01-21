@@ -255,7 +255,7 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
       headerText,
       style: TextStyles.bodyText(
         context: context,
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.5),
       ),
     ),
   );

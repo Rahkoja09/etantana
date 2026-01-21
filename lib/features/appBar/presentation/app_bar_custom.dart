@@ -1,4 +1,5 @@
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,6 +26,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ref.watch(themeProvider);
     return AppBar(
       actions: <Widget>[Container()],
       automaticallyImplyLeading: false,
@@ -43,48 +45,32 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "0_0",
-            style: TextStyles.bodyText(
-              context: context,
-              fontWeight: FontWeight.w900,
-              fontSize: 18,
-              color: Theme.of(context).colorScheme.onSurface,
+          Image(
+            image: AssetImage(
+              theme == lightTheme
+                  ? "assets/medias/logos/e_tantana_black.png"
+                  : "assets/medias/logos/e_tantana.png",
             ),
+            height: 24,
           ),
 
           Row(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 0.w, top: 5.h, bottom: 5.h),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: HugeIcon(
-                    icon: HugeIcons.strokeRoundedSearch01,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Padding(
                 padding: EdgeInsets.only(left: 5, top: 5, bottom: 5),
 
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      ref.read(themeProvider.notifier).state =
+                          theme == darkTheme ? lightTheme : darkTheme;
+                    });
+                  },
                   child: HugeIcon(
-                    icon: HugeIcons.strokeRoundedSorting01,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Padding(
-                padding: EdgeInsets.only(left: 5, top: 5, bottom: 5),
-
-                child: GestureDetector(
-                  onTap: () {},
-                  child: HugeIcon(
-                    icon: HugeIcons.strokeRoundedMoon02,
+                    icon:
+                        theme == darkTheme
+                            ? HugeIcons.strokeRoundedMoon02
+                            : HugeIcons.strokeRoundedSun01,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
