@@ -7,6 +7,7 @@ import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
 import 'package:e_tantana/features/printer/presentation/pages/printer.dart';
+import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
@@ -58,10 +59,10 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
   }
 
   final List<IconData> _iconList = [
+    HugeIcons.strokeRoundedHome01,
     HugeIcons.strokeRoundedPackage,
     HugeIcons.strokeRoundedShoppingBasketCheckIn01,
-    HugeIcons.strokeRoundedDeliveryTruck01,
-    HugeIcons.strokeRoundedInvoice03,
+    HugeIcons.strokeRoundedChart01,
   ];
 
   bool onScrollNotification(ScrollNotification notification) {
@@ -97,7 +98,8 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
                 Exemple(),
                 Product(),
                 Order(),
-                Printer(
+                Exemple(),
+                /*PrinterView(
                   order:
                       widget.order ??
                       OrderEntities(
@@ -113,7 +115,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
                         deliveryCosts: "xxxx.x Ar",
                         invoiceLink: "",
                       ),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -177,15 +179,15 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
   String _getLabel(int index) {
     switch (index) {
       case 0:
-        return "Produit";
+        return "Accueil";
       case 1:
-        return "Commande";
-      case 2:
-        return "Livraison";
-      case 3:
-        return "Impression";
-      default:
         return "Produit";
+      case 2:
+        return "Commande";
+      case 3:
+        return "Statistique"; // soon.. : livraison or other  -------
+      default:
+        return "Accueil";
     }
   }
 

@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:screenshot/screenshot.dart';
+
 enum AppMediaType { product, invoice }
 
 abstract class MediaServices {
@@ -32,6 +35,14 @@ abstract class MediaServices {
     String? entityId,
     String bucketName = 'agency',
   });
+
+  Future<void> screenshotAndShareMedia(
+    BuildContext context,
+    String id,
+    String ownerName,
+    ScreenshotController screenshotController,
+    Widget widget,
+  );
 
   // --- UTILS ---
   String getPublicUrl(String filePath, String bucketName);

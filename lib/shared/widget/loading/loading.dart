@@ -13,7 +13,7 @@ class Loading extends StatelessWidget {
     return Container(
       height: size.height,
       width: size.width,
-      decoration: BoxDecoration(color: const Color.fromARGB(10, 255, 255, 255)),
+      decoration: BoxDecoration(color: const Color.fromARGB(142, 0, 0, 0)),
       child: Center(
         child: Container(
           height: 100.h,

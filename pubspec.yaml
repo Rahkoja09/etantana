@@ -95,11 +95,12 @@ dependencies:
   http: ^1.5.0
 
   # UI kit ---------
-  getwidget: ^6.0.0
   json_theme: ^8.0.0+3
   intl: ^0.19.0
   dartz: ^0.10.1
   share_plus: ^10.1.0
+  interactive_viewer_2: ^0.1.0
+  toastification: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -133,3 +134,6 @@ flutter:
       fonts:
         - asset: assets/fonts/Nunito/Nunito-Regular.ttf
           weight: 600
+    - family: BrunoAceSC
+      fonts:
+        - asset: assets/fonts/brunoAceSC/BrunoAceSC-Regular.ttf

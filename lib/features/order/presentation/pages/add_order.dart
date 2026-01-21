@@ -15,6 +15,7 @@ import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/loading/loading.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
+import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/text/horizontal_divider.dart';
 import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/show_input_error.dart';
@@ -106,14 +107,12 @@ class _AddOrderState extends ConsumerState<AddOrder> {
         );
       }
       if (next.order != null && next.isLoading == false) {
-        showDialog(
-          context: context,
-          builder:
-              (context) => SuccessDialog(
-                title: "Commande passée.",
-                message:
-                    "La commande de M./Mm ${clientName.text.trim()} est ajoutée avec succès!",
-              ),
+        showToast(
+          context,
+          title: 'Commande passée.',
+          isError: false,
+          description:
+              "La commande de M./Mm ${clientName.text.trim()} est ajoutée avec succès!",
         );
       }
     });

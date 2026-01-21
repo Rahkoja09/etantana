@@ -1,12 +1,16 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:e_tantana/core/error/exceptions.dart';
 import 'package:e_tantana/core/network/network_info.dart';
 import 'package:e_tantana/core/utils/tools/isUrl.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,7 +23,7 @@ class MediaServiceImpl implements MediaServices {
 
   MediaServiceImpl(this._supabase, this._networkInfo, this._picker);
 
-  // --- PICKING -------
+  //  PICKING -------
 
   @override
   Future<File?> pickImage({required bool fromGallery}) async {
@@ -43,7 +47,7 @@ class MediaServiceImpl implements MediaServices {
     return pickedFile != null ? File(pickedFile.path) : null;
   }
 
-  // --- PROCESSING & VALIDATION -------
+  //  PROCESSING & VALIDATION -------
 
   @override
   Future<File> compressImage(File file, {int quality = 80}) async {
@@ -93,7 +97,7 @@ class MediaServiceImpl implements MediaServices {
       throw ApiException(message: "Le fichier doit être une image.");
     }
 
-    // Validation Taille (5MB image / 50MB video) ---------
+    // Validation Taille (5MB image / 50MB video) -------
     final int maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
     if (fileSize > maxSize) {
       throw ApiException(
@@ -102,7 +106,7 @@ class MediaServiceImpl implements MediaServices {
     }
   }
 
-  // --- UPLOAD OPERATIONS ---
+  //  UPLOAD OPERATIONS -------------
 
   @override
   Future<String> uploadMedia({
@@ -195,12 +199,12 @@ class MediaServiceImpl implements MediaServices {
       await thumbFile.writeAsBytes(bytes);
       return thumbFile;
     } catch (e) {
-      print('Erreur génération thumbnail : $e');
+      debugPrint('Erreur génération thumbnail : $e');
       return null;
     }
   }
 
-  // --- UTILS ----
+  //  UTILS -------
 
   @override
   String getPublicUrl(String filePath, String bucketName) {
@@ -219,7 +223,7 @@ class MediaServiceImpl implements MediaServices {
     await VideoCompress.deleteAllCache();
   }
 
-  // --- PRIVATE NAMING LOGIC---------------------
+  //  PRIVATE NAMING ---------------------
 
   String _getFileNameByType(AppMediaType type, String extension, {int? index}) {
     final suffix = index != null ? '_$index' : '';
@@ -232,6 +236,34 @@ class MediaServiceImpl implements MediaServices {
         return 'product_$timestamp$suffix$extension';
       case AppMediaType.invoice:
         return 'invoice_$timestamp$suffix$extension';
+    }
+  }
+
+  @override
+  Future<void> screenshotAndShareMedia(
+    BuildContext context,
+    String id,
+    String ownerName,
+    ScreenshotController screenshotController,
+    Widget widget,
+  ) async {
+    try {
+      final Uint8List imageBytes = await screenshotController.captureFromWidget(
+        widget,
+        context: context,
+        delay: const Duration(milliseconds: 100),
+      );
+
+      final directory = await getTemporaryDirectory();
+      final String fileName = 'facture_$id.png';
+      final File imageFile = File('${directory.path}/$fileName');
+      await imageFile.writeAsBytes(imageBytes);
+
+      await Share.shareXFiles([
+        XFile(imageFile.path),
+      ], text: 'Voici la facture de $ownerName');
+    } catch (e) {
+      debugPrint("Erreur lors de l'exportation : $e");
     }
   }
 }

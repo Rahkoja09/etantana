@@ -7,6 +7,7 @@ import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -66,13 +67,11 @@ class _ProductState extends ConsumerState<Product> {
     ref.listen<ProductState>(productControllerProvider, (prev, next) {
       if (next.errorMessage != null &&
           next.errorMessage != prev?.errorMessage) {
-        showDialog(
-          context: context,
-          builder:
-              (context) => ErrorDialog(
-                title: "Erreur de récuperation produit.",
-                message: next.errorMessage!,
-              ),
+        showToast(
+          context,
+          title: 'Erreur de récuperation produit.',
+          isError: true,
+          description: next.errorMessage!,
         );
       }
       if (next.product != null && next.isLoading == false) {
@@ -162,21 +161,14 @@ class _ProductState extends ConsumerState<Product> {
   }
 
   Widget _buildEmptyState() {
-    return AppRefreshIndicator(
-      onRefresh: () async {
-        await ref
-            .read(productControllerProvider.notifier)
-            .researchProduct(null);
-      },
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inventory_2_outlined, size: 60.sp, color: Colors.grey),
-            SizedBox(height: 16.h),
-            const Text("Aucun produit en stock"),
-          ],
-        ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inventory_2_outlined, size: 60.sp, color: Colors.grey),
+          SizedBox(height: 16.h),
+          const Text("Aucun produit en stock"),
+        ],
       ),
     );
   }

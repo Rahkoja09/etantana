@@ -1,15 +1,14 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/order/presentation/widget/minimal_order_display.dart';
-import 'package:e_tantana/features/printer/presentation/pages/printer.dart';
+import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
-import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
+import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,13 +71,11 @@ class _OrderState extends ConsumerState<Order> {
     ref.listen<OrderStates>(orderControllerProvider, (prev, next) {
       if (next.errorMessage != null &&
           next.errorMessage != prev?.errorMessage) {
-        showDialog(
-          context: context,
-          builder:
-              (context) => ErrorDialog(
-                title: "Erreur de récuperation commande.",
-                message: next.errorMessage!,
-              ),
+        showToast(
+          context,
+          title: 'Erreur de récuperation produit.',
+          isError: true,
+          description: next.errorMessage!,
         );
       }
       if (next.order != null) {
@@ -197,7 +194,7 @@ class _OrderState extends ConsumerState<Order> {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder:
-                                                (_) => Printer(
+                                                (_) => PrinterView(
                                                   order: displayData[index],
                                                 ),
                                           ),

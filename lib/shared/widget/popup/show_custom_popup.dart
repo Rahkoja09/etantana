@@ -15,11 +15,14 @@ Future<void> showCustomPopup({
     barrierDismissible: dismissible,
     builder: (context) {
       return Dialog(
+        insetAnimationCurve: Curves.bounceInOut,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
         insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+        elevation: 4,
         child: Container(
+          constraints: BoxConstraints(maxWidth: 350),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.r),
             color: Theme.of(context).colorScheme.surface,
@@ -27,7 +30,7 @@ Future<void> showCustomPopup({
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// Header coloré
+              /// Header coloré-------------
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),

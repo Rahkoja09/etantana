@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_theme/json_theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,11 +55,13 @@ class MyApp extends ConsumerWidget {
       designSize: const Size(390, 844), // iphone 13 ----
       minTextAdapt: true,
       builder: (context, child) {
-        return MaterialApp(
-          theme: theme,
-          debugShowCheckedModeBanner: false,
-          title: AppConst.appName,
-          home: const NavBar(),
+        return ToastificationWrapper(
+          child: MaterialApp(
+            theme: theme,
+            debugShowCheckedModeBanner: false,
+            title: AppConst.appName,
+            home: const NavBar(),
+          ),
         );
       },
     );

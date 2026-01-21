@@ -693,14 +693,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.2.0"
-  getwidget:
-    dependency: "direct main"
-    description:
-      name: getwidget
-      sha256: "0aea9b0168fec787501be65fc25c3ceb1e7f650ed77ee8f1edbda3296ea4d6a0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.0"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -829,6 +821,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.11"
+  iconsax_flutter:
+    dependency: transitive
+    description:
+      name: iconsax_flutter
+      sha256: d14b4cec8586025ac15276bdd40f6eea308cb85748135965bb6255f14beb2564
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   image_picker:
     dependency: "direct main"
     description:
@@ -893,6 +893,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2"
+  interactive_viewer_2:
+    dependency: "direct main"
+    description:
+      name: interactive_viewer_2
+      sha256: "8362483f9209b0e59f1cfe988ca002e1e2ecf4ec2decd528ae337b6659cb2135"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   internet_connection_checker_plus:
     dependency: "direct main"
     description:
@@ -1173,6 +1181,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  pausable_timer:
+    dependency: transitive
+    description:
+      name: pausable_timer
+      sha256: "6ef1a95441ec3439de6fb63f39a011b67e693198e7dae14e20675c3c00e86074"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0+3"
   permission_handler:
     dependency: "direct main"
     description:
@@ -1602,6 +1618,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.4"
+  toastification:
+    dependency: "direct main"
+    description:
+      name: toastification
+      sha256: "69db2bff425b484007409650d8bcd5ed1ce2e9666293ece74dcd917dacf23112"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   typed_data:
     dependency: transitive
     description:

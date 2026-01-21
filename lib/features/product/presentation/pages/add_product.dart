@@ -10,6 +10,7 @@ import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
 import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
+import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/text/horizontal_divider.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_picker_display.dart';
 import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
@@ -100,13 +101,11 @@ class _AddProductState extends ConsumerState<AddProduct> {
         );
       }
       if (next.product != null && next.isLoading == false) {
-        showDialog(
-          context: context,
-          builder:
-              (context) => SuccessDialog(
-                title: "Fait",
-                message: "${nomProduitInput.text.trim()} ajouter avec succès!",
-              ),
+        showToast(
+          context,
+          title: 'Ajout produit réussi.',
+          isError: false,
+          description: "${nomProduitInput.text.trim()} ajouter avec succès!",
         );
       }
     });
