@@ -24,31 +24,31 @@ class Home extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header avec salutation
+                // Header avec salutation --------
                 const WelcomeHeader(),
                 SizedBox(height: 30.h),
 
-                // Section Stats
+                // Section Stats ----------
                 const StatsSection(),
                 SizedBox(height: 32.h),
 
-                // Section Recherche rapide
+                // Section Recherche rapide --------
                 const QuickSearchSection(),
                 SizedBox(height: 32.h),
 
-                // Section Actions principales
+                // Section Actions principales- ----------------
                 const MainActionsSection(),
                 SizedBox(height: 32.h),
 
-                // Section Accès rapide
+                // Section Accès rapide -----
                 const QuickAccessSection(),
                 SizedBox(height: 32.h),
 
-                // Section Récent/Favoris
+                // Section Récent/Favoris--------
                 const RecentActivitySection(),
                 SizedBox(height: 32.h),
 
-                // Section Outils utiles
+                // Section Outils utiles -----------------
                 const ToolsSection(),
                 SizedBox(height: 32.h),
               ],

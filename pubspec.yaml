@@ -82,6 +82,7 @@ dependencies:
   share_plus: ^10.1.0
   interactive_viewer_2: ^0.1.0
   toastification: ^3.0.3
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -104,3 +105,16 @@ flutter:
     - family: BrunoAceSC
       fonts:
         - asset: assets/fonts/brunoAceSC/BrunoAceSC-Regular.ttf
+    
+flutter_launcher_icons:
+  image_path: "assets/medias/icons/app_icon.png"
+  android:
+    notification_icon: "notification_icon"
+    adaptive_icon_background: "#ffffff"
+    adaptive_icon_foreground: "assets/medias/icons/app_icon.png"
+  ios:
+    image_path: "assets/medias/icons/app_icon.png"
+  
+  web:
+    image_path: "assets/medias/icons/app_icon.png"
+    background_color: "#ffffff"

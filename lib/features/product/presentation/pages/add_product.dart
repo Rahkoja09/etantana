@@ -59,6 +59,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
   TextEditingController codeProduitInput = TextEditingController();
   TextEditingController nomProduitInput = TextEditingController();
   TextEditingController descProduitInput = TextEditingController();
+  TextEditingController purchasePriceInput = TextEditingController();
+  TextEditingController sellingPriceInput = TextEditingController();
   int qteProduit = 0;
   String? selectedType;
   String variantsForServer = "";
@@ -193,6 +195,30 @@ class _AddProductState extends ConsumerState<AddProduct> {
                         qteProduit = qte;
                       });
                     },
+                  ),
+                  SizedBox(height: 30.h),
+                  MediumTitleWithDegree(
+                    showDegree: true,
+                    degree: 1,
+                    title: "Prix d'achat (Ar)",
+                  ),
+                  SimpleInput(
+                    textHint: "ex: 3000",
+                    iconData: HugeIcons.strokeRoundedId,
+                    textEditControlleur: nomProduitInput,
+                    maxLines: 1,
+                  ),
+                  SizedBox(height: 30.h),
+                  MediumTitleWithDegree(
+                    showDegree: true,
+                    degree: 1,
+                    title: "Prix de vente (Ar)",
+                  ),
+                  SimpleInput(
+                    textHint: "ex: 6000",
+                    iconData: HugeIcons.strokeRoundedId,
+                    textEditControlleur: nomProduitInput,
+                    maxLines: 1,
                   ),
                   SizedBox(height: 10.h),
                   ShowInputError(message: errorQuantity),

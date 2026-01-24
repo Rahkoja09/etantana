@@ -36,9 +36,9 @@ class StatsSection extends StatelessWidget {
             Expanded(
               child: StatCard(
                 icon: HugeIcons.strokeRoundedDollar02,
-                label: "Revenus",
-                value: "12.5k",
-                color: Theme.of(context).colorScheme.secondary,
+                label: "Recettes (Ar)",
+                value: "450 000",
+                color: Colors.green.shade600,
               ),
             ),
           ],
@@ -48,19 +48,19 @@ class StatsSection extends StatelessWidget {
           children: [
             Expanded(
               child: StatCard(
-                icon: HugeIcons.strokeRoundedUser,
-                label: "Clients",
-                value: "156",
-                color: Theme.of(context).colorScheme.tertiary,
+                icon: HugeIcons.strokeRoundedPackage,
+                label: "Produits Actifs",
+                value: "85",
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
             SizedBox(width: 12.w),
             Expanded(
               child: StatCard(
-                icon: HugeIcons.strokeRoundedChartIncrease,
-                label: "Croissance",
-                value: "+12%",
-                color: Colors.green.shade400,
+                icon: HugeIcons.strokeRoundedAiView,
+                label: "Panier Moyen",
+                value: "18 750",
+                color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
           ],

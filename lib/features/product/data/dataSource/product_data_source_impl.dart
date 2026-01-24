@@ -51,6 +51,8 @@ class ProductDataSourceImpl implements ProductDataSource {
                 'details': entities.details,
                 'images': entities.images,
                 'e_id': entities.eId,
+                'purchase_price': entities.purchasePrice,
+                'selling_price': entities.sellingPrice,
               })
               .select()
               .single();
@@ -78,6 +80,8 @@ class ProductDataSourceImpl implements ProductDataSource {
         final description = criterial.description;
         final type = criterial.type;
         final details = criterial.details;
+        final purchasePrice = criterial.purchasePrice;
+        final sellingPrice = criterial.sellingPrice;
 
         if (eId != null) query = query.eq("e_id", eId);
         if (name != null) query = query.ilike("name", '%$name%');
@@ -85,6 +89,12 @@ class ProductDataSourceImpl implements ProductDataSource {
         if (description != null) query = query.eq("description", description);
         if (type != null) query = query.eq("type", type);
         if (details != null) query = query.eq("details", details);
+        if (purchasePrice != null) {
+          query = query.eq("purchase_price", purchasePrice);
+        }
+        if (sellingPrice != null) {
+          query = query.eq("selling_price", sellingPrice);
+        }
       }
 
       // trier par date ---------

@@ -12,6 +12,8 @@ class ProductModel extends ProductEntities {
     super.id,
     super.images,
     super.type,
+    super.purchasePrice,
+    super.sellingPrice,
   });
 
   factory ProductModel.fromMap(MapData data) {
@@ -25,6 +27,8 @@ class ProductModel extends ProductEntities {
       eId: data['e_id'],
       images: data['images'],
       type: data['type'],
+      purchasePrice: data['purchase_price'],
+      sellingPrice: data['selling_price'],
     );
   }
 
@@ -39,6 +43,8 @@ class ProductModel extends ProductEntities {
       'details': details,
       'images': images,
       'e_id': eId,
+      'purchase_price': purchasePrice,
+      'selling_price': sellingPrice,
     };
   }
 
@@ -53,6 +59,8 @@ class ProductModel extends ProductEntities {
       eId: entity.eId,
       images: entity.images,
       type: entity.type,
+      purchasePrice: entity.purchasePrice,
+      sellingPrice: entity.sellingPrice,
     );
   }
 
@@ -66,6 +74,8 @@ class ProductModel extends ProductEntities {
     String? images,
     String? type,
     String? eId,
+    double? purchasePrice,
+    double? sellingPrice,
   }) {
     return ProductModel(
       name: name ?? this.name,
@@ -77,6 +87,8 @@ class ProductModel extends ProductEntities {
       id: id ?? this.id,
       images: images ?? this.images,
       type: type ?? this.type,
+      purchasePrice: purchasePrice ?? this.purchasePrice,
+      sellingPrice: sellingPrice ?? this.sellingPrice,
     );
   }
 }

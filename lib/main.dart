@@ -43,6 +43,8 @@ Future<void> main() async {
       ),
     ),
   );
+
+  //runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

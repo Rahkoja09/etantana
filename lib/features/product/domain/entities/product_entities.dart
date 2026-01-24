@@ -11,6 +11,8 @@ class ProductEntities extends Equatable {
   final String? type;
   final String? details;
   final String? images;
+  final double? purchasePrice;
+  final double? sellingPrice;
 
   const ProductEntities({
     this.id,
@@ -22,6 +24,8 @@ class ProductEntities extends Equatable {
     this.details,
     this.images,
     this.type,
+    this.purchasePrice,
+    this.sellingPrice,
   });
 
   ProductEntities copyWith({
@@ -34,6 +38,8 @@ class ProductEntities extends Equatable {
     String? type,
     String? details,
     String? images,
+    double? purchasePrice,
+    double? sellingPrice,
   }) {
     return ProductEntities(
       name: name ?? this.name,
@@ -45,6 +51,8 @@ class ProductEntities extends Equatable {
       id: id ?? this.id,
       images: images ?? this.images,
       type: type ?? this.type,
+      purchasePrice: purchasePrice ?? this.purchasePrice,
+      sellingPrice: sellingPrice ?? this.sellingPrice,
     );
   }
 
@@ -59,5 +67,7 @@ class ProductEntities extends Equatable {
     type,
     details,
     images,
+    purchasePrice,
+    sellingPrice,
   ];
 }
