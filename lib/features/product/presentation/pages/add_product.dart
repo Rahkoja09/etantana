@@ -30,13 +30,47 @@ import 'package:hugeicons/hugeicons.dart';
 
 class AddProduct extends ConsumerStatefulWidget {
   final bool? isFutureProduct;
-  const AddProduct({super.key, this.isFutureProduct = false});
+  final ProductEntities? productToEdit;
+  const AddProduct({
+    super.key,
+    this.isFutureProduct = false,
+    this.productToEdit,
+  });
 
   @override
   ConsumerState<AddProduct> createState() => _AddProductState();
 }
 
 class _AddProductState extends ConsumerState<AddProduct> {
+  // les inputs ----------------
+  dynamic _productImage;
+  TextEditingController codeProduitInput = TextEditingController();
+  TextEditingController nomProduitInput = TextEditingController();
+  TextEditingController descProduitInput = TextEditingController();
+  TextEditingController purchasePriceInput = TextEditingController();
+  TextEditingController sellingPriceInput = TextEditingController();
+  int qteProduit = 0;
+  String? selectedType;
+  String variantsForServer = "";
+  bool? isFutureProduct = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.productToEdit != null) {
+      final p = widget.productToEdit!;
+      nomProduitInput.text = p.name ?? "";
+      codeProduitInput.text = p.eId ?? "";
+      descProduitInput.text = p.description ?? "";
+      purchasePriceInput.text = p.purchasePrice?.toString() ?? "";
+      sellingPriceInput.text = p.sellingPrice?.toString() ?? "";
+      qteProduit = p.quantity ?? 0;
+      selectedType = p.type;
+      isFutureProduct = p.futureProduct ?? false;
+      _productImage = p.images;
+    }
+  }
+
   final _mediaService = sl<MediaServices>();
   bool showPopUp = false;
 
@@ -56,17 +90,6 @@ class _AddProductState extends ConsumerState<AddProduct> {
     "Autres",
   ];
 
-  // les inputs ----------------
-  File? _productImage;
-  TextEditingController codeProduitInput = TextEditingController();
-  TextEditingController nomProduitInput = TextEditingController();
-  TextEditingController descProduitInput = TextEditingController();
-  TextEditingController purchasePriceInput = TextEditingController();
-  TextEditingController sellingPriceInput = TextEditingController();
-  int qteProduit = 0;
-  String? selectedType;
-  String variantsForServer = "";
-  bool? isFutureProduct = false;
   // les ereur -------------
   String? errorName;
   String? errorQuantity;
@@ -120,6 +143,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
             title:
                 widget.isFutureProduct == true
                     ? "Ajout future produit"
+                    : widget.productToEdit != null
+                    ? "Modifier produit"
                     : "Ajout produit",
             onBack: () {
               Navigator.of(context).pushReplacement(
@@ -130,7 +155,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
           body: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(StylesConstants.spacerContent),
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.surfaceContainer,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -230,7 +255,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   SimpleInput(
                     textHint: "ex: 3000",
                     iconData: HugeIcons.strokeRoundedMoney01,
-                    textEditControlleur: nomProduitInput,
+                    textEditControlleur: purchasePriceInput,
                     maxLines: 1,
                   ),
                   SizedBox(height: 30.h),
@@ -242,7 +267,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   SimpleInput(
                     textHint: "ex: 6000",
                     iconData: HugeIcons.strokeRoundedMoneyBag01,
-                    textEditControlleur: nomProduitInput,
+                    textEditControlleur: sellingPriceInput,
                     maxLines: 1,
                   ),
                   SizedBox(height: 10.h),
@@ -298,7 +323,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   SizedBox(height: 30.h),
                   BottomContainerButton(
                     prevBtnText: "Annuler",
-                    nextBtnText: "Ajouter",
+                    nextBtnText:
+                        widget.productToEdit != null ? "Modifier" : "Ajouter",
                     onBack: () {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
@@ -328,7 +354,9 @@ class _AddProductState extends ConsumerState<AddProduct> {
               btnColor: null,
               isActionDangerous: false,
               title:
-                  "Vouler vous ajouter le produit ${nomProduitInput.text.trim()}",
+                  widget.productToEdit != null
+                      ? "Voulez vous Modifier ce produit ${nomProduitInput.text.trim()}"
+                      : "Voulez vous Ajouter le produit ${nomProduitInput.text.trim()}",
               value: "",
               icon: HugeIcons.strokeRoundedStoreAdd01,
               isloading: productState.isLoading,
@@ -348,8 +376,14 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   details: variantsForServer,
                   eId: codeProduitInput.text,
                   type: selectedType,
+                  futureProduct: isFutureProduct,
+                  purchasePrice: double.tryParse(purchasePriceInput.text),
+                  sellingPrice: double.tryParse(sellingPriceInput.text),
                 );
-                await productAction.addProduct(addMe, _productImage);
+
+                widget.productToEdit != null
+                    ? await productAction.updateProduct(addMe)
+                    : await productAction.addProduct(addMe, _productImage);
                 await productAction.researchProduct(null);
 
                 // vider les input apres ajout -----------
@@ -360,6 +394,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
                 qteProduit = 0;
                 selectedType = null;
                 variantsForServer = "";
+                purchasePriceInput.text = "";
+                sellingPriceInput.text = "";
               },
             ),
           ),

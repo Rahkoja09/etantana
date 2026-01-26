@@ -50,7 +50,7 @@ class MediaServiceImpl implements MediaServices {
   //  PROCESSING & VALIDATION -------
 
   @override
-  Future<File> compressImage(File file, {int quality = 80}) async {
+  Future<File> compressImage(File file, {int quality = 50}) async {
     try {
       final String targetPath = p.join(
         file.parent.path,
@@ -133,7 +133,8 @@ class MediaServiceImpl implements MediaServices {
             filePath,
             file,
             fileOptions: FileOptions(contentType: contentType, upsert: true),
-          );
+          )
+          .timeout(const Duration(seconds: 20));
 
       return getPublicUrl(filePath, bucketName);
     } catch (e) {
@@ -183,7 +184,7 @@ class MediaServiceImpl implements MediaServices {
         video: videoPath,
         imageFormat: ImageFormat.JPEG,
         maxWidth: 200,
-        quality: 75,
+        quality: 50,
       );
 
       if (bytes == null) return null;

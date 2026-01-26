@@ -1,16 +1,20 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
+import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
-import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
+import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class Product extends ConsumerStatefulWidget {
@@ -25,6 +29,8 @@ class _ProductState extends ConsumerState<Product> {
   final TextEditingController _searchController = TextEditingController();
   List<ProductEntities> myProducts = [];
   bool isFetching = false;
+  bool showPopUp = false;
+  ProductEntities? selectionForActionProduct;
 
   // criterial variable -----------
   String? productNameCriterial;
@@ -79,96 +85,159 @@ class _ProductState extends ConsumerState<Product> {
       }
     });
 
-    final displayList =
-        myProducts.isEmpty
-            ? List.generate(
-              10,
-              (index) => ProductEntities(name: "Chargement...", quantity: 1),
-            )
-            : myProducts;
+    final skeletonData = List.generate(
+      5,
+      (index) => ProductEntities(name: "Chargement...", quantity: 1),
+    );
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(StylesConstants.spacerContent),
-              child: FloatingSearchBar(
-                controller: _searchController,
-                onSortTap: () {},
-                hintText: "Rechercher un produit (par son nom)",
-                onChanged: (val) {
-                  ref
-                      .read(productControllerProvider.notifier)
-                      .researchProduct(ProductEntities(name: val));
-                },
-              ),
-            ),
+    final isInitialLoading = productState.isLoading && myProducts.isEmpty;
+    final displayList = isInitialLoading ? skeletonData : myProducts;
 
-            Expanded(
-              child: AppRefreshIndicator(
-                onRefresh: getProduct,
-                child:
-                    (displayList.isEmpty && !productState.isLoading)
-                        ? _buildEmptyState()
-                        : Skeletonizer(
-                          enabled: productState.isLoading,
-                          effect: LoadingEffect.getCommonEffect(context),
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            physics: const ClampingScrollPhysics(),
-                            padding: EdgeInsets.all(
-                              StylesConstants.spacerContent,
+    return Stack(
+      children: [
+        Scaffold(
+          body: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(StylesConstants.spacerContent),
+                  child: FloatingSearchBar(
+                    controller: _searchController,
+                    onSortTap: () {},
+                    hintText: "Rechercher un produit (par son nom)",
+                    onChanged: (val) {
+                      ref
+                          .read(productControllerProvider.notifier)
+                          .researchProduct(ProductEntities(name: val));
+                    },
+                  ),
+                ),
+
+                Expanded(
+                  child: AppRefreshIndicator(
+                    onRefresh: getProduct,
+                    child:
+                        (displayList.isEmpty && !productState.isLoading)
+                            ? _buildEmptyState()
+                            : Skeletonizer(
+                              enabled: productState.isLoading,
+                              effect: LoadingEffect.getCommonEffect(context),
+                              child: ListView.builder(
+                                controller:
+                                    isInitialLoading ? null : _scrollController,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                dragStartBehavior: DragStartBehavior.down,
+                                padding: EdgeInsets.all(
+                                  StylesConstants.spacerContent,
+                                ),
+                                itemCount:
+                                    displayList.length +
+                                    (productState.isLoading &&
+                                            myProducts.isNotEmpty
+                                        ? 1
+                                        : 0),
+                                itemBuilder: (context, index) {
+                                  if (index == displayList.length &&
+                                      isFetching) {
+                                    return Skeletonizer(
+                                      enabled: true,
+                                      effect: LoadingEffect.getCommonEffect(
+                                        context,
+                                      ),
+                                      child: MinimalProductView(
+                                        onDelete: () {},
+                                        product: displayList[0],
+                                        onEdit: () {},
+                                        onOrder: () {},
+                                      ),
+                                    );
+                                  }
+                                  if (index >= displayList.length) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  final item = displayList[index];
+                                  return MinimalProductView(
+                                    onDelete: () {
+                                      setState(() {
+                                        showPopUp = true;
+                                      });
+                                      setState(() {
+                                        selectionForActionProduct = item;
+                                      });
+                                    },
+                                    product: item,
+                                    onEdit: () {
+                                      setState(() {
+                                        selectionForActionProduct = item;
+                                      });
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) => AddProduct(
+                                                productToEdit:
+                                                    selectionForActionProduct,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                    onOrder: () {
+                                      setState(() {
+                                        selectionForActionProduct = item;
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
                             ),
-                            itemCount:
-                                displayList.length +
-                                (productState.isLoading && myProducts.isNotEmpty
-                                    ? 1
-                                    : 0),
-                            itemBuilder: (context, index) {
-                              if (index == displayList.length && isFetching) {
-                                return Skeletonizer(
-                                  enabled: true,
-                                  effect: LoadingEffect.getCommonEffect(
-                                    context,
-                                  ),
-                                  child: MinimalProductView(
-                                    product: displayList[0],
-                                    onEdit: () {},
-                                    order: () {},
-                                  ),
-                                );
-                              }
-                              if (index >= displayList.length) {
-                                return const SizedBox.shrink();
-                              }
-
-                              final item = displayList[index];
-                              return MinimalProductView(
-                                product: item,
-                                onEdit: () {},
-                                order: () {},
-                              );
-                            },
-                          ),
-                        ),
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+        if (showPopUp)
+          TransparentBackgroundPopUp(
+            widget: ConfirmationDialogue(
+              backGroundColor: Theme.of(context).colorScheme.surface,
+              btnColor: null,
+              isActionDangerous: true,
+              title: "Vouler vous vraiment supprimer ce produit :",
+              value: "${selectionForActionProduct!.name}",
+              icon: HugeIcons.strokeRoundedDelete03,
+              isloading: productState.isLoading,
+              onTapLeftBtn: () {
+                setState(() {
+                  showPopUp = false;
+                });
+              },
+              onTapRightBtn: () async {
+                await ref
+                    .read(productControllerProvider.notifier)
+                    .deleteProductById(selectionForActionProduct!.id!);
+                await getProduct();
+                setState(() {
+                  showPopUp = false;
+                });
+              },
+            ),
+          ),
+      ],
     );
   }
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.inventory_2_outlined, size: 60.sp, color: Colors.grey),
-          SizedBox(height: 16.h),
-          const Text("Aucun produit en stock"),
-        ],
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inventory_2_outlined, size: 60.sp, color: Colors.grey),
+            SizedBox(height: 16.h),
+            const Text("Aucun produit en stock"),
+          ],
+        ),
       ),
     );
   }

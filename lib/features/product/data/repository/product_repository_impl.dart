@@ -4,7 +4,6 @@ import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/core/network/network_info.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/product/data/dataSource/product_data_source.dart';
-import 'package:e_tantana/features/product/data/model/product_model.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/domain/repository/product_repository.dart';
 

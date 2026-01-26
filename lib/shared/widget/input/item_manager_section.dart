@@ -21,16 +21,31 @@ class ProductVariant {
 }
 
 class ItemManagerSection extends StatefulWidget {
+  final String? varianteInString;
   final Function(String) onChanged;
 
-  const ItemManagerSection({super.key, required this.onChanged});
+  const ItemManagerSection({
+    super.key,
+    required this.onChanged,
+    this.varianteInString,
+  });
 
   @override
   State<ItemManagerSection> createState() => _ItemManagerSectionState();
 }
 
 class _ItemManagerSectionState extends State<ItemManagerSection> {
-  final List<ProductVariant> _items = [];
+  List<ProductVariant> _items = [];
+  @override
+  void initState() {
+    super.initState();
+    if (widget.varianteInString != null) {
+      setState(() {
+        _items = VariantParser.parse(widget.varianteInString!);
+      });
+    }
+  }
+
   void _notifyParent() {
     final formattedString = VariantParser.stringify(_items);
     widget.onChanged(formattedString);
@@ -53,14 +68,14 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
       child: Column(
         children: [
           SimpleInput(
-            textHint: "clé (ex: rouge)",
+            textHint: "clé (ex: rouge/carré/..)",
             iconData: HugeIcons.strokeRoundedTag01,
             textEditControlleur: _nameController,
             maxLines: 1,
           ),
           SizedBox(height: 12.h),
           SimpleInput(
-            textHint: "taille (ex: 11x24 ou 11cm)",
+            textHint: "prop (ex: 11x24cm/tête/..)",
             iconData: HugeIcons.strokeRoundedInformationCircle,
             textEditControlleur: _detailController,
             maxLines: 1,
@@ -113,7 +128,6 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Bouton Ajouter
         InkWell(
           onTap: _openAddPopup,
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
@@ -148,7 +162,6 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
 
         SizedBox(height: 12.h),
 
-        // Liste des éléments ajoutés
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

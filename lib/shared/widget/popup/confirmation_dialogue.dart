@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -155,65 +156,33 @@ class _ConfirmationDialogueState extends State<ConfirmationDialogue>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: _buildButton(
-                      context,
-                      widget.btnColor ??
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      Theme.of(context).colorScheme.onSurface,
-                      widget.leftButtonTitle,
-                      widget.onTapLeftBtn ?? () => Navigator.pop(context),
-                      false,
+                    child: Button(
+                      onTap:
+                          widget.onTapLeftBtn ?? () => Navigator.pop(context),
+                      btnText: widget.leftButtonTitle,
+                      enableNoBackground: true,
+                      btnColor:
+                          widget.isActionDangerous
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  SizedBox(width: 5.w),
+                  SizedBox(width: 20.w),
                   Expanded(
-                    child: _buildButton(
-                      context,
-                      widget.btnColor ??
-                          Colors.lightGreenAccent.withValues(alpha: 0.6),
-                      Colors.white,
-                      widget.rightButtonTitle,
-                      widget.onTapRightBtn ??
-                          () {
-                            Navigator.pop(context);
-                          },
-                      true,
+                    child: Button(
+                      onTap:
+                          widget.onTapRightBtn ?? () => Navigator.pop(context),
+                      btnText: widget.rightButtonTitle,
+                      btnColor:
+                          widget.isActionDangerous
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildButton(
-    BuildContext context,
-    Color color,
-    Color? textColor,
-    String title,
-    VoidCallback onTap,
-    bool isPrimary,
-  ) {
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor:
-            isPrimary ? Colors.white : Theme.of(context).colorScheme.onSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-        elevation: isPrimary ? 4 : 2,
-      ),
-      child: Text(
-        title,
-        style: TextStyles.buttonText(context: context).copyWith(
-          fontWeight: isPrimary ? FontWeight.w600 : FontWeight.normal,
-          color: textColor ?? Colors.white,
         ),
       ),
     );
