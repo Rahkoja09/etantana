@@ -11,4 +11,10 @@ abstract class OrderDataSource {
     int start = 0,
     int end = 9,
   });
+
+  // statisticals order ---------------
+  /*Future<int> getMonthlyOrders();
+  Future<int> getDailyOrders();
+  Future<int> getDailySales();
+  Future<int> getAverageSalesPerWeek();*/
 }

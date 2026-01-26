@@ -53,6 +53,7 @@ class ProductDataSourceImpl implements ProductDataSource {
                 'e_id': entities.eId,
                 'purchase_price': entities.purchasePrice,
                 'selling_price': entities.sellingPrice,
+                'future_product': entities.futureProduct,
               })
               .select()
               .single();
@@ -82,6 +83,7 @@ class ProductDataSourceImpl implements ProductDataSource {
         final details = criterial.details;
         final purchasePrice = criterial.purchasePrice;
         final sellingPrice = criterial.sellingPrice;
+        final futureProduct = criterial.futureProduct;
 
         if (eId != null) query = query.eq("e_id", eId);
         if (name != null) query = query.ilike("name", '%$name%');
@@ -89,6 +91,9 @@ class ProductDataSourceImpl implements ProductDataSource {
         if (description != null) query = query.eq("description", description);
         if (type != null) query = query.eq("type", type);
         if (details != null) query = query.eq("details", details);
+        if (futureProduct != null) {
+          query = query.eq("future_product", futureProduct);
+        }
         if (purchasePrice != null) {
           query = query.eq("purchase_price", purchasePrice);
         }

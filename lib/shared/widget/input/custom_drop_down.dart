@@ -95,7 +95,7 @@ class CustomDropdown extends StatelessWidget {
             );
           }).toList(),
       onChanged: onChanged,
-      dropdownColor: Theme.of(context).colorScheme.surface,
+      dropdownColor: Theme.of(context).colorScheme.surfaceContainerHigh,
       borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
     );
   }

@@ -31,7 +31,16 @@ class MediumTitleWithDegree extends StatelessWidget {
                 showDegree
                     ? List.generate(
                       degree,
-                      (index) => TextSpan(text: " $degreeSimbole"),
+                      (index) => TextSpan(
+                        text: " $degreeSimbole",
+                        style: TextStyles.bodyMedium(
+                          context: context,
+                          color:
+                              degree == 1
+                                  ? Theme.of(context).colorScheme.error
+                                  : Colors.green,
+                        ),
+                      ),
                     )
                     : [TextSpan(text: "")],
           ),

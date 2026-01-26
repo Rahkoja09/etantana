@@ -1,4 +1,3 @@
-import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:equatable/equatable.dart';
 
 class ProductEntities extends Equatable {
@@ -13,6 +12,7 @@ class ProductEntities extends Equatable {
   final String? images;
   final double? purchasePrice;
   final double? sellingPrice;
+  final bool? futureProduct;
 
   const ProductEntities({
     this.id,
@@ -26,6 +26,7 @@ class ProductEntities extends Equatable {
     this.type,
     this.purchasePrice,
     this.sellingPrice,
+    this.futureProduct,
   });
 
   ProductEntities copyWith({
@@ -40,6 +41,7 @@ class ProductEntities extends Equatable {
     String? images,
     double? purchasePrice,
     double? sellingPrice,
+    bool? futureProduct,
   }) {
     return ProductEntities(
       name: name ?? this.name,
@@ -53,6 +55,7 @@ class ProductEntities extends Equatable {
       type: type ?? this.type,
       purchasePrice: purchasePrice ?? this.purchasePrice,
       sellingPrice: sellingPrice ?? this.sellingPrice,
+      futureProduct: futureProduct ?? this.futureProduct,
     );
   }
 
@@ -69,5 +72,6 @@ class ProductEntities extends Equatable {
     images,
     purchasePrice,
     sellingPrice,
+    futureProduct,
   ];
 }

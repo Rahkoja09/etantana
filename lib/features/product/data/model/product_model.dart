@@ -14,6 +14,7 @@ class ProductModel extends ProductEntities {
     super.type,
     super.purchasePrice,
     super.sellingPrice,
+    super.futureProduct,
   });
 
   factory ProductModel.fromMap(MapData data) {
@@ -29,6 +30,7 @@ class ProductModel extends ProductEntities {
       type: data['type'],
       purchasePrice: data['purchase_price'],
       sellingPrice: data['selling_price'],
+      futureProduct: data["future_product"],
     );
   }
 
@@ -45,6 +47,7 @@ class ProductModel extends ProductEntities {
       'e_id': eId,
       'purchase_price': purchasePrice,
       'selling_price': sellingPrice,
+      "future_product": futureProduct,
     };
   }
 
@@ -61,6 +64,7 @@ class ProductModel extends ProductEntities {
       type: entity.type,
       purchasePrice: entity.purchasePrice,
       sellingPrice: entity.sellingPrice,
+      futureProduct: entity.futureProduct,
     );
   }
 
@@ -76,6 +80,7 @@ class ProductModel extends ProductEntities {
     String? eId,
     double? purchasePrice,
     double? sellingPrice,
+    bool? futureProduct,
   }) {
     return ProductModel(
       name: name ?? this.name,
@@ -89,6 +94,7 @@ class ProductModel extends ProductEntities {
       type: type ?? this.type,
       purchasePrice: purchasePrice ?? this.purchasePrice,
       sellingPrice: sellingPrice ?? this.sellingPrice,
+      futureProduct: futureProduct ?? this.futureProduct,
     );
   }
 }

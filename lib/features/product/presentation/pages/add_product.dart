@@ -8,6 +8,7 @@ import 'package:e_tantana/features/product/presentation/controller/product_contr
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
+import 'package:e_tantana/shared/widget/input/switch_button.dart';
 import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
@@ -28,7 +29,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class AddProduct extends ConsumerStatefulWidget {
-  const AddProduct({super.key});
+  final bool? isFutureProduct;
+  const AddProduct({super.key, this.isFutureProduct = false});
 
   @override
   ConsumerState<AddProduct> createState() => _AddProductState();
@@ -64,7 +66,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
   int qteProduit = 0;
   String? selectedType;
   String variantsForServer = "";
-
+  bool? isFutureProduct = false;
   // les ereur -------------
   String? errorName;
   String? errorQuantity;
@@ -115,7 +117,10 @@ class _AddProductState extends ConsumerState<AddProduct> {
       children: [
         Scaffold(
           appBar: SimpleAppbar(
-            title: "Ajouter produit",
+            title:
+                widget.isFutureProduct == true
+                    ? "Ajout future produit"
+                    : "Ajout produit",
             onBack: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 0)),
@@ -155,6 +160,23 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     ],
                   ),
                   SizedBox(height: 30.h),
+
+                  SwitchButton(
+                    isEnabled: widget.isFutureProduct == true ? false : true,
+                    degree: 1,
+                    showDegree: true,
+                    title: "Produit encore en transite",
+                    onChanged: (value) {
+                      setState(() {
+                        isFutureProduct = value;
+                      });
+                    },
+                    value:
+                        widget.isFutureProduct == true
+                            ? widget.isFutureProduct!
+                            : isFutureProduct!,
+                  ),
+                  SizedBox(height: 30.h),
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 2,
@@ -179,14 +201,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     maxLines: 1,
                   ),
                   ShowInputError(message: errorName),
+
                   SizedBox(height: 30.h),
-                  HorizontalDivider(
-                    width: width,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.4),
-                  ),
-                  SizedBox(height: 10.h),
                   NumberInput(
                     value: qteProduit,
                     title: "Quantité(s) produit *",
@@ -197,6 +213,15 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     },
                   ),
                   SizedBox(height: 30.h),
+
+                  HorizontalDivider(
+                    width: width,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.4),
+                  ),
+                  SizedBox(height: 10.h),
+
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 1,
@@ -204,7 +229,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   ),
                   SimpleInput(
                     textHint: "ex: 3000",
-                    iconData: HugeIcons.strokeRoundedId,
+                    iconData: HugeIcons.strokeRoundedMoney01,
                     textEditControlleur: nomProduitInput,
                     maxLines: 1,
                   ),
@@ -216,7 +241,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   ),
                   SimpleInput(
                     textHint: "ex: 6000",
-                    iconData: HugeIcons.strokeRoundedId,
+                    iconData: HugeIcons.strokeRoundedMoneyBag01,
                     textEditControlleur: nomProduitInput,
                     maxLines: 1,
                   ),

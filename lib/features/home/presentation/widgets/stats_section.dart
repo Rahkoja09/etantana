@@ -27,7 +27,7 @@ class StatsSection extends StatelessWidget {
             Expanded(
               child: StatCard(
                 icon: HugeIcons.strokeRoundedShoppingCart01,
-                label: "Commandes",
+                label: "Commandes /jr",
                 value: "24",
                 color: Theme.of(context).colorScheme.primary,
               ),
@@ -49,8 +49,8 @@ class StatsSection extends StatelessWidget {
             Expanded(
               child: StatCard(
                 icon: HugeIcons.strokeRoundedPackage,
-                label: "Produits Actifs",
-                value: "85",
+                label: "Premium du mois",
+                value: "Pince Flexible",
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
@@ -58,8 +58,8 @@ class StatsSection extends StatelessWidget {
             Expanded(
               child: StatCard(
                 icon: HugeIcons.strokeRoundedAiView,
-                label: "Panier Moyen",
-                value: "18 750",
+                label: "Ventes Moyenne /smn",
+                value: "7",
                 color: Theme.of(context).colorScheme.tertiary,
               ),
             ),

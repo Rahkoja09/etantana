@@ -244,7 +244,7 @@ void _showEditOptionsDialog(BuildContext context) {
                 ModerneOptionCard(
                   context: context,
                   icon: HugeIcons.strokeRoundedGarage,
-                  title: 'En Stock',
+                  title: 'produit en Stock',
                   subtitle: 'Le produit est déjà en arrivé',
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -258,10 +258,15 @@ void _showEditOptionsDialog(BuildContext context) {
                 ModerneOptionCard(
                   context: context,
                   icon: HugeIcons.strokeRoundedPackageMoving,
-                  title: 'Future Stock',
+                  title: 'produit Future Stock',
                   subtitle: 'Le produit est encore en transit',
                   onTap: () {
                     Navigator.pop(sheetContext);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => AddProduct(isFutureProduct: true),
+                      ),
+                    );
                   },
                   isActive: true,
                 ),

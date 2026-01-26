@@ -42,6 +42,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
   void initState() {
     super.initState();
     _deliveryCosts = double.tryParse(widget.order.deliveryCosts ?? '0') ?? 0.0;
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _getProduct();
       _showEditPricesDialog(widget.order.deliveryCosts!);
@@ -64,6 +65,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
       if (next.product != null && next.isLoading == false) {
         setState(() {
           product = next.product![0];
+          _unitPrice = product.sellingPrice ?? 0.0;
         });
       }
     });
