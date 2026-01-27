@@ -29,11 +29,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class AddProduct extends ConsumerStatefulWidget {
-  final bool? isFutureProduct;
+  final bool isFutureProduct;
   final ProductEntities? productToEdit;
   const AddProduct({
     super.key,
-    this.isFutureProduct = false,
+    required this.isFutureProduct,
     this.productToEdit,
   });
 
@@ -52,11 +52,12 @@ class _AddProductState extends ConsumerState<AddProduct> {
   int qteProduit = 0;
   String? selectedType;
   String variantsForServer = "";
-  bool? isFutureProduct = false;
+  bool? isFutureProduct;
 
   @override
   void initState() {
     super.initState();
+    isFutureProduct = widget.isFutureProduct;
     if (widget.productToEdit != null) {
       final p = widget.productToEdit!;
       nomProduitInput.text = p.name ?? "";
@@ -68,6 +69,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
       selectedType = p.type;
       isFutureProduct = p.futureProduct ?? false;
       _productImage = p.images;
+      variantsForServer = p.details!;
     }
   }
 
@@ -128,12 +130,22 @@ class _AddProductState extends ConsumerState<AddProduct> {
         );
       }
       if (next.product != null && next.isLoading == false) {
-        showToast(
-          context,
-          title: 'Ajout produit réussi.',
-          isError: false,
-          description: "${nomProduitInput.text.trim()} ajouter avec succès!",
-        );
+        if (widget.productToEdit != null) {
+          showToast(
+            context,
+            title: 'Modification produit réussi.',
+            isError: false,
+            description:
+                "${nomProduitInput.text.trim()} est modifié avec succès!",
+          );
+        } else {
+          showToast(
+            context,
+            title: 'Ajout produit réussi.',
+            isError: false,
+            description: "${nomProduitInput.text.trim()} ajouté avec succès!",
+          );
+        }
       }
     });
     return Stack(
@@ -192,13 +204,14 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     showDegree: true,
                     title: "Produit encore en transite",
                     onChanged: (value) {
+                      print(value);
                       setState(() {
                         isFutureProduct = value;
                       });
                     },
                     value:
                         widget.isFutureProduct == true
-                            ? widget.isFutureProduct!
+                            ? widget.isFutureProduct
                             : isFutureProduct!,
                   ),
                   SizedBox(height: 30.h),
@@ -286,9 +299,9 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   ),
                   CustomDropdown(
                     iconData: HugeIcons.strokeRoundedCheckList,
-                    onChanged: (selectedType) {
+                    onChanged: (value) {
                       setState(() {
-                        selectedType = selectedType;
+                        selectedType = value;
                       });
                     },
                     items: typeOfProductList,
@@ -302,6 +315,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     degree: 2,
                   ),
                   ItemManagerSection(
+                    varianteInString: variantsForServer,
                     onChanged: (variante) {
                       setState(() {
                         variantsForServer = variante;
@@ -369,21 +383,35 @@ class _AddProductState extends ConsumerState<AddProduct> {
                 setState(() {
                   showPopUp = false;
                 });
-                final addMe = ProductEntities(
-                  name: nomProduitInput.text.trim(),
-                  quantity: qteProduit,
-                  description: descProduitInput.text,
-                  details: variantsForServer,
-                  eId: codeProduitInput.text,
-                  type: selectedType,
-                  futureProduct: isFutureProduct,
-                  purchasePrice: double.tryParse(purchasePriceInput.text),
-                  sellingPrice: double.tryParse(sellingPriceInput.text),
-                );
 
-                widget.productToEdit != null
-                    ? await productAction.updateProduct(addMe)
-                    : await productAction.addProduct(addMe, _productImage);
+                if (widget.productToEdit != null) {
+                  final updateMe = widget.productToEdit!.copyWith(
+                    name: nomProduitInput.text.trim(),
+                    quantity: qteProduit,
+                    description: descProduitInput.text,
+                    details: variantsForServer,
+                    eId: codeProduitInput.text,
+                    type: selectedType,
+                    futureProduct: isFutureProduct,
+                    purchasePrice: double.tryParse(purchasePriceInput.text),
+                    sellingPrice: double.tryParse(sellingPriceInput.text),
+                  );
+                  await productAction.updateProduct(updateMe);
+                } else {
+                  final addMe = ProductEntities(
+                    name: nomProduitInput.text.trim(),
+                    quantity: qteProduit,
+                    description: descProduitInput.text,
+                    details: variantsForServer,
+                    eId: codeProduitInput.text,
+                    type: selectedType,
+                    futureProduct: isFutureProduct,
+                    purchasePrice: double.tryParse(purchasePriceInput.text),
+                    sellingPrice: double.tryParse(sellingPriceInput.text),
+                  );
+                  await productAction.addProduct(addMe, _productImage);
+                }
+                // refresh list ----------
                 await productAction.researchProduct(null);
 
                 // vider les input apres ajout -----------

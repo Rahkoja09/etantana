@@ -13,8 +13,13 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class SelectProduct extends ConsumerStatefulWidget {
+  final ProductEntities? selectedProduct;
   final Function(ProductEntities?) onChanged;
-  const SelectProduct({super.key, required this.onChanged});
+  const SelectProduct({
+    super.key,
+    required this.onChanged,
+    this.selectedProduct,
+  });
 
   @override
   ConsumerState<SelectProduct> createState() => _SelectProductState();
@@ -22,6 +27,13 @@ class SelectProduct extends ConsumerStatefulWidget {
 
 class _SelectProductState extends ConsumerState<SelectProduct> {
   String? selectedProductId;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.selectedProduct != null) {
+      selectedProductId = widget.selectedProduct!.id;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

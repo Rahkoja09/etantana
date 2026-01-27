@@ -248,9 +248,11 @@ void _showEditOptionsDialog(BuildContext context) {
                   subtitle: 'Le produit est déjà en arrivé',
                   onTap: () {
                     Navigator.pop(sheetContext);
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (_) => AddProduct()));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => AddProduct(isFutureProduct: false),
+                      ),
+                    );
                   },
                   isActive: true,
                 ),

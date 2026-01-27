@@ -25,7 +25,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class AddOrder extends ConsumerStatefulWidget {
-  const AddOrder({super.key});
+  final ProductEntities? productToOrder;
+  const AddOrder({super.key, this.productToOrder});
 
   @override
   ConsumerState<AddOrder> createState() => _AddOrderState();
@@ -41,6 +42,16 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   TextEditingController clientTel = TextEditingController();
   TextEditingController clientAdrs = TextEditingController();
   TextEditingController fraisDeLiv = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.productToOrder != null) {
+      setState(() {
+        selectedProductEntity = widget.productToOrder;
+      });
+    }
+  }
 
   List<String> statusList = [
     "Validée",
@@ -135,8 +146,8 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Section Produit
                   SelectProduct(
+                    selectedProduct: selectedProductEntity,
                     onChanged: (selectionProduct) {
                       setState(() {
                         selectedProductEntity = selectionProduct;
@@ -216,7 +227,6 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                   ),
                   SizedBox(height: 20.h),
 
-                  // Section Client
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 1,

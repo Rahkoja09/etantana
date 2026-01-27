@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/utils/tools/isUrl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -42,9 +43,9 @@ class ImagePickerDisplay extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(11),
                           child:
-                              isUrl(imageFile)
-                                  ? Image.network(imageFile, fit: BoxFit.cover)
-                                  : Image.file(imageFile!, fit: BoxFit.cover),
+                              imageFile is File
+                                  ? Image.file(imageFile!, fit: BoxFit.cover)
+                                  : Image.network(imageFile, fit: BoxFit.cover),
                         ),
                         Positioned(
                           top: 8,

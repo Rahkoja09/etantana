@@ -1,4 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
@@ -175,6 +176,7 @@ class _ProductState extends ConsumerState<Product> {
                                         MaterialPageRoute(
                                           builder:
                                               (_) => AddProduct(
+                                                isFutureProduct: false,
                                                 productToEdit:
                                                     selectionForActionProduct,
                                               ),
@@ -185,6 +187,15 @@ class _ProductState extends ConsumerState<Product> {
                                       setState(() {
                                         selectionForActionProduct = item;
                                       });
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) => AddOrder(
+                                                productToOrder:
+                                                    selectionForActionProduct,
+                                              ),
+                                        ),
+                                      );
                                     },
                                   );
                                 },
