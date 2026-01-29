@@ -1,5 +1,7 @@
-import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/features/home/presentation/widgets/stat_card.dart';
+import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/features/home/presentation/widget/big_stat_view.dart';
+import 'package:e_tantana/features/home/presentation/widget/stat_number_view.dart';
+import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -12,58 +14,35 @@ class StatsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Aperçu",
-          style: TextStyles.bodyText(
-            context: context,
-            fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        SizedBox(height: 16.h),
+        MediumTitleWithDegree(showDegree: false, title: "Tableau de bord"),
+        SizedBox(height: 10.h),
         Row(
           children: [
             Expanded(
-              child: StatCard(
-                icon: HugeIcons.strokeRoundedShoppingCart01,
-                label: "Commandes /jr",
-                value: "24",
-                color: Theme.of(context).colorScheme.primary,
+              child: StatNumberView(
+                icon: HugeIcons.strokeRoundedInvoice,
+                title: "Commandes",
+                value: "6",
               ),
             ),
-            SizedBox(width: 12.w),
+            SizedBox(width: StylesConstants.spacerContent),
             Expanded(
-              child: StatCard(
-                icon: HugeIcons.strokeRoundedDollar02,
-                label: "Recettes (Ar)",
-                value: "450 000",
-                color: Colors.green.shade600,
+              child: StatNumberView(
+                icon: HugeIcons.strokeRoundedPackage03,
+                title: "Produits",
+                value: "12",
               ),
             ),
           ],
         ),
-        SizedBox(height: 12.h),
-        Row(
-          children: [
-            Expanded(
-              child: StatCard(
-                icon: HugeIcons.strokeRoundedPackage,
-                label: "Premium du mois",
-                value: "Pince Flexible",
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: StatCard(
-                icon: HugeIcons.strokeRoundedAiView,
-                label: "Ventes Moyenne /smn",
-                value: "7",
-                color: Theme.of(context).colorScheme.tertiary,
-              ),
-            ),
-          ],
+        SizedBox(height: StylesConstants.spacerContent),
+        BigStatView(
+          icon: HugeIcons.strokeRoundedMoneyBag01,
+          title: "Chiffres d'affaire",
+          cycle: "Aujourd'hui",
+          moneySign: "Ariary",
+          increasePercent: "+106%",
+          value: "350 000",
         ),
       ],
     );

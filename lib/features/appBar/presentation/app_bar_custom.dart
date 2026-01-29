@@ -26,20 +26,29 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
 
   @override
   Widget build(BuildContext context) {
+    Color iconColor = Colors.white;
     final theme = ref.watch(themeProvider);
     return AppBar(
       actions: <Widget>[Container()],
       automaticallyImplyLeading: false,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.primary,
           border: Border(
             bottom: BorderSide(
               color: Theme.of(context).colorScheme.primary,
               width: 2,
             ),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
       ),
       title: Row(
@@ -48,31 +57,45 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
           Image(
             image: AssetImage(
               theme == lightTheme
-                  ? "assets/medias/logos/e_tantana_black.png"
-                  : "assets/medias/logos/e_tantana.png",
+                  ? "assets/medias/icons/app_icon.png"
+                  : "assets/medias/icons/app_icon.png",
             ),
-            height: 24,
+            height: 33,
           ),
 
           Row(
             children: [
-              Padding(
-                padding: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+              IconButton(
+                onPressed: () {},
+                icon: HugeIcon(
+                  icon: HugeIcons.strokeRoundedNotification03,
+                  color: iconColor,
+                  size: 25,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    ref.read(themeProvider.notifier).state =
+                        theme == darkTheme ? lightTheme : darkTheme;
+                  });
+                },
+                icon: HugeIcon(
+                  icon:
+                      theme == darkTheme
+                          ? HugeIcons.strokeRoundedSun01
+                          : HugeIcons.strokeRoundedMoon02,
+                  color: iconColor,
+                  size: 25,
+                ),
+              ),
 
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      ref.read(themeProvider.notifier).state =
-                          theme == darkTheme ? lightTheme : darkTheme;
-                    });
-                  },
-                  child: HugeIcon(
-                    icon:
-                        theme == darkTheme
-                            ? HugeIcons.strokeRoundedMoon02
-                            : HugeIcons.strokeRoundedSun01,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+              IconButton(
+                onPressed: () {},
+                icon: HugeIcon(
+                  icon: HugeIcons.strokeRoundedSettings02,
+                  color: iconColor,
+                  size: 25,
                 ),
               ),
             ],

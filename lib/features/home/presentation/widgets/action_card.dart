@@ -7,6 +7,7 @@ import 'package:hugeicons/hugeicons.dart';
 class ActionCard extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Color color;
   final VoidCallback onTap;
 
   const ActionCard({
@@ -14,6 +15,7 @@ class ActionCard extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
+    required this.color,
   });
 
   @override
@@ -23,28 +25,21 @@ class ActionCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainer,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
-            width: 1.5,
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
         ),
         child: Column(
           children: [
             Container(
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(
                   StylesConstants.borderRadius,
                 ),
               ),
-              child: HugeIcon(
-                icon: icon,
-                color: Theme.of(context).colorScheme.primary,
-                size: 24.w,
-              ),
+              child: HugeIcon(icon: icon, color: color, size: 24.w),
             ),
             SizedBox(height: 12.h),
             Text(

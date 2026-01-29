@@ -1,5 +1,5 @@
-import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/home/presentation/widgets/action_card.dart';
+import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -12,21 +12,14 @@ class MainActionsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Actions principales",
-          style: TextStyles.bodyText(
-            context: context,
-            fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        SizedBox(height: 16.h),
+        MediumTitleWithDegree(showDegree: false, title: "Actions rapide"),
+        SizedBox(height: 10.h),
         Row(
           children: [
             Expanded(
               child: ActionCard(
-                icon: HugeIcons.strokeRoundedAddSquare,
+                color: Colors.blue[900]!,
+                icon: HugeIcons.strokeRoundedMoneyAdd01,
                 label: "Nouvelle\nvente",
                 onTap: () {},
               ),
@@ -34,7 +27,8 @@ class MainActionsSection extends StatelessWidget {
             SizedBox(width: 12.w),
             Expanded(
               child: ActionCard(
-                icon: HugeIcons.strokeRoundedPackage03,
+                color: Theme.of(context).colorScheme.primary,
+                icon: HugeIcons.strokeRoundedGarage,
                 label: "Ajouter\nproduit",
                 onTap: () {},
               ),
@@ -46,16 +40,18 @@ class MainActionsSection extends StatelessWidget {
           children: [
             Expanded(
               child: ActionCard(
-                icon: HugeIcons.strokeRoundedDownload01,
-                label: "Importer",
+                color: Colors.green,
+                icon: HugeIcons.strokeRoundedPackageMoving,
+                label: "Ajouter\nfuture produit",
                 onTap: () {},
               ),
             ),
             SizedBox(width: 12.w),
             Expanded(
               child: ActionCard(
-                icon: HugeIcons.strokeRoundedFileExport,
-                label: "Exporter",
+                color: Colors.deepOrange[300]!,
+                icon: HugeIcons.strokeRoundedInvoice,
+                label: "Imprimer\nfacture",
                 onTap: () {},
               ),
             ),
