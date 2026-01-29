@@ -22,7 +22,7 @@ class FloatingSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w),
-      height: 50.h,
+      height: 40.h,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),

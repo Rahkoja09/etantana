@@ -127,7 +127,7 @@ class _OrderState extends ConsumerState<Order> {
                           child: ListView.builder(
                             controller:
                                 isInitialLoading ? null : _scrollController,
-                            physics: const ClampingScrollPhysics(),
+                            physics: const AlwaysScrollableScrollPhysics(),
                             padding: EdgeInsets.symmetric(
                               horizontal: StylesConstants.spacerContent,
                             ),
