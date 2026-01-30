@@ -26,6 +26,7 @@ class First extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
+        constraints: BoxConstraints(maxWidth: 380),
         width: 380,
         color: Colors.white,
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),

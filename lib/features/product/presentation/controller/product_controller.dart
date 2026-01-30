@@ -69,12 +69,14 @@ class ProductController extends StateNotifier<ProductState> {
 
     _setLoadingState();
 
-    // On mémorise les critères dans le state --------------------------<<
-    state = state.copyWith(currentCriteria: criterial);
+    state = state.copyWith(
+      currentCriteria: criterial,
+      product: [],
+      isLoading: true,
+    );
 
-    // On demande les index 0 à 9 ---------
     final res = await _productUsecases.researchProduct(
-      state.currentCriteria,
+      criterial,
       start: 0,
       end: _pageSize - 1,
     );

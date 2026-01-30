@@ -1,5 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
-import 'package:e_tantana/features/home/presentation/widget/presentation_card.dart';
+import 'package:e_tantana/features/home/presentation/widgets/presentation_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';

@@ -253,9 +253,9 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
     padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
     child: Text(
       headerText,
-      style: TextStyles.bodyText(
+      style: TextStyles.bodyMedium(
         context: context,
-        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3),
       ),
     ),
   );

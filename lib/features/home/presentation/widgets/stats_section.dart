@@ -1,6 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
-import 'package:e_tantana/features/home/presentation/widget/big_stat_view.dart';
-import 'package:e_tantana/features/home/presentation/widget/stat_number_view.dart';
+import 'package:e_tantana/features/home/presentation/widgets/big_stat_view.dart';
+import 'package:e_tantana/features/home/presentation/widgets/stat_number_view.dart';
 import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

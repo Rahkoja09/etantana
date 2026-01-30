@@ -82,23 +82,20 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
         children: [
           _buildGridBackground(),
           Center(
-            child: AspectRatio(
-              aspectRatio: 380 / 700,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: InteractiveViewer(
-                  panEnabled: true,
-                  scaleEnabled: true,
-                  trackpadScrollCausesScale: true,
-                  minScale: 0.1,
-                  maxScale: 4.0,
-                  child: First(
-                    order: widget.order,
-                    product: product,
-                    delivery: _deliveryCosts,
-                    unitPrice: _unitPrice,
-                    grandTotal: grandTotal,
-                  ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: InteractiveViewer(
+                panEnabled: true,
+                scaleEnabled: true,
+                trackpadScrollCausesScale: true,
+                minScale: 0.1,
+                maxScale: 4.0,
+                child: First(
+                  order: widget.order,
+                  product: product,
+                  delivery: _deliveryCosts,
+                  unitPrice: _unitPrice,
+                  grandTotal: grandTotal,
                 ),
               ),
             ),

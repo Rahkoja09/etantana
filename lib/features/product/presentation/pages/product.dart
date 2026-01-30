@@ -11,6 +11,7 @@ import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
+import 'package:e_tantana/shared/widget/selectableOption/flat_chip_selector.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +33,10 @@ class _ProductState extends ConsumerState<Product> {
   bool isFetching = false;
   bool showPopUp = false;
   ProductEntities? selectionForActionProduct;
+  String currentFilter = "Tous";
+
+  // list des critères ---------
+  List<String> criterialListSort = ["Tous", "Futurs produits", "Stock zéro"];
 
   // criterial variable -----------
   String? productNameCriterial;
@@ -71,34 +76,25 @@ class _ProductState extends ConsumerState<Product> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
-    ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.errorMessage != null &&
-          next.errorMessage != prev?.errorMessage) {
-        showToast(
-          context,
-          title: 'Erreur de récuperation produit.',
-          isError: true,
-          description: next.errorMessage!,
-        );
-      }
-      if (next.product != null && next.isLoading == false) {
-        myProducts = next.product!;
-      }
-    });
+    final actualProducts = productState.product ?? [];
 
     final skeletonData = List.generate(
       5,
-      (index) => ProductEntities(name: "Chargement...", quantity: 1),
+      (index) => ProductEntities(
+        name: "Chargement...",
+        quantity: 1,
+        createdAt: DateTime.now(),
+      ),
     );
-
-    final isInitialLoading = productState.isLoading && myProducts.isEmpty;
-    final displayList = isInitialLoading ? skeletonData : myProducts;
-
+    final isInitialLoading = productState.isLoading && actualProducts.isEmpty;
+    final displayList = isInitialLoading ? skeletonData : actualProducts;
     return Stack(
       children: [
         Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           body: SafeArea(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: EdgeInsets.all(StylesConstants.spacerContent),
@@ -114,6 +110,47 @@ class _ProductState extends ConsumerState<Product> {
                   ),
                 ),
 
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: StylesConstants.spacerContent,
+                  ),
+                  child: FlatChipSelector(
+                    options: criterialListSort,
+                    selectedOption: currentFilter,
+                    onSelect: (value) {
+                      setState(() => currentFilter = value);
+                      switch (value) {
+                        case ("Tous"):
+                          {
+                            getProduct();
+                            break;
+                          }
+                        case ("Futurs produits"):
+                          {
+                            ref
+                                .read(productControllerProvider.notifier)
+                                .researchProduct(
+                                  ProductEntities(futureProduct: true),
+                                );
+                            break;
+                          }
+                        case ("Stock zéro"):
+                          {
+                            ref
+                                .read(productControllerProvider.notifier)
+                                .researchProduct(ProductEntities(quantity: 0));
+                            break;
+                          }
+                        default:
+                          {
+                            getProduct();
+                            break;
+                          }
+                      }
+                    },
+                  ),
+                ),
+
                 Expanded(
                   child: AppRefreshIndicator(
                     onRefresh: getProduct,
@@ -123,6 +160,7 @@ class _ProductState extends ConsumerState<Product> {
                             : Skeletonizer(
                               enabled: productState.isLoading,
                               effect: LoadingEffect.getCommonEffect(context),
+                              ignoreContainers: true,
                               child: ListView.builder(
                                 controller:
                                     isInitialLoading ? null : _scrollController,
