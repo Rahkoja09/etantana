@@ -1,4 +1,9 @@
 import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/features/home/data/dataSrouce/dashboard_stats_data_source.dart';
+import 'package:e_tantana/features/home/data/dataSrouce/dashboard_stats_data_source_impl.dart';
+import 'package:e_tantana/features/home/data/repository/dashboard_stats_repository_impl.dart';
+import 'package:e_tantana/features/home/domain/repository/dashboard_stats_repository.dart';
+import 'package:e_tantana/features/home/domain/usecases/dashboard_stats_usecase.dart';
 import 'package:e_tantana/features/order/data/dataSource/order_data_source.dart';
 import 'package:e_tantana/features/order/data/dataSource/order_data_source_impl.dart';
 import 'package:e_tantana/features/order/data/repository/order_repository_impl.dart';
@@ -26,6 +31,7 @@ Future<void> init() async {
   _initProduct();
   _initOrder();
   _initMediaService();
+  _initDashboard();
 }
 
 // supabase_client, internet connection, network -------------
@@ -43,6 +49,16 @@ Future<void> _initProduct() async {
     () => ProductDataSourceImpl(sl()),
   );
   sl.registerLazySingleton(() => ProductUsecases(sl(), sl()));
+}
+
+Future<void> _initDashboard() async {
+  sl.registerLazySingleton<DashboardStatsRepository>(
+    () => DashboardStatsRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton<DashboardStatsDataSource>(
+    () => DashboardStatsDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton(() => DashboardStatsUsecase(sl()));
 }
 
 Future<void> _initOrder() async {

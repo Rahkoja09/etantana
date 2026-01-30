@@ -1,50 +1,100 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/features/home/domain/entities/dashboard_stats_entities.dart';
+import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
+import 'package:e_tantana/features/home/presentation/states/dashboard_states.dart';
 import 'package:e_tantana/features/home/presentation/widgets/big_stat_view.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stat_number_view.dart';
+import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class StatsSection extends StatelessWidget {
+class StatsSection extends ConsumerStatefulWidget {
   const StatsSection({super.key});
 
   @override
+  ConsumerState<StatsSection> createState() => _StatsSectionState();
+}
+
+class _StatsSectionState extends ConsumerState<StatsSection> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getDashboard();
+    });
+  }
+
+  DashboardStatsEntities? dashboard;
+
+  Future<void> getDashboard() async {
+    await ref
+        .read(dashboardStatsControllerProvider.notifier)
+        .getDashboardStats();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        MediumTitleWithDegree(showDegree: false, title: "Tableau de bord"),
-        SizedBox(height: 10.h),
-        Row(
-          children: [
-            Expanded(
-              child: StatNumberView(
-                icon: HugeIcons.strokeRoundedInvoice,
-                title: "Commandes",
-                value: "6",
+    final dashboardState = ref.watch(dashboardStatsControllerProvider);
+    ref.listen<DashboardStates>(dashboardStatsControllerProvider, (prev, next) {
+      if (next.errorMessage != null &&
+          next.errorMessage != prev?.errorMessage) {
+        showToast(
+          context,
+          title: 'Erreur de récuperation des donnée de board.',
+          isError: true,
+          description: next.errorMessage!,
+        );
+      } else if (next.dashboard != null) {
+        setState(() {
+          dashboard = next.dashboard!;
+        });
+      }
+    });
+    return Skeletonizer(
+      enabled: dashboardState.isLoading,
+      ignoreContainers: true,
+      justifyMultiLineText: true,
+      effect: LoadingEffect.getCommonEffect(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MediumTitleWithDegree(showDegree: false, title: "Tableau de bord"),
+          SizedBox(height: 10.h),
+          Row(
+            children: [
+              Expanded(
+                child: StatNumberView(
+                  icon: HugeIcons.strokeRoundedInvoice,
+                  title: "Commandes",
+                  value: "${dashboard!.totalOrders}",
+                ),
               ),
-            ),
-            SizedBox(width: StylesConstants.spacerContent),
-            Expanded(
-              child: StatNumberView(
-                icon: HugeIcons.strokeRoundedPackage03,
-                title: "Produits",
-                value: "12",
+              SizedBox(width: StylesConstants.spacerContent),
+              Expanded(
+                child: StatNumberView(
+                  icon: HugeIcons.strokeRoundedPackage03,
+                  title: "Produits",
+                  value: "${dashboard!.totalProducts}",
+                ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: StylesConstants.spacerContent),
-        BigStatView(
-          icon: HugeIcons.strokeRoundedMoneyBag01,
-          title: "Chiffres d'affaire",
-          cycle: "Aujourd'hui",
-          moneySign: "Ariary",
-          increasePercent: "+106%",
-          value: "350 000",
-        ),
-      ],
+            ],
+          ),
+          SizedBox(height: StylesConstants.spacerContent),
+          BigStatView(
+            icon: HugeIcons.strokeRoundedMoneyBag01,
+            title: "Chiffres d'affaire",
+            cycle: "${dashboard!.period}",
+            moneySign: "Ariary",
+            increasePercent: "${dashboard!.revenueIncrease}",
+            value: "${dashboard!.revenue}",
+          ),
+        ],
+      ),
     );
   }
 }
