@@ -91,63 +91,75 @@ class _ProductState extends ConsumerState<Product> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                Container(
                   padding: EdgeInsets.all(StylesConstants.spacerContent),
-                  child: FloatingSearchBar(
-                    controller: _searchController,
-                    onSortTap: () {},
-                    hintText: "Rechercher un produit (par son nom)",
-                    onChanged: (val) {
-                      ref
-                          .read(productControllerProvider.notifier)
-                          .researchProduct(ProductEntities(name: val));
-                    },
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.3),
+                      ),
+                    ),
                   ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: StylesConstants.spacerContent,
-                  ),
-                  child: FlatChipSelector(
-                    options: criterialListSort,
-                    selectedOption: currentFilter,
-                    onSelect: (value) {
-                      setState(() => currentFilter = value);
-                      switch (value) {
-                        case ("Tous"):
-                          {
-                            getProduct();
-                            break;
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FloatingSearchBar(
+                        controller: _searchController,
+                        onSortTap: () {},
+                        hintText: "Rechercher un produit (par son nom)",
+                        onChanged: (val) {
+                          ref
+                              .read(productControllerProvider.notifier)
+                              .researchProduct(ProductEntities(name: val));
+                        },
+                      ),
+                      SizedBox(height: StylesConstants.spacerContent),
+                      FlatChipSelector(
+                        options: criterialListSort,
+                        selectedOption: currentFilter,
+                        onSelect: (value) {
+                          setState(() => currentFilter = value);
+                          switch (value) {
+                            case ("Tous"):
+                              {
+                                getProduct();
+                                break;
+                              }
+                            case ("Futurs produits"):
+                              {
+                                ref
+                                    .read(productControllerProvider.notifier)
+                                    .researchProduct(
+                                      ProductEntities(futureProduct: true),
+                                    );
+                                break;
+                              }
+                            case ("Stock zéro"):
+                              {
+                                ref
+                                    .read(productControllerProvider.notifier)
+                                    .researchProduct(
+                                      ProductEntities(quantity: 0),
+                                    );
+                                break;
+                              }
+                            default:
+                              {
+                                getProduct();
+                                break;
+                              }
                           }
-                        case ("Futurs produits"):
-                          {
-                            ref
-                                .read(productControllerProvider.notifier)
-                                .researchProduct(
-                                  ProductEntities(futureProduct: true),
-                                );
-                            break;
-                          }
-                        case ("Stock zéro"):
-                          {
-                            ref
-                                .read(productControllerProvider.notifier)
-                                .researchProduct(ProductEntities(quantity: 0));
-                            break;
-                          }
-                        default:
-                          {
-                            getProduct();
-                            break;
-                          }
-                      }
-                    },
+                        },
+                      ),
+                    ],
                   ),
                 ),
 
@@ -184,6 +196,7 @@ class _ProductState extends ConsumerState<Product> {
                                         context,
                                       ),
                                       child: MinimalProductView(
+                                        index: 0,
                                         onDelete: () {},
                                         product: displayList[0],
                                         onEdit: () {},
@@ -196,45 +209,51 @@ class _ProductState extends ConsumerState<Product> {
                                   }
 
                                   final item = displayList[index];
-                                  return MinimalProductView(
-                                    onDelete: () {
-                                      setState(() {
-                                        showPopUp = true;
-                                      });
-                                      setState(() {
-                                        selectionForActionProduct = item;
-                                      });
-                                    },
-                                    product: item,
-                                    onEdit: () {
-                                      setState(() {
-                                        selectionForActionProduct = item;
-                                      });
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => AddProduct(
-                                                isFutureProduct: false,
-                                                productToEdit:
-                                                    selectionForActionProduct,
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                    onOrder: () {
-                                      setState(() {
-                                        selectionForActionProduct = item;
-                                      });
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => AddOrder(
-                                                productToOrder:
-                                                    selectionForActionProduct,
-                                              ),
-                                        ),
-                                      );
-                                    },
+                                  return Column(
+                                    children: [
+                                      MinimalProductView(
+                                        index: index + 1,
+                                        onDelete: () {
+                                          setState(() {
+                                            showPopUp = true;
+                                          });
+                                          setState(() {
+                                            selectionForActionProduct = item;
+                                          });
+                                        },
+                                        product: item,
+                                        onEdit: () {
+                                          setState(() {
+                                            selectionForActionProduct = item;
+                                          });
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => AddProduct(
+                                                    isFutureProduct: false,
+                                                    productToEdit:
+                                                        selectionForActionProduct,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                        onOrder: () {
+                                          setState(() {
+                                            selectionForActionProduct = item;
+                                          });
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => AddOrder(
+                                                    productToOrder:
+                                                        selectionForActionProduct,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(height: 15),
+                                    ],
                                   );
                                 },
                               ),

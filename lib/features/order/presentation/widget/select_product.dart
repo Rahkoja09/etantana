@@ -47,7 +47,7 @@ class _SelectProductState extends ConsumerState<SelectProduct> {
             : [];
 
     for (var p in currentProducts) {
-      if (p.id != null) {
+      if (p.id != null && p.quantity! > 0) {
         productIds.add(p.id!);
       }
     }

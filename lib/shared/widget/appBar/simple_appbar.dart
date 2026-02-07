@@ -18,16 +18,10 @@ class SimpleAppbar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.primary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-      ),
+
       title: Text(
         title,
-        style: TextStyles.titleSmall(
-          context: context,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyles.titleMedium(context: context, color: Colors.white),
       ),
       leading: IconButton(
         icon: HugeIcon(

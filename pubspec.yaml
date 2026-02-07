@@ -83,6 +83,7 @@ dependencies:
   interactive_viewer_2: ^0.1.0
   toastification: ^3.0.3
   flutter_launcher_icons: ^0.14.4
+  lottie: ^3.1.2
 
 dev_dependencies:
   flutter_test:
@@ -96,6 +97,7 @@ flutter:
     - assets/medias/logos/
     - assets/medias/icons/
     - assets/theme/
+    - assets/medias/animations/
 
   fonts:
     - family: Nonito

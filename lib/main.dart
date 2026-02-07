@@ -5,7 +5,7 @@ import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/constants/supabase_api_constants.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart' as di;
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
+import 'package:e_tantana/features/splashView/presentation/pages/splash_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,7 +62,7 @@ class MyApp extends ConsumerWidget {
             theme: theme,
             debugShowCheckedModeBanner: false,
             title: AppConst.appName,
-            home: const NavBar(),
+            home: const SplashView(),
           ),
         );
       },

@@ -68,7 +68,7 @@ class _NumberInputState extends State<NumberInput> {
           decoration: BoxDecoration(
             color:
                 widget.backgroundColor ??
-                Theme.of(context).colorScheme.surfaceContainer,
+                Theme.of(context).colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: Theme.of(

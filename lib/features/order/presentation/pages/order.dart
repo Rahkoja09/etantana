@@ -73,7 +73,7 @@ class _OrderState extends ConsumerState<Order> {
           next.errorMessage != prev?.errorMessage) {
         showToast(
           context,
-          title: 'Erreur de récuperation produit.',
+          title: 'Erreur de récuperation commmande(s).',
           isError: true,
           description: next.errorMessage!,
         );

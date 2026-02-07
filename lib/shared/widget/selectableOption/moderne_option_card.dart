@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class ModerneOptionCard extends StatelessWidget {
+  final Color cardColor;
   final String title;
   final String subtitle;
   final IconData icon;
@@ -12,6 +13,7 @@ class ModerneOptionCard extends StatelessWidget {
   final bool isActive;
   const ModerneOptionCard({
     super.key,
+    required this.cardColor,
     required BuildContext context,
     this.icon = HugeIcons.strokeRoundedActivity01,
     this.title = "This.title",
@@ -30,34 +32,28 @@ class ModerneOptionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color:
               isActive
-                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                  ? Theme.of(context).colorScheme.surfaceContainerLowest
                   : Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-          border: Border.all(
-            color:
-                !isActive
-                    ? Theme.of(context).colorScheme.surfaceContainer
-                    : Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: cardColor.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.3),
+                color: cardColor.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.2),
+                  width: 0.4,
+                ),
               ),
               child: HugeIcon(
                 icon: icon,
-                color:
-                    isActive
-                        ? Colors.black
-                        : Colors.white.withValues(alpha: 0.3),
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 24.sp,
               ),
             ),
@@ -85,7 +81,9 @@ class ModerneOptionCard extends StatelessWidget {
                       fontWeight: FontWeight.w300,
                       color:
                           isActive
-                              ? Theme.of(context).colorScheme.onSurface
+                              ? Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.5)
                               : Colors.grey,
                     ),
                   ),

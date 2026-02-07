@@ -2,6 +2,7 @@ import 'package:e_tantana/core/utils/tools/variante_parser.dart';
 import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
+import 'package:e_tantana/shared/widget/text/horizontal_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -126,6 +127,7 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return Column(
       children: [
         InkWell(
@@ -161,7 +163,14 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
         ),
 
         SizedBox(height: 12.h),
-
+        if (_items.isNotEmpty)
+          HorizontalDivider(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
+            width: size.width - StylesConstants.spacerContent * 2,
+          ),
+        SizedBox(height: 8.h),
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -170,14 +179,10 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
           itemBuilder: (context, index) {
             final item = _items[index];
             return Container(
-              padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(
                   StylesConstants.borderRadius,
-                ),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
                 ),
               ),
               child: Row(
@@ -188,21 +193,27 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
                       children: [
                         Text(
                           item.key.toUpperCase(),
-                          style: TextStyles.bodySmall(
+                          style: TextStyles.bodyMedium(
                             context: context,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           "${item.size} • Qté: ${item.quantity}",
-                          style: TextStyles.bodyMedium(context: context),
+                          style: TextStyles.bodySmall(
+                            context: context,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   IconButton(
                     icon: const Icon(
-                      Icons.delete_outline,
+                      HugeIcons.strokeRoundedDelete04,
+                      size: 20,
                       color: Colors.redAccent,
                     ),
                     onPressed: () {

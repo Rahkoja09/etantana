@@ -4,6 +4,7 @@ import 'package:e_tantana/features/home/presentation/controller/dashboard_contro
 import 'package:e_tantana/features/home/presentation/states/dashboard_states.dart';
 import 'package:e_tantana/features/home/presentation/widgets/big_stat_view.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stat_number_view.dart';
+import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
@@ -29,7 +30,13 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
     });
   }
 
-  DashboardStatsEntities? dashboard;
+  DashboardStatsEntities dashboard = DashboardStatsEntities(
+    period: "loading",
+    revenue: 0.0,
+    revenueIncrease: "+0%",
+    totalOrders: 0,
+    totalProducts: 0,
+  );
 
   Future<void> getDashboard() async {
     await ref
@@ -55,45 +62,47 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
         });
       }
     });
-    return Skeletonizer(
-      enabled: dashboardState.isLoading,
-      ignoreContainers: true,
-      justifyMultiLineText: true,
-      effect: LoadingEffect.getCommonEffect(context),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MediumTitleWithDegree(showDegree: false, title: "Tableau de bord"),
-          SizedBox(height: 10.h),
-          Row(
-            children: [
-              Expanded(
-                child: StatNumberView(
-                  icon: HugeIcons.strokeRoundedInvoice,
-                  title: "Commandes",
-                  value: "${dashboard!.totalOrders}",
+    return AppRefreshIndicator(
+      onRefresh: getDashboard,
+      child: Skeletonizer(
+        enabled: dashboardState.isLoading,
+        ignoreContainers: true,
+        effect: LoadingEffect.getCommonEffect(context),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MediumTitleWithDegree(showDegree: false, title: "Tableau de bord"),
+            SizedBox(height: 10.h),
+            Row(
+              children: [
+                Expanded(
+                  child: StatNumberView(
+                    icon: HugeIcons.strokeRoundedInvoice,
+                    title: "Commandes",
+                    value: "${dashboard.totalOrders}",
+                  ),
                 ),
-              ),
-              SizedBox(width: StylesConstants.spacerContent),
-              Expanded(
-                child: StatNumberView(
-                  icon: HugeIcons.strokeRoundedPackage03,
-                  title: "Produits",
-                  value: "${dashboard!.totalProducts}",
+                SizedBox(width: StylesConstants.spacerContent),
+                Expanded(
+                  child: StatNumberView(
+                    icon: HugeIcons.strokeRoundedPackage03,
+                    title: "Produits",
+                    value: "${dashboard.totalProducts}",
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: StylesConstants.spacerContent),
-          BigStatView(
-            icon: HugeIcons.strokeRoundedMoneyBag01,
-            title: "Chiffres d'affaire",
-            cycle: "${dashboard!.period}",
-            moneySign: "Ariary",
-            increasePercent: "${dashboard!.revenueIncrease}",
-            value: "${dashboard!.revenue}",
-          ),
-        ],
+              ],
+            ),
+            SizedBox(height: StylesConstants.spacerContent),
+            BigStatView(
+              icon: HugeIcons.strokeRoundedMoneyBag01,
+              title: "Chiffres d'affaire",
+              cycle: "${dashboard.period}",
+              moneySign: "Ariary",
+              increasePercent: "${dashboard.revenueIncrease}",
+              value: "${dashboard.revenue}",
+            ),
+          ],
+        ),
       ),
     );
   }

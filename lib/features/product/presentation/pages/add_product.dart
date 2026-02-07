@@ -8,7 +8,9 @@ import 'package:e_tantana/features/product/presentation/controller/product_contr
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
+import 'package:e_tantana/shared/widget/input/custom_toggle.dart';
 import 'package:e_tantana/shared/widget/input/switch_button.dart';
+import 'package:e_tantana/shared/widget/others/separator_background.dart';
 import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
@@ -23,6 +25,8 @@ import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
+import 'package:e_tantana/shared/widget/text/text_app_bar.dart';
+import 'package:e_tantana/shared/widget/text/title_with_explaination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -120,13 +124,11 @@ class _AddProductState extends ConsumerState<AddProduct> {
 
     ref.listen<ProductState>(productControllerProvider, (prev, next) {
       if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
-        showDialog(
-          context: context,
-          builder:
-              (context) => ErrorDialog(
-                title: "Erreur d'ajout de produit\nRéessayer plus tard.",
-                message: next.errorMessage!,
-              ),
+        showToast(
+          context,
+          title: "Erreur",
+          isError: true,
+          description: next.errorMessage!,
         );
       }
       if (next.product != null && next.isLoading == false) {
@@ -148,6 +150,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
         }
       }
     });
+    final double contentSpacer = 20.h;
+    final double sectionSpacer = 50.h;
     return Stack(
       children: [
         Scaffold(
@@ -167,17 +171,19 @@ class _AddProductState extends ConsumerState<AddProduct> {
           body: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(StylesConstants.spacerContent),
-              color: Theme.of(context).colorScheme.surfaceContainer,
+              color: Theme.of(context).colorScheme.surface,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      MediumTitleWithDegree(
-                        showDegree: false,
-                        title: "PHOTO DU PRODUIT",
+                      TitleWithExplaination(
+                        title: "Image du produit",
+                        explaination:
+                            "Importer un image qui represente votre produit",
                       ),
+                      SizedBox(height: contentSpacer),
                       ImagePickerDisplay(
                         onPickImage: () async {
                           final image = await _mediaService.pickImage(
@@ -196,74 +202,67 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 30.h),
+                  SizedBox(height: sectionSpacer),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TitleWithExplaination(
+                        title: "Informations du produit",
+                        explaination:
+                            "Données les informations precise du produit",
+                      ),
 
-                  SwitchButton(
-                    isEnabled: widget.isFutureProduct == true ? false : true,
-                    degree: 1,
-                    showDegree: true,
-                    title: "Produit encore en transite",
-                    onChanged: (value) {
-                      print(value);
-                      setState(() {
-                        isFutureProduct = value;
-                      });
-                    },
-                    value:
-                        widget.isFutureProduct == true
-                            ? widget.isFutureProduct
-                            : isFutureProduct!,
-                  ),
-                  SizedBox(height: 30.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 2,
-                    title: "Code produit",
-                  ),
-                  SimpleInput(
-                    textHint: "ex: pinceF02i",
-                    iconData: HugeIcons.strokeRoundedFingerPrint,
-                    textEditControlleur: codeProduitInput,
-                    maxLines: 1,
-                  ),
-                  SizedBox(height: 30.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Nom Produit",
-                  ),
-                  SimpleInput(
-                    textHint: "ex: pince flexible",
-                    iconData: HugeIcons.strokeRoundedId,
-                    textEditControlleur: nomProduitInput,
-                    maxLines: 1,
-                  ),
-                  ShowInputError(message: errorName),
+                      SizedBox(height: contentSpacer),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 1,
+                        title: "Nom Produit",
+                      ),
+                      SimpleInput(
+                        textHint: "ex: pince flexible",
+                        iconData: HugeIcons.strokeRoundedId,
+                        textEditControlleur: nomProduitInput,
+                        maxLines: 1,
+                      ),
+                      ShowInputError(message: errorName),
+                      SizedBox(height: contentSpacer),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 2,
+                        title: "Code produit",
+                      ),
+                      SimpleInput(
+                        textHint: "ex: pinceF02i",
+                        iconData: HugeIcons.strokeRoundedBarCode01,
+                        textEditControlleur: codeProduitInput,
+                        maxLines: 1,
+                      ),
 
-                  SizedBox(height: 30.h),
-                  NumberInput(
-                    value: qteProduit,
-                    title: "Quantité(s) produit *",
-                    onValueChanged: (qte) {
-                      setState(() {
-                        qteProduit = qte;
-                      });
-                    },
+                      SizedBox(height: contentSpacer),
+                      NumberInput(
+                        value: qteProduit,
+                        title: "Quantité(s) produit *",
+                        onValueChanged: (qte) {
+                          setState(() {
+                            qteProduit = qte;
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 30.h),
 
-                  HorizontalDivider(
-                    width: width,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.4),
+                  SizedBox(height: sectionSpacer),
+
+                  TitleWithExplaination(
+                    title: "Détails sur les prix",
+                    explaination:
+                        "Informer le system des détails sur le prix produit",
                   ),
-                  SizedBox(height: 10.h),
-
+                  SizedBox(height: contentSpacer),
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 1,
-                    title: "Prix d'achat (Ar)",
+                    title: "Prix d'achat unitaire (Ar)",
                   ),
                   SimpleInput(
                     textHint: "ex: 3000",
@@ -271,11 +270,11 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     textEditControlleur: purchasePriceInput,
                     maxLines: 1,
                   ),
-                  SizedBox(height: 30.h),
+                  SizedBox(height: contentSpacer),
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 1,
-                    title: "Prix de vente (Ar)",
+                    title: "Prix de vente unitaire (Ar)",
                   ),
                   SimpleInput(
                     textHint: "ex: 6000",
@@ -283,15 +282,14 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     textEditControlleur: sellingPriceInput,
                     maxLines: 1,
                   ),
-                  SizedBox(height: 10.h),
-                  ShowInputError(message: errorQuantity),
-                  HorizontalDivider(
-                    width: width,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.4),
+
+                  SizedBox(height: sectionSpacer),
+                  TitleWithExplaination(
+                    title: "Détails du produit",
+                    explaination:
+                        "Prenez le temps d'ajouter les détails du produit",
                   ),
-                  SizedBox(height: 30.h),
+                  SizedBox(height: contentSpacer),
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 2,
@@ -308,10 +306,10 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     textHint: "Selectioner un type",
                     value: selectedType,
                   ),
-                  SizedBox(height: 30.h),
+                  SizedBox(height: contentSpacer),
                   MediumTitleWithDegree(
                     showDegree: true,
-                    title: "Détail(s)",
+                    title: "Variante(s)",
                     degree: 2,
                   ),
                   ItemManagerSection(
@@ -322,7 +320,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       });
                     },
                   ),
-                  SizedBox(height: 30.h),
+                  SizedBox(height: contentSpacer + 10),
                   MediumTitleWithDegree(
                     showDegree: true,
                     title: "Déscription(s)",
@@ -334,28 +332,39 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     textEditControlleur: descProduitInput,
                     maxLines: 6,
                   ),
-                  SizedBox(height: 30.h),
-                  BottomContainerButton(
-                    prevBtnText: "Annuler",
-                    nextBtnText:
-                        widget.productToEdit != null ? "Modifier" : "Ajouter",
-                    onBack: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (_) => NavBar(selectedIndex: 0),
-                        ),
-                      );
-                    },
-                    onValidate: () {
-                      if (_validateFields()) {
-                        setState(() {
-                          showPopUp = true;
-                        });
-                      } else {}
-                    },
-                  ),
                 ],
               ),
+            ),
+          ),
+          bottomNavigationBar: Container(
+            height: 80,
+            color: Colors.white,
+            child: BottomContainerButton(
+              leftContentChild: CustomToggle(
+                onChanged: (value) {
+                  setState(() {
+                    isFutureProduct = value;
+                  });
+                  print(isFutureProduct);
+                },
+                isFuture: widget.isFutureProduct,
+                desableOnDefaultValue:
+                    widget.isFutureProduct == true ? true : false,
+              ),
+              nextBtnText:
+                  widget.productToEdit != null ? "Modifier" : "Ajouter",
+              onBack: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 0)),
+                );
+              },
+              onValidate: () {
+                if (_validateFields()) {
+                  setState(() {
+                    showPopUp = true;
+                  });
+                } else {}
+              },
             ),
           ),
         ),

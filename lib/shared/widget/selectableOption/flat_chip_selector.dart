@@ -34,7 +34,9 @@ class FlatChipSelector extends StatelessWidget {
                   color:
                       isSelected
                           ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.surface,
+                          : Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(
                     StylesConstants.borderRadius,
                   ),
@@ -50,13 +52,15 @@ class FlatChipSelector extends StatelessWidget {
                 ),
                 child: Text(
                   option,
-                  style: TextStyles.bodySmall(
+                  style: TextStyles.bodyMedium(
                     context: context,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w800,
                     color:
                         isSelected
                             ? Theme.of(context).colorScheme.onPrimary
-                            : Theme.of(context).colorScheme.onSurface,
+                            : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),

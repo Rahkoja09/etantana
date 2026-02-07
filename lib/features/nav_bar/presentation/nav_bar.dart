@@ -211,11 +211,14 @@ void _showEditOptionsDialog(BuildContext context) {
               topLeft: Radius.circular(StylesConstants.borderRadius * 2),
               topRight: Radius.circular(StylesConstants.borderRadius * 2),
             ),
-            border: Border.all(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.2),
-            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 10,
+                offset: Offset(-4, 0),
+                spreadRadius: 0.2,
+              ),
+            ],
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -234,17 +237,34 @@ void _showEditOptionsDialog(BuildContext context) {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  'Ajout produit ou commande',
+                  'Actions rapide',
                   style: TextStyles.titleSmall(
                     context: context,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 24.h),
+
                 ModerneOptionCard(
                   context: context,
+                  cardColor: const Color.fromARGB(255, 15, 69, 113),
+                  icon: HugeIcons.strokeRoundedInvoice03,
+                  title: 'Passer une commande',
+                  subtitle: 'Passer la commande d\'un Client',
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => const AddOrder()));
+                  },
+                  isActive: true,
+                ),
+                SizedBox(height: 12.h),
+                ModerneOptionCard(
+                  cardColor: Theme.of(context).colorScheme.primary,
+                  context: context,
                   icon: HugeIcons.strokeRoundedGarage,
-                  title: 'produit en Stock',
+                  title: 'Ajouter produit',
                   subtitle: 'Le produit est déjà en arrivé',
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -259,8 +279,9 @@ void _showEditOptionsDialog(BuildContext context) {
                 SizedBox(height: 12.h),
                 ModerneOptionCard(
                   context: context,
-                  icon: HugeIcons.strokeRoundedPackageMoving,
-                  title: 'produit Future Stock',
+                  cardColor: Colors.green,
+                  icon: HugeIcons.strokeRoundedCargoShip,
+                  title: 'Ajouter future produit',
                   subtitle: 'Le produit est encore en transit',
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -272,31 +293,7 @@ void _showEditOptionsDialog(BuildContext context) {
                   },
                   isActive: true,
                 ),
-                SizedBox(height: 12.h),
-                ModerneOptionCard(
-                  context: context,
-                  icon: HugeIcons.strokeRoundedInvoice03,
-                  title: 'Commande',
-                  subtitle: 'Passer la commande d\'un Client',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (_) => const AddOrder()));
-                  },
-                  isActive: true,
-                ),
-                SizedBox(height: 12.h),
-                ModerneOptionCard(
-                  context: context,
-                  icon: HugeIcons.strokeRoundedDeliveryTruck01,
-                  title: 'Livraison',
-                  subtitle: 'Assigné un nouveau frais de Livraison à un lieu',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                  },
-                  isActive: true,
-                ),
+
                 SizedBox(height: 20.h),
               ],
             ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -26,12 +27,14 @@ class ImagePickerDisplay extends StatelessWidget {
           onTap: imageFile == null ? onPickImage : null,
           child: Container(
             width: double.infinity,
-            height: 200,
+            height: 250.h,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -71,22 +74,65 @@ class ImagePickerDisplay extends StatelessWidget {
                     : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        HugeIcon(
-                          icon: HugeIcons.strokeRoundedCameraAdd02,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.6),
-                          size: 30.sp,
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                            shape: BoxShape.circle,
+                          ),
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedImageAdd02,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
+                            size: 20.sp,
+                          ),
                         ),
                         const SizedBox(height: 8),
+                        InkWell(
+                          onTap: onPickImage,
+                          child: Text(
+                            "Importer une image du produit",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                              fontFamily: "Nonito",
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
                         Text(
-                          "Cliquez ici pour importer",
+                          "Taille de l'image inférieur ou égale à 50 Mo",
                           style: TextStyles.bodyMedium(
                             context: context,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.6),
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                          "ou",
+                          style: TextStyles.bodyMedium(
+                            context: context,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Button(
+                          onTap: onPickImage,
+                          btnColor: Colors.blue,
+                          btnText: "Importer",
+                          btnTextColor: Colors.white,
                         ),
                       ],
                     ),

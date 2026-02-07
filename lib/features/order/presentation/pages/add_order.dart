@@ -129,7 +129,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
     });
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: SimpleAppbar(
         title: "Créer une commande",
         onBack: () {
@@ -282,61 +282,55 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                   ShowInputError(message: errorDeliveryCosts),
 
                   SizedBox(height: 30.h),
-
-                  BottomContainerButton(
-                    prevBtnText: "Annuler",
-                    nextBtnText: "Valider",
-                    onBack: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (_) => NavBar(selectedIndex: 0),
-                        ),
-                      );
-                    },
-                    onValidate: () async {
-                      if (_validateFields()) {
-                        final orderData = OrderEntities(
-                          clientAdrs: clientAdrs.text.trim(),
-                          clientName: clientName.text.trim(),
-                          clientTel: clientTel.text.trim(),
-                          deliveryCosts: fraisDeLiv.text.trim(),
-                          details: variantsForServer,
-                          productId: selectedProductEntity.id,
-                          quantity: qteProduit,
-                          status: selectedStatus,
-                        );
-                        await orderAction.insertOrder(orderData);
-
-                        final updates = selectedProductEntity.copyWith(
-                          quantity:
-                              (selectedProductEntity.quantity - qteProduit),
-                        );
-                        await productAction.updateProduct(updates);
-                        await productAction.researchProduct(null);
-
-                        // réinitialiser les inputs -------------
-                        setState(() {
-                          qteProduit = 0;
-                        });
-                        variantsForServer = null;
-                        selectedStatus = null;
-                        selectedProductEntity;
-                        clientName.text = "";
-                        clientTel.text = "";
-                        clientAdrs.text = "";
-                        fraisDeLiv.text = "";
-                      } else {
-                        debugPrint("Formulaire invalide");
-                      }
-                    },
-                  ),
-                  SizedBox(height: 20.h),
                 ],
               ),
             ),
           ),
           if (orderState.isLoading) Loading(),
         ],
+      ),
+      bottomNavigationBar: BottomContainerButton(
+        nextBtnText: "Créer",
+        onBack: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 0)),
+          );
+        },
+        onValidate: () async {
+          if (_validateFields()) {
+            final orderData = OrderEntities(
+              clientAdrs: clientAdrs.text.trim(),
+              clientName: clientName.text.trim(),
+              clientTel: clientTel.text.trim(),
+              deliveryCosts: fraisDeLiv.text.trim(),
+              details: variantsForServer,
+              productId: selectedProductEntity.id,
+              quantity: qteProduit,
+              status: selectedStatus,
+            );
+            await orderAction.insertOrder(orderData);
+
+            final updates = selectedProductEntity.copyWith(
+              quantity: (selectedProductEntity.quantity - qteProduit),
+            );
+            await productAction.updateProduct(updates);
+            await productAction.researchProduct(null);
+
+            // réinitialiser les inputs -------------
+            setState(() {
+              qteProduit = 0;
+            });
+            variantsForServer = null;
+            selectedStatus = null;
+            selectedProductEntity;
+            clientName.text = "";
+            clientTel.text = "";
+            clientAdrs.text = "";
+            fraisDeLiv.text = "";
+          } else {
+            debugPrint("Formulaire invalide");
+          }
+        },
       ),
     );
   }

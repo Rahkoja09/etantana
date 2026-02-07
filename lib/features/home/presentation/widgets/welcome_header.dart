@@ -5,7 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class WelcomeHeader extends StatefulWidget {
-  const WelcomeHeader({super.key});
+  final VoidCallback onTap;
+  const WelcomeHeader({super.key, required this.onTap});
 
   @override
   State<WelcomeHeader> createState() => _WelcomeHeaderState();
@@ -17,29 +18,26 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
   Widget build(BuildContext context) {
     return SizedBox(
       height: 125.h,
-      child: PageView.builder(
-        itemBuilder: (context, index) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                PresentationCard(
-                  icon: HugeIcons.strokeRoundedPackage,
-                  headText: "Je",
-                  bodyText: "Gere",
-                  commenteText: "Mes Produit, commandes et factures",
-                ),
-                SizedBox(width: StylesConstants.spacerContent),
-                PresentationCard(
-                  icon: HugeIcons.strokeRoundedChartLineData01,
-                  headText: "Je",
-                  bodyText: "Revise",
-                  commenteText: "Mes Statistiques, Recettes et inventaires",
-                ),
-              ],
-            ),
-          );
-        },
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        children: [
+          PresentationCard(
+            onTap: widget.onTap,
+            icon: HugeIcons.strokeRoundedPackage,
+            headText: "Je",
+            bodyText: "Gère",
+            commenteText: "Mes Produits, commandes et factures",
+          ),
+          SizedBox(width: StylesConstants.spacerContent),
+          PresentationCard(
+            onTap: widget.onTap,
+            icon: HugeIcons.strokeRoundedChartLineData01,
+            headText: "Je",
+            bodyText: "Révise",
+            commenteText: "Mes Statistiques, Recettes et inventaires",
+          ),
+        ],
       ),
     );
   }

@@ -25,9 +25,8 @@ class ActionCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
         ),
         child: Column(
           children: [

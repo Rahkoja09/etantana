@@ -4,22 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BottomContainerButton extends StatelessWidget {
+  final Widget? leftContentChild;
   final VoidCallback onValidate;
   final VoidCallback onBack;
   final String nextBtnText;
-  final String prevBtnText;
   const BottomContainerButton({
     super.key,
+    this.leftContentChild,
     required this.onValidate,
     required this.onBack,
-    this.prevBtnText = "Retour",
     this.nextBtnText = "Valider",
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(StylesConstants.spacerContent),
       height: 60.h,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -43,15 +43,13 @@ class BottomContainerButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          leftContentChild ?? SizedBox.shrink(),
           Spacer(),
-          Row(
-            children: [
-              Button(
-                onTap: onValidate,
-                btnText: nextBtnText,
-                btnColor: Theme.of(context).colorScheme.primary,
-              ),
-            ],
+          Button(
+            onTap: onValidate,
+            btnText: nextBtnText,
+            btnTextColor: Colors.white,
+            btnColor: Theme.of(context).colorScheme.primary,
           ),
         ],
       ),

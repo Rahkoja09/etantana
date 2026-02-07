@@ -1,6 +1,7 @@
 import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/utils/tools/name_more_short.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/gestures.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class MinimalProductView extends StatefulWidget {
+  final int index;
   final ProductEntities product;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -16,6 +18,7 @@ class MinimalProductView extends StatefulWidget {
 
   const MinimalProductView({
     super.key,
+    required this.index,
     required this.product,
     required this.onEdit,
     required this.onDelete,
@@ -30,17 +33,6 @@ class _MinimalProductViewState extends State<MinimalProductView> {
   @override
   Widget build(BuildContext context) {
     bool outOfStock = (widget.product.quantity ?? 0) <= 0;
-    bool newProduct() {
-      if (widget.product.createdAt != null) {
-        if (("${widget.product.createdAt!.day}/${widget.product.createdAt!.month}/${widget.product.createdAt!.year}") ==
-            "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}") {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      return false;
-    }
 
     return Dismissible(
       key: Key(widget.product.id.toString()),
@@ -72,8 +64,7 @@ class _MinimalProductViewState extends State<MinimalProductView> {
         onTap: widget.onEdit,
         child: Container(
           height: 70.h,
-          margin: EdgeInsets.symmetric(vertical: 4.h, horizontal: 0.w),
-          padding: EdgeInsets.all(StylesConstants.spacerContent - 10),
+          margin: EdgeInsets.symmetric(vertical: 0.h, horizontal: 0.w),
 
           decoration: BoxDecoration(
             color:
@@ -81,18 +72,28 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                     ? Theme.of(
                       context,
                     ).colorScheme.error.withValues(alpha: 0.15)
-                    : Theme.of(context).colorScheme.surface,
+                    : Theme.of(context).colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
           ),
           child: Row(
             children: [
+              SizedBox(width: 5.w),
+              Text(
+                "${widget.index}",
+                maxLines: 1,
+                style: TextStyles.bodyText(
+                  context: context,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              SizedBox(width: 18.w),
               ClipRRect(
                 borderRadius: BorderRadius.circular(
                   StylesConstants.borderRadius,
                 ),
                 child: SizedBox(
-                  width: 70.w,
-                  height: 70.h,
+                  width: 58.w,
+                  height: 58.h,
                   child: ImageViewer(
                     imageFileOrLink:
                         widget.product.images ?? AppConst.defaultImage,
@@ -101,80 +102,62 @@ class _MinimalProductViewState extends State<MinimalProductView> {
               ),
               SizedBox(width: 16.w),
 
-              // Infos Produit
+              // Infos Produit ------------------
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      widget.product.name ?? "Sans nom",
+                      NameMoreShort().shortenName(
+                            widget.product.name!.toUpperCase(),
+                            30,
+                          ) ??
+                          "Sans nom",
                       maxLines: 1,
                       style: TextStyles.bodyMedium(
                         context: context,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildBadge(
+                    Text(
+                      "${widget.product.sellingPrice ?? 0} Ar",
+                      style: TextStyles.bodyText(
+                        context: context,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(
                           context,
-                          outOfStock
-                              ? "Rupture"
-                              : "${widget.product.quantity} en stock",
-                          outOfStock ? Colors.red.shade400 : Colors.blueGrey,
-                        ),
-                        SizedBox(width: 4.h),
-                        _buildBadge(
-                          context,
-                          newProduct() ? "Nouveau" : "En stock",
-                          newProduct() ? Colors.green : Colors.blue,
-                        ),
-                      ],
+                        ).colorScheme.onSurface.withValues(alpha: 0.4),
+                      ),
                     ),
                   ],
                 ),
               ),
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "${widget.product.sellingPrice ?? 0} Ar",
+                    "Stock",
                     style: TextStyles.bodyMedium(
                       context: context,
-                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  Icon(
-                    Icons.chevron_right,
-                    size: 16.sp,
-                    color: Colors.grey.shade400,
+                  Text(
+                    outOfStock ? "Rupture" : "${widget.product.quantity}",
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: outOfStock ? Colors.red.shade400 : Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
+              SizedBox(width: 5.w),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBadge(BuildContext context, String text, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4.r),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 10.sp,
-          color: color,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -188,10 +171,7 @@ class _MinimalProductViewState extends State<MinimalProductView> {
     return Container(
       alignment: alignment,
       padding: EdgeInsets.symmetric(horizontal: 20.w),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-      ),
+      decoration: BoxDecoration(color: color),
       child: Icon(icon, color: Colors.white, size: 28.sp),
     );
   }

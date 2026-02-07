@@ -39,7 +39,7 @@ class CustomDropdown extends StatelessWidget {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surface,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
         prefixIcon: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: HugeIcon(

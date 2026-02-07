@@ -88,7 +88,8 @@ class TextStyles {
   }) => TextStyle(
     decoration: TextDecoration.none,
     color: color ?? Theme.of(context).colorScheme.onSurface,
-    fontSize: (fontSize ?? 14.0).sp,
-    fontWeight: FontWeight.w600,
+    fontSize: (fontSize ?? 12.0).sp,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Nonito',
   );
 }
