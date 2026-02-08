@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/printer/presentation/invoiceModels/first/pages/first_footer.dart';
 import 'package:e_tantana/features/printer/presentation/invoiceModels/first/pages/first_header.dart';
@@ -8,17 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class First extends StatelessWidget {
+  final double totalProducts;
   final OrderEntities order;
-  final ProductEntities product;
-  final double unitPrice;
-  final double delivery;
+  final List<MapData> orderList;
+  final double deliveryCost;
   final double grandTotal;
   const First({
     super.key,
+    required this.totalProducts,
     required this.order,
-    required this.product,
-    required this.delivery,
-    required this.unitPrice,
+    required this.deliveryCost,
+    required this.orderList,
     required this.grandTotal,
   });
 
@@ -34,11 +35,15 @@ class First extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // label -------------
-            FirstLabel(order: order, delivery: delivery, unitPrice: unitPrice),
+            FirstLabel(
+              order: order,
+              delivery: deliveryCost,
+              totalProducts: totalProducts,
+            ),
             // cute here ---------
             CuteHere(),
             // invoice header ----------
-            FirstHeader(order: order, product: product),
+            FirstHeader(order: order, orderList: orderList),
             // invoice body ----
             Table(
               columnWidths: const {
@@ -49,7 +54,7 @@ class First extends StatelessWidget {
               children: [
                 TableRow(
                   decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.black)),
+                    border: Border(bottom: BorderSide(color: Colors.black12)),
                   ),
                   children: [
                     _tableHeader("Prix unit."),
@@ -57,22 +62,26 @@ class First extends StatelessWidget {
                     _tableHeader("Total"),
                   ],
                 ),
-                TableRow(
-                  children: [
-                    _tableCell("${unitPrice.toInt()} Ar"),
-                    _tableCell("${order.quantity ?? 1}"),
-                    _tableCell(
-                      "${unitPrice.toInt() * order.quantity!.toInt()} Ar",
-                    ),
-                  ],
-                ),
+                ...orderList.map((item) {
+                  final int price = item["unit_price"]?.toInt() ?? 0;
+                  final int qty = item["quantity"] ?? 1;
+                  final int total = price * qty;
+
+                  return TableRow(
+                    children: [
+                      _tableCell("$price Ar"),
+                      _tableCell("$qty"),
+                      _tableCell("$total Ar"),
+                    ],
+                  );
+                }),
               ],
             ),
             SizedBox(height: 15.h),
 
             _buildTotalLine(
               "Frais de livraison ==>",
-              "${delivery.toInt()} Ar",
+              "${deliveryCost.toInt()} Ar",
               isBold: false,
             ),
             Divider(color: Colors.black),

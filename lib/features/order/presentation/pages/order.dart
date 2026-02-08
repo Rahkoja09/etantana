@@ -12,6 +12,7 @@ import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class Order extends ConsumerStatefulWidget {
@@ -97,6 +98,7 @@ class _OrderState extends ConsumerState<Order> {
     final displayData = isInitialLoading ? skeletonData : allOrder;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -137,7 +139,6 @@ class _OrderState extends ConsumerState<Order> {
                                     ? 1
                                     : 0),
                             itemBuilder: (context, index) {
-                              // GARDER TA LOGIQUE DE SKELETON (Pagination) ----------
                               if (index == displayData.length - 1 &&
                                   isFetching) {
                                 return Skeletonizer(
@@ -251,12 +252,29 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
 
   return Padding(
     padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
-    child: Text(
-      headerText,
-      style: TextStyles.bodyMedium(
-        context: context,
-        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3),
-      ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Spacer(),
+
+        Text(
+          headerText,
+          style: TextStyles.bodyText(
+            context: context,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(width: 4),
+        HugeIcon(
+          icon: HugeIcons.strokeRoundedCalendar01,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+          size: 17,
+        ),
+        Spacer(),
+      ],
     ),
   );
 }

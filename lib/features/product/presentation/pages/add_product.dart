@@ -10,6 +10,7 @@ import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
 import 'package:e_tantana/shared/widget/input/custom_toggle.dart';
 import 'package:e_tantana/shared/widget/input/switch_button.dart';
+import 'package:e_tantana/shared/widget/others/mini_text_card.dart';
 import 'package:e_tantana/shared/widget/others/separator_background.dart';
 import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';

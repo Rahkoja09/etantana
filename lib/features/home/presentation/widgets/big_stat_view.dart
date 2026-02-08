@@ -27,6 +27,10 @@ class BigStatView extends StatelessWidget {
       height: 110,
       padding: EdgeInsets.all(StylesConstants.spacerContent),
       decoration: BoxDecoration(
+        border: Border.all(
+          width: 0.2,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+        ),
         color: Theme.of(context).colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
       ),

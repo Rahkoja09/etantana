@@ -6,12 +6,12 @@ import 'package:hugeicons/hugeicons.dart';
 
 class FirstLabel extends StatelessWidget {
   final OrderEntities order;
-  final double unitPrice;
+  final double totalProducts;
   final double delivery;
   const FirstLabel({
     super.key,
     required this.order,
-    required this.unitPrice,
+    required this.totalProducts,
     required this.delivery,
   });
 
@@ -69,7 +69,7 @@ class FirstLabel extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(border: Border.all(width: 3, color: color)),
           child: Text(
-            "Prix: ${unitPrice.toInt() * order.quantity!.toInt()} Ar + ${delivery.toInt()} Ar frais de liv.",
+            "Prix: ${totalProducts.toInt() * order.quantity!.toInt()} Ar + ${delivery.toInt()} Ar frais de liv.",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: "Nonito",

@@ -1,8 +1,17 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
+
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
+import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
+import 'package:e_tantana/features/order/presentation/widget/multiple_product_view_order.dart';
 import 'package:e_tantana/features/order/presentation/widget/select_product.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
@@ -14,29 +23,27 @@ import 'package:e_tantana/shared/widget/input/item_manager_section.dart';
 import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/loading/loading.dart';
+import 'package:e_tantana/shared/widget/others/mini_text_card.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/text/horizontal_divider.dart';
 import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/show_input_error.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class AddOrder extends ConsumerStatefulWidget {
-  final ProductEntities? productToOrder;
-  const AddOrder({super.key, this.productToOrder});
+  List<MapData>? orderListToOrderWithQuantity;
+  final List<ProductEntities?>? productToOrder;
+  AddOrder({super.key, this.productToOrder, this.orderListToOrderWithQuantity});
 
   @override
   ConsumerState<AddOrder> createState() => _AddOrderState();
 }
 
 class _AddOrderState extends ConsumerState<AddOrder> {
-  int qteProduit = 0;
+  int qteProduit = 1;
   String? variantsForServer;
   String? selectedStatus;
-  dynamic selectedProductEntity;
+  List<ProductEntities?>? selectedProductEntity;
 
   TextEditingController clientName = TextEditingController();
   TextEditingController clientTel = TextEditingController();
@@ -69,6 +76,12 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   String? errorProdQty;
   String? errorStatus;
 
+  Future<void> updateHomeDashboard() async {
+    await ref
+        .read(dashboardStatsControllerProvider.notifier)
+        .getDashboardStats();
+  }
+
   bool _validateFields() {
     setState(() {
       // Validation Produit ----------
@@ -95,6 +108,28 @@ class _AddOrderState extends ConsumerState<AddOrder> {
         errorClientTel == null &&
         errorAdrsClient == null &&
         errorDeliveryCosts == null;
+  }
+
+  double calculateTotal(
+    List<ProductEntities?> actualProducts,
+    List<MapData> orderListe,
+  ) {
+    double total = 0;
+    for (var item in orderListe) {
+      final String currentId = item["id"];
+      final int quantity = item["quantity"];
+      for (var product in actualProducts) {
+        if (product!.id == currentId) {
+          final price = (product!.sellingPrice ?? 0).toDouble();
+          setState(() {
+            total += price * quantity;
+          });
+          break;
+        }
+      }
+    }
+
+    return total;
   }
 
   @override
@@ -146,42 +181,133 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SelectProduct(
-                    selectedProduct: selectedProductEntity,
-                    onChanged: (selectionProduct) {
-                      setState(() {
-                        selectedProductEntity = selectionProduct;
-                      });
-                    },
-                  ),
+                  if (selectedProductEntity == null ||
+                      selectedProductEntity!.length == 1)
+                    SelectProduct(
+                      selectedProduct: selectedProductEntity?[0],
+                      onChanged: (selectionProduct) {
+                        setState(() {
+                          selectedProductEntity = [selectionProduct];
+                          widget.orderListToOrderWithQuantity = [
+                            {
+                              "id": selectionProduct!.id,
+                              "quantity": qteProduit,
+                              "unit_price": selectionProduct.sellingPrice,
+                              "product_name": selectionProduct.name,
+                              "purchase_price": selectionProduct.purchasePrice,
+                            },
+                          ];
+                        });
+                      },
+                    ),
+                  if (selectedProductEntity != null &&
+                      selectedProductEntity!.length > 1) ...[
+                    Container(
+                      padding: EdgeInsets.all(StylesConstants.spacerContent),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          StylesConstants.borderRadius,
+                        ),
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.2),
+                          width: 0.7,
+                        ),
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.08),
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.1),
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.20),
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.30),
+                          ],
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MediumTitleWithDegree(
+                            showDegree: false,
+                            title: "Détails du panier",
+                          ),
+
+                          Row(
+                            children: [
+                              MiniTextCard(
+                                text:
+                                    "${calculateTotal(selectedProductEntity!, widget.orderListToOrderWithQuantity!)} Ar",
+                                icon: HugeIcons.strokeRoundedMoney03,
+                              ),
+                              SizedBox(width: 5),
+                              MiniTextCard(
+                                text:
+                                    "${widget.productToOrder!.length} Articles",
+                                icon: HugeIcons.strokeRoundedShoppingCart01,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 30),
+                          MediumTitleWithDegree(
+                            showDegree: false,
+                            title: "Les Produits",
+                          ),
+                          MultipleProductViewOrder(
+                            productsToOrder: selectedProductEntity!,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
                   ShowInputError(message: errorProdName),
 
                   SizedBox(height: 20.h),
 
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3),
-                        width: 0.5,
+                  if (widget.productToOrder == null ||
+                      widget.productToOrder!.length == 1)
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.3),
+                          width: 0.5,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          StylesConstants.borderRadius,
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(
-                        StylesConstants.borderRadius,
+                      child: NumberInput(
+                        value: qteProduit.toInt(),
+                        title: "Quantité produit(s)",
+                        onValueChanged: (qte) {
+                          setState(() {
+                            qteProduit = qte;
+                            widget.orderListToOrderWithQuantity = [
+                              {
+                                "id": selectedProductEntity?[0]?.id,
+                                "quantity": qte,
+                                "unit_price":
+                                    selectedProductEntity?[0]?.sellingPrice,
+                                "product_name": selectedProductEntity?[0]?.name,
+                                "purchase_price":
+                                    selectedProductEntity?[0]?.purchasePrice,
+                              },
+                            ];
+                          });
+                        },
                       ),
                     ),
-                    child: NumberInput(
-                      value: qteProduit,
-                      title: "Quantité(s) Commandé *",
-                      onValueChanged: (qte) {
-                        setState(() {
-                          qteProduit = qte;
-                        });
-                      },
-                    ),
-                  ),
                   ShowInputError(message: errorProdQty),
 
                   SizedBox(height: 20.h),
@@ -298,28 +424,47 @@ class _AddOrderState extends ConsumerState<AddOrder> {
         },
         onValidate: () async {
           if (_validateFields()) {
+            final firstProduct = selectedProductEntity?.firstOrNull;
+
+            if (firstProduct == null) {
+              setState(() => errorProdName = "Veuillez choisir un produit");
+              return;
+            }
+
             final orderData = OrderEntities(
               clientAdrs: clientAdrs.text.trim(),
               clientName: clientName.text.trim(),
               clientTel: clientTel.text.trim(),
               deliveryCosts: fraisDeLiv.text.trim(),
               details: variantsForServer,
-              productId: selectedProductEntity.id,
+              productsAndQuantities: widget.orderListToOrderWithQuantity,
               quantity: qteProduit,
               status: selectedStatus,
             );
             await orderAction.insertOrder(orderData);
-
-            final updates = selectedProductEntity.copyWith(
-              quantity: (selectedProductEntity.quantity - qteProduit),
-            );
-            await productAction.updateProduct(updates);
+            for (
+              int i = 0;
+              i < widget.orderListToOrderWithQuantity!.length;
+              i++
+            ) {
+              await productAction.getProductById(
+                widget.orderListToOrderWithQuantity![i]["id"],
+              );
+              final updates = selectedProductEntity![i]!.copyWith(
+                id: widget.orderListToOrderWithQuantity![i]["id"],
+                quantity:
+                    ((selectedProductEntity![i]!.quantity!) -
+                            (widget
+                                .orderListToOrderWithQuantity![i]["quantity"]))
+                        .toInt(),
+              );
+              await productAction.updateProduct(updates);
+            }
             await productAction.researchProduct(null);
+            await updateHomeDashboard();
 
             // réinitialiser les inputs -------------
-            setState(() {
-              qteProduit = 0;
-            });
+            qteProduit = 0;
             variantsForServer = null;
             selectedStatus = null;
             selectedProductEntity;

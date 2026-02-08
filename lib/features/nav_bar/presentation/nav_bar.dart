@@ -9,9 +9,11 @@ import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
+import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -78,97 +80,122 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
     return false;
   }
 
+  DateTime? _lastPressedAt;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-          extendBody: true,
-          appBar: const AppBarCustom(),
-          //endDrawer: const SideBar(),
+        PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
 
-          // IndexedStack save state of pages ----------
-          body: NotificationListener<ScrollNotification>(
-            onNotification: onScrollNotification,
-            child: IndexedStack(
-              index: _bottomNavIndex,
-              children: [
-                Home(),
-                Product(),
-                Order(),
-                Exemple(),
-                /*PrinterView(
-                  order:
-                      widget.order ??
-                      OrderEntities(
-                        id: "Null",
-                        createdAt: DateTime.now(),
-                        status: "Null",
-                        productId: "Null",
-                        quantity: 0,
-                        details: "Null",
-                        clientName: "Rakoto",
-                        clientTel: "03x xx xxx xx",
-                        clientAdrs: "xxxx, xxx, Antananarivo",
-                        deliveryCosts: "xxxx.x Ar",
-                        invoiceLink: "",
-                      ),
-                ),*/
-              ],
-            ),
-          ),
+            final now = DateTime.now();
 
-          floatingActionButton: ScaleTransition(
-            scale: fabAnimation,
-            child: FloatingActionButton(
-              shape: const CircleBorder(),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              child: const Icon(
-                HugeIcons.strokeRoundedAdd01,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                _showEditOptionsDialog(context);
-              },
-            ),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+            if (_lastPressedAt == null ||
+                now.difference(_lastPressedAt!) > const Duration(seconds: 2)) {
+              _lastPressedAt = now;
 
-          bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-            borderColor: Theme.of(context).colorScheme.surfaceContainer,
-            itemCount: _iconList.length,
-            tabBuilder: (int index, bool isActive) {
-              final color =
-                  isActive
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurfaceVariant;
-
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(_iconList[index], size: 20.w, color: color),
-                  SizedBox(height: 2.h),
-                  Text(
-                    _getLabel(index),
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              showToast(
+                context,
+                title: "Quitter l'application",
+                description: "Appuyez encore pour quitter",
+                isError: true,
               );
-            },
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            activeIndex: _bottomNavIndex,
-            splashColor: Theme.of(context).colorScheme.primary,
-            notchSmoothness: NotchSmoothness.softEdge,
-            gapLocation: GapLocation.center,
-            onTap: (index) => setState(() => _bottomNavIndex = index),
-            hideAnimationController: _hideBottomBarAnimationController,
+              return;
+            }
+
+            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+          },
+          child: Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+            extendBody: true,
+            appBar: const AppBarCustom(),
+            //endDrawer: const SideBar(),
+
+            // IndexedStack save state of pages ----------
+            body: NotificationListener<ScrollNotification>(
+              onNotification: onScrollNotification,
+              child: IndexedStack(
+                index: _bottomNavIndex,
+                children: [
+                  Home(),
+                  Product(),
+                  Order(),
+                  Exemple(),
+                  /*PrinterView(
+                    order:
+                        widget.order ??
+                        OrderEntities(
+                          id: "Null",
+                          createdAt: DateTime.now(),
+                          status: "Null",
+                          productId: "Null",
+                          quantity: 0,
+                          details: "Null",
+                          clientName: "Rakoto",
+                          clientTel: "03x xx xxx xx",
+                          clientAdrs: "xxxx, xxx, Antananarivo",
+                          deliveryCosts: "xxxx.x Ar",
+                          invoiceLink: "",
+                        ),
+                  ),*/
+                ],
+              ),
+            ),
+
+            floatingActionButton: ScaleTransition(
+              scale: fabAnimation,
+              child: FloatingActionButton(
+                shape: const CircleBorder(),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: const Icon(
+                  HugeIcons.strokeRoundedAdd01,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  _showEditOptionsDialog(context);
+                },
+              ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+
+            bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+              borderColor: Theme.of(context).colorScheme.surfaceContainer,
+              itemCount: _iconList.length,
+              tabBuilder: (int index, bool isActive) {
+                final color =
+                    isActive
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurfaceVariant;
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(_iconList[index], size: 20.w, color: color),
+                    SizedBox(height: 2.h),
+                    Text(
+                      _getLabel(index),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                );
+              },
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              activeIndex: _bottomNavIndex,
+              splashColor: Theme.of(context).colorScheme.primary,
+              notchSmoothness: NotchSmoothness.softEdge,
+              gapLocation: GapLocation.center,
+              onTap: (index) => setState(() => _bottomNavIndex = index),
+              hideAnimationController: _hideBottomBarAnimationController,
+            ),
           ),
         ),
       ],
@@ -255,7 +282,7 @@ void _showEditOptionsDialog(BuildContext context) {
                     Navigator.pop(sheetContext);
                     Navigator.of(
                       context,
-                    ).push(MaterialPageRoute(builder: (_) => const AddOrder()));
+                    ).push(MaterialPageRoute(builder: (_) => AddOrder()));
                   },
                   isActive: true,
                 ),

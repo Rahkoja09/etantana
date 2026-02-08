@@ -167,11 +167,11 @@ class _SelectProductState extends ConsumerState<SelectProduct> {
                   }
                 }
               },
-              textHint: "CLIQUEZ POUR CHOISIR UN PRODUIT",
+              textHint: "CLIQUEZ POUR CHOISIR UN PRODUIT".toLowerCase(),
               value: selectedProductId,
             ),
 
-            // --- MESSAGE D'ERREUR ---
+            // MESSAGE D'ERREUR -------
             if (isNotSelected)
               Padding(
                 padding: EdgeInsets.only(top: 8.h, left: 4.w),

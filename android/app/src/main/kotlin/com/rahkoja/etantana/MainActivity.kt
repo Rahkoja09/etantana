@@ -1,4 +1,4 @@
-package com.example.e_tantana
+package com.rahkoja.etantana
 
 import io.flutter.embedding.android.FlutterActivity
 

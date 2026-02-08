@@ -3,6 +3,7 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/utils/tools/name_more_short.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
+import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,8 @@ class MinimalProductView extends StatefulWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onOrder;
+  final ValueChanged<int> selectedQuantity;
+  final bool? isSelected;
 
   const MinimalProductView({
     super.key,
@@ -23,6 +26,8 @@ class MinimalProductView extends StatefulWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onOrder,
+    required this.selectedQuantity,
+    this.isSelected = false,
   });
 
   @override
@@ -63,34 +68,31 @@ class _MinimalProductViewState extends State<MinimalProductView> {
       child: GestureDetector(
         onTap: widget.onEdit,
         child: Container(
-          height: 70.h,
-          margin: EdgeInsets.symmetric(vertical: 0.h, horizontal: 0.w),
-
+          height: 80.h,
+          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+            border: Border.all(
+              width: 0.2,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.3),
+            ),
             color:
                 outOfStock
                     ? Theme.of(
                       context,
                     ).colorScheme.error.withValues(alpha: 0.15)
-                    : Theme.of(context).colorScheme.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+                    : Theme.of(context).colorScheme.surface,
           ),
           child: Row(
             children: [
-              SizedBox(width: 5.w),
-              Text(
-                "${widget.index}",
-                maxLines: 1,
-                style: TextStyles.bodyText(
-                  context: context,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              SizedBox(width: 18.w),
+              if (widget.isSelected!) ...[
+                Checkbox(value: true, onChanged: (value) {}),
+                SizedBox(width: 18.w),
+              ],
               ClipRRect(
-                borderRadius: BorderRadius.circular(
-                  StylesConstants.borderRadius,
-                ),
+                borderRadius: BorderRadius.circular(5),
                 child: SizedBox(
                   width: 58.w,
                   height: 58.h,
@@ -106,55 +108,73 @@ class _MinimalProductViewState extends State<MinimalProductView> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      NameMoreShort().shortenName(
-                            widget.product.name!.toUpperCase(),
-                            30,
-                          ) ??
-                          "Sans nom",
-                      maxLines: 1,
-                      style: TextStyles.bodyMedium(
-                        context: context,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          NameMoreShort().shortenName(
+                                widget.product.name!,
+                                30,
+                              ) ??
+                              "Sans nom",
+                          maxLines: 1,
+                          style: TextStyles.bodyText(
+                            context: context,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 3.h),
+                        Text(
+                          outOfStock
+                              ? "Rupture de Stock"
+                              : "Stock . ${widget.product.quantity}",
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color:
+                                outOfStock
+                                    ? Colors.red.shade400
+                                    : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.4),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "${widget.product.sellingPrice ?? 0} Ar",
-                      style: TextStyles.bodyText(
-                        context: context,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.4),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "Ar ${widget.product.sellingPrice ?? 0}",
+                              style: TextStyles.bodySmall(
+                                context: context,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                          child: NumberInput(
+                            value: 0,
+                            onValueChanged: (value) {
+                              setState(() => widget.selectedQuantity(value));
+                            },
+                            noBorder: true,
+                            minValue: 0,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    "Stock",
-                    style: TextStyles.bodyMedium(
-                      context: context,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  Text(
-                    outOfStock ? "Rupture" : "${widget.product.quantity}",
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: outOfStock ? Colors.red.shade400 : Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+
               SizedBox(width: 5.w),
             ],
           ),

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.e_tantana"
+    namespace = "com.rahkoja.etantana"
     compileSdk = 35
     ndkVersion = "27.0.12077973"
 
@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.mobile.fonenako"
+        applicationId = "com.rahkoja.etantana"
         minSdk = 23
         targetSdk = 33
         versionCode = 1

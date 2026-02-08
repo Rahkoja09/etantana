@@ -42,7 +42,7 @@ class OrderDataSourceImpl implements OrderDataSource {
                 'status': entity.status,
                 'quantity': entity.quantity,
                 'invoice_link': entity.invoiceLink,
-                'product_id': entity.productId,
+                'products_and_quantities': entity.productsAndQuantities,
                 'client_name': entity.clientName,
                 'client_tel': entity.clientTel,
                 'client_adrs': entity.clientAdrs,
@@ -71,7 +71,7 @@ class OrderDataSourceImpl implements OrderDataSource {
       if (criterial != null) {
         final status = criterial.status;
         final invoiceLink = criterial.invoiceLink;
-        final productId = criterial.productId;
+        final productsAndQuantities = criterial.productsAndQuantities;
         final quantity = criterial.quantity;
         final details = criterial.details;
         final clientName = criterial.clientName;
@@ -80,7 +80,9 @@ class OrderDataSourceImpl implements OrderDataSource {
 
         if (status != null) query = query.eq("status", status);
         if (invoiceLink != null) query = query.eq("invoice_link", invoiceLink);
-        if (productId != null) query = query.eq("product_id", productId);
+        if (productsAndQuantities != null) {
+          query = query.eq("products_and_quantities", productsAndQuantities);
+        }
         if (quantity != null) query = query.eq("quantity", quantity);
         if (details != null) query = query.eq("details", details);
         if (clientName != null) {

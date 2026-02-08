@@ -184,7 +184,7 @@ class MediaServiceImpl implements MediaServices {
         video: videoPath,
         imageFormat: ImageFormat.JPEG,
         maxWidth: 200,
-        quality: 50,
+        quality: 30,
       );
 
       if (bytes == null) return null;

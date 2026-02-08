@@ -8,7 +8,7 @@ class OrderModel extends OrderEntities {
     super.quantity,
     super.status,
     super.invoiceLink,
-    super.productId,
+    super.productsAndQuantities,
     super.details,
     super.clientName,
     super.clientTel,
@@ -23,7 +23,12 @@ class OrderModel extends OrderEntities {
       quantity: data["quantity"],
       createdAt: DateTime.parse(data['created_at']),
       invoiceLink: data['invoice_link'],
-      productId: data['product_id'],
+      productsAndQuantities:
+          data['products_and_quantities'] != null
+              ? (data['products_and_quantities'] as List)
+                  .map((item) => Map<String, dynamic>.from(item))
+                  .toList()
+              : null,
       clientName: data['client_name'],
       clientTel: data['client_tel'],
       clientAdrs: data['client_adrs'],
@@ -39,7 +44,7 @@ class OrderModel extends OrderEntities {
       'status': status,
       'quantity': quantity,
       'invoice_link': invoiceLink,
-      'product_id': productId,
+      'products_and_quantities': productsAndQuantities,
       'client_name': clientName,
       'client_tel': clientTel,
       'client_adrs': clientAdrs,
@@ -55,7 +60,7 @@ class OrderModel extends OrderEntities {
       quantity: entity.quantity,
       createdAt: entity.createdAt,
       status: entity.status,
-      productId: entity.productId,
+      productsAndQuantities: entity.productsAndQuantities,
       clientName: entity.clientName,
       clientTel: entity.clientTel,
       clientAdrs: entity.clientAdrs,
@@ -69,7 +74,7 @@ class OrderModel extends OrderEntities {
     DateTime? createdAt,
     String? status,
     String? invoiceLink,
-    String? productId,
+    List<MapData>? productsAndQuantities,
     int? quantity,
     String? details,
     String? clientName,
@@ -85,7 +90,8 @@ class OrderModel extends OrderEntities {
       createdAt: createdAt ?? this.createdAt,
       details: details ?? this.details,
       invoiceLink: invoiceLink ?? this.invoiceLink,
-      productId: productId ?? this.productId,
+      productsAndQuantities:
+          productsAndQuantities ?? this.productsAndQuantities,
       quantity: quantity ?? this.quantity,
       status: status ?? this.status,
       deliveryCosts: deliveryCosts ?? this.deliveryCosts,

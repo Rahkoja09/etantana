@@ -27,9 +27,14 @@ class PresentationCard extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: 400),
         padding: EdgeInsets.all(StylesConstants.spacerContent),
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.surface),
+          border: Border.all(
+            width: 0.2,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
+          ),
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,11 +50,15 @@ class PresentationCard extends StatelessWidget {
                 style: TextStyles.titleSmall(
                   context: context,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 children: [
                   TextSpan(
                     text: bodyText,
-                    style: TextStyles.titleMedium(context: context),
+                    style: TextStyles.titleMedium(
+                      context: context,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),

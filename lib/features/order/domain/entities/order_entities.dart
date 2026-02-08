@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:equatable/equatable.dart';
 
 class OrderEntities extends Equatable {
@@ -5,7 +6,7 @@ class OrderEntities extends Equatable {
   final DateTime? createdAt;
   final String? status;
   final String? invoiceLink;
-  final String? productId;
+  final List<MapData>? productsAndQuantities;
   final int? quantity;
   final String? details;
   final String? clientName;
@@ -18,7 +19,7 @@ class OrderEntities extends Equatable {
     this.createdAt,
     this.status,
     this.invoiceLink,
-    this.productId,
+    this.productsAndQuantities,
     this.quantity,
     this.details,
     this.clientName,
@@ -33,7 +34,7 @@ class OrderEntities extends Equatable {
     createdAt,
     status,
     invoiceLink,
-    productId,
+    productsAndQuantities,
     quantity,
     details,
     clientName,

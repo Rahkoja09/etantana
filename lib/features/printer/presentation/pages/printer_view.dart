@@ -31,44 +31,29 @@ class PrinterView extends ConsumerStatefulWidget {
 }
 
 class _PrinterViewState extends ConsumerState<PrinterView> {
-  ProductEntities product = ProductEntities();
   final ScreenshotController _screenshotController = ScreenshotController();
   final medias = sl<MediaServices>();
 
-  double _unitPrice = 0;
   double _deliveryCosts = 0;
 
   @override
   void initState() {
     super.initState();
     _deliveryCosts = double.tryParse(widget.order.deliveryCosts ?? '0') ?? 0.0;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _getProduct();
-      _showEditPricesDialog(widget.order.deliveryCosts!);
-    });
-  }
-
-  Future<void> _getProduct() async {
-    await ref
-        .read(productControllerProvider.notifier)
-        .getProductById(widget.order.productId!);
   }
 
   @override
   Widget build(BuildContext context) {
-    final double totalProducts = _unitPrice * (widget.order.quantity ?? 1);
-    final double grandTotal = totalProducts + _deliveryCosts;
-    final productState = ref.watch(productControllerProvider);
-
-    ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.product != null && next.isLoading == false) {
-        setState(() {
-          product = next.product![0];
-          _unitPrice = product.sellingPrice ?? 0.0;
-        });
+    double totalProducts = 0.0;
+    if (widget.order.productsAndQuantities != null) {
+      for (int i = 0; i < widget.order.productsAndQuantities!.length; i++) {
+        totalProducts +=
+            widget.order.productsAndQuantities![i]["unit_price"] *
+            (widget.order.productsAndQuantities![i]["quantity"] ?? 1);
       }
-    });
+    }
+    print('le prix total est : =====> $totalProducts');
+    final double grandTotal = totalProducts + _deliveryCosts;
     return Scaffold(
       appBar: SimpleAppbar(
         title: "Facturation commande",
@@ -91,10 +76,10 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 minScale: 0.1,
                 maxScale: 4.0,
                 child: First(
+                  totalProducts: totalProducts,
+                  orderList: widget.order.productsAndQuantities ?? [],
                   order: widget.order,
-                  product: product,
-                  delivery: _deliveryCosts,
-                  unitPrice: _unitPrice,
+                  deliveryCost: _deliveryCosts,
                   grandTotal: grandTotal,
                 ),
               ),
@@ -105,10 +90,8 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
             bottom: 10.h,
             left: 10.w,
             right: 10.w,
-            child: _buildToolbar(grandTotal, widget.order),
+            child: _buildToolbar(grandTotal, widget.order, totalProducts),
           ),
-
-          if (productState.isLoading) Loading(),
         ],
       ),
     );
@@ -123,7 +106,11 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
     );
   }
 
-  Widget _buildToolbar(double grandTotal, OrderEntities order) {
+  Widget _buildToolbar(
+    double grandTotal,
+    OrderEntities order,
+    double totalProducts,
+  ) {
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surface,
@@ -155,10 +142,10 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 order.clientName!,
                 _screenshotController,
                 First(
+                  totalProducts: totalProducts,
+                  orderList: widget.order.productsAndQuantities!,
                   order: widget.order,
-                  product: product,
-                  delivery: _deliveryCosts,
-                  unitPrice: _unitPrice,
+                  deliveryCost: _deliveryCosts,
                   grandTotal: grandTotal,
                 ),
               );
@@ -177,10 +164,10 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 order.clientName!,
                 _screenshotController,
                 First(
+                  totalProducts: totalProducts,
+                  orderList: widget.order.productsAndQuantities!,
                   order: widget.order,
-                  product: product,
-                  delivery: _deliveryCosts,
-                  unitPrice: _unitPrice,
+                  deliveryCost: _deliveryCosts,
                   grandTotal: grandTotal,
                 ),
               );
@@ -199,10 +186,10 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 order.clientName!,
                 _screenshotController,
                 First(
+                  totalProducts: totalProducts,
+                  orderList: widget.order.productsAndQuantities!,
                   order: widget.order,
-                  product: product,
-                  delivery: _deliveryCosts,
-                  unitPrice: _unitPrice,
+                  deliveryCost: _deliveryCosts,
                   grandTotal: grandTotal,
                 ),
               );
@@ -236,7 +223,6 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
   }
 
   void _showEditPricesDialog(String deliveryCosts) {
-    final priceController = TextEditingController(text: _unitPrice.toString());
     final deliveryController = TextEditingController(
       text: _deliveryCosts.toString(),
     );
@@ -249,14 +235,6 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MediumTitleWithDegree(showDegree: false, title: "Prix unitaire"),
-          SimpleInput(
-            textHint: "prix unitaire",
-            iconData: HugeIcons.strokeRoundedMoney02,
-            textEditControlleur: priceController,
-            maxLines: 1,
-          ),
-          SizedBox(height: 15.h),
           MediumTitleWithDegree(showDegree: false, title: "Frais de livraison"),
           SimpleInput(
             textHint: "Frais de Liv.",
@@ -278,7 +256,6 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
               Button(
                 onTap: () {
                   setState(() {
-                    _unitPrice = double.tryParse(priceController.text) ?? 0.0;
                     _deliveryCosts =
                         double.tryParse(deliveryController.text) ?? 0.0;
                   });

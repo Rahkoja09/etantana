@@ -9,7 +9,9 @@ class NumberInput extends StatefulWidget {
   final IconData minusIcon;
   final IconData plusIcon;
   final Color? backgroundColor;
-  final String title;
+  final String? title;
+  final double? height;
+  final bool? noBorder;
 
   const NumberInput({
     super.key,
@@ -19,7 +21,9 @@ class NumberInput extends StatefulWidget {
     this.minusIcon = Icons.remove,
     this.plusIcon = Icons.add,
     this.backgroundColor,
-    this.title = "Title of section",
+    this.title,
+    this.height,
+    this.noBorder = false,
   });
 
   @override
@@ -56,77 +60,90 @@ class _NumberInputState extends State<NumberInput> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          widget.title,
-          style: TextStyles.bodyText(
-            context: context,
-            fontWeight: FontWeight.bold,
+        if (widget.title != null)
+          Flexible(
+            child: Text(
+              widget.title!,
+              style: TextStyles.bodyText(
+                context: context,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
+
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+          height: widget.height ?? 35.h,
           decoration: BoxDecoration(
             color:
                 widget.backgroundColor ??
                 Theme.of(context).colorScheme.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
-              color: Theme.of(
-                context,
-              ).colorScheme.outline.withValues(alpha: 0.3),
-              width: 1,
+              color:
+                  widget.noBorder!
+                      ? Colors.transparent
+                      : Theme.of(
+                        context,
+                      ).colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
+              _buildCompactButton(
+                icon: widget.minusIcon,
                 onPressed: currentValue > widget.minValue ? _decrement : null,
-                icon: Icon(
-                  widget.minusIcon,
-                  size: 18.sp,
-                  color:
-                      currentValue > widget.minValue
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
-                ),
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(minWidth: 24.w, minHeight: 24.h),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shape: const CircleBorder(),
-                ),
+                enabled: currentValue > widget.minValue,
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Text(
-                  '$currentValue',
-                  style: TextStyles.bodyText(
-                    context: context,
-                    fontWeight: FontWeight.bold,
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Center(
+                  child: Text(
+                    '$currentValue',
+                    style: TextStyles.bodyText(
+                      context: context,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-              IconButton(
+
+              _buildCompactButton(
+                icon: widget.plusIcon,
                 onPressed: _increment,
-                icon: Icon(
-                  widget.plusIcon,
-                  size: 18.sp,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(minWidth: 24.w, minHeight: 24.h),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shape: const CircleBorder(),
-                ),
+                enabled: true,
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCompactButton({
+    required IconData icon,
+    VoidCallback? onPressed,
+    required bool enabled,
+  }) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 30.w,
+        height: double.infinity,
+        decoration: BoxDecoration(color: Colors.transparent),
+        child: Icon(
+          icon,
+          size: 16.sp,
+          color:
+              enabled
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
+        ),
+      ),
     );
   }
 }

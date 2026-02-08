@@ -1,10 +1,12 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
+import 'package:e_tantana/features/product/presentation/widgets/order_summary_floating_bar.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
@@ -34,6 +36,11 @@ class _ProductState extends ConsumerState<Product> {
   bool showPopUp = false;
   ProductEntities? selectionForActionProduct;
   String currentFilter = "Tous";
+  int listVersion = 0;
+
+  // list des commandes - cmd multiple ---------
+  List<MapData> orderList = [];
+  List<ProductEntities> productsToOrde = [];
 
   // list des critères ---------
   List<String> criterialListSort = ["Tous", "Futurs produits", "Stock zéro"];
@@ -50,6 +57,37 @@ class _ProductState extends ConsumerState<Product> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getProduct();
     });
+  }
+
+  // multiple order actions --------
+  void handleRestore() {
+    setState(() {
+      orderList.clear();
+      productsToOrde.clear();
+      listVersion++;
+    });
+  }
+
+  double calculateTotal(List<ProductEntities> actualProducts) {
+    double total = 0;
+    for (var item in orderList) {
+      final String currentId = item["id"];
+      final int quantity = item["quantity"];
+      for (var product in actualProducts) {
+        if (product.id == currentId) {
+          if (!productsToOrde.contains(product)) {
+            productsToOrde.add(product);
+          }
+          final price = (product.sellingPrice ?? 0).toDouble();
+          setState(() {
+            total += price * quantity;
+          });
+          break;
+        }
+      }
+    }
+
+    return total;
   }
 
   void _onScroll() {
@@ -96,72 +134,93 @@ class _ProductState extends ConsumerState<Product> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.all(StylesConstants.spacerContent),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerLow,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3),
+                if (orderList.isNotEmpty)
+                  OrderSummaryFloatingBar(
+                    itemCount: orderList.length,
+                    onCancel: () {
+                      handleRestore();
+                    },
+                    onRestore: () {},
+                    onValidate: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (_) => AddOrder(
+                                productToOrder: productsToOrde,
+                                orderListToOrderWithQuantity: orderList,
+                              ),
+                        ),
+                      );
+                    },
+                    totalAmount: calculateTotal(actualProducts),
+                  ),
+                if (!orderList.isNotEmpty)
+                  Container(
+                    padding: EdgeInsets.all(StylesConstants.spacerContent),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.3),
+                        ),
                       ),
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FloatingSearchBar(
+                          controller: _searchController,
+                          onSortTap: () {},
+                          hintText: "Rechercher un produit (par son nom)",
+                          onChanged: (val) {
+                            ref
+                                .read(productControllerProvider.notifier)
+                                .researchProduct(ProductEntities(name: val));
+                          },
+                        ),
+                        SizedBox(height: StylesConstants.spacerContent),
+                        FlatChipSelector(
+                          options: criterialListSort,
+                          selectedOption: currentFilter,
+                          onSelect: (value) {
+                            setState(() => currentFilter = value);
+                            switch (value) {
+                              case ("Tous"):
+                                {
+                                  getProduct();
+                                  break;
+                                }
+                              case ("Futurs produits"):
+                                {
+                                  ref
+                                      .read(productControllerProvider.notifier)
+                                      .researchProduct(
+                                        ProductEntities(futureProduct: true),
+                                      );
+                                  break;
+                                }
+                              case ("Stock zéro"):
+                                {
+                                  ref
+                                      .read(productControllerProvider.notifier)
+                                      .researchProduct(
+                                        ProductEntities(quantity: 0),
+                                      );
+                                  break;
+                                }
+                              default:
+                                {
+                                  getProduct();
+                                  break;
+                                }
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FloatingSearchBar(
-                        controller: _searchController,
-                        onSortTap: () {},
-                        hintText: "Rechercher un produit (par son nom)",
-                        onChanged: (val) {
-                          ref
-                              .read(productControllerProvider.notifier)
-                              .researchProduct(ProductEntities(name: val));
-                        },
-                      ),
-                      SizedBox(height: StylesConstants.spacerContent),
-                      FlatChipSelector(
-                        options: criterialListSort,
-                        selectedOption: currentFilter,
-                        onSelect: (value) {
-                          setState(() => currentFilter = value);
-                          switch (value) {
-                            case ("Tous"):
-                              {
-                                getProduct();
-                                break;
-                              }
-                            case ("Futurs produits"):
-                              {
-                                ref
-                                    .read(productControllerProvider.notifier)
-                                    .researchProduct(
-                                      ProductEntities(futureProduct: true),
-                                    );
-                                break;
-                              }
-                            case ("Stock zéro"):
-                              {
-                                ref
-                                    .read(productControllerProvider.notifier)
-                                    .researchProduct(
-                                      ProductEntities(quantity: 0),
-                                    );
-                                break;
-                              }
-                            default:
-                              {
-                                getProduct();
-                                break;
-                              }
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
 
                 Expanded(
                   child: AppRefreshIndicator(
@@ -174,6 +233,7 @@ class _ProductState extends ConsumerState<Product> {
                               effect: LoadingEffect.getCommonEffect(context),
                               ignoreContainers: true,
                               child: ListView.builder(
+                                key: ValueKey(listVersion),
                                 controller:
                                     isInitialLoading ? null : _scrollController,
                                 physics: const AlwaysScrollableScrollPhysics(),
@@ -196,6 +256,7 @@ class _ProductState extends ConsumerState<Product> {
                                         context,
                                       ),
                                       child: MinimalProductView(
+                                        selectedQuantity: (quantity) {},
                                         index: 0,
                                         onDelete: () {},
                                         product: displayList[0],
@@ -212,6 +273,43 @@ class _ProductState extends ConsumerState<Product> {
                                   return Column(
                                     children: [
                                       MinimalProductView(
+                                        isSelected:
+                                            orderList.indexWhere(
+                                                      (element) =>
+                                                          element["id"] ==
+                                                          item.id,
+                                                    ) !=
+                                                    -1
+                                                ? true
+                                                : false,
+                                        selectedQuantity: (quantity) {
+                                          final index = orderList.indexWhere(
+                                            (element) =>
+                                                element["id"] == item.id,
+                                          );
+
+                                          if (quantity > 0) {
+                                            if (index != -1) {
+                                              orderList[index]["quantity"] =
+                                                  quantity;
+                                            } else {
+                                              orderList.add({
+                                                "id": item.id,
+                                                "quantity": quantity,
+                                                "unit_price": item.sellingPrice,
+                                                "product_name": item.name,
+                                                "purchase_price":
+                                                    item.purchasePrice,
+                                              });
+                                            }
+                                          } else {
+                                            if (index != -1) {
+                                              orderList.removeAt(index);
+                                            }
+                                          }
+
+                                          setState(() {});
+                                        },
                                         index: index + 1,
                                         onDelete: () {
                                           setState(() {
@@ -240,19 +338,30 @@ class _ProductState extends ConsumerState<Product> {
                                         onOrder: () {
                                           setState(() {
                                             selectionForActionProduct = item;
+                                            orderList.add({
+                                              "id": item.id,
+                                              "quantity": 1,
+                                              "unit_price": item.sellingPrice,
+                                              "product_name": item.name,
+                                              "purchase_price":
+                                                  item.purchasePrice,
+                                            });
                                           });
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder:
                                                   (_) => AddOrder(
-                                                    productToOrder:
-                                                        selectionForActionProduct,
+                                                    orderListToOrderWithQuantity:
+                                                        orderList,
+                                                    productToOrder: [
+                                                      selectionForActionProduct,
+                                                    ],
                                                   ),
                                             ),
                                           );
                                         },
                                       ),
-                                      SizedBox(height: 15),
+                                      SizedBox(height: 5),
                                     ],
                                   );
                                 },
@@ -264,6 +373,7 @@ class _ProductState extends ConsumerState<Product> {
             ),
           ),
         ),
+
         if (showPopUp)
           TransparentBackgroundPopUp(
             widget: ConfirmationDialogue(

@@ -27,7 +27,7 @@ class MainActionsSection extends StatelessWidget {
                 onTap: () {
                   Navigator.of(
                     context,
-                  ).push(MaterialPageRoute(builder: (_) => const AddOrder()));
+                  ).push(MaterialPageRoute(builder: (_) => AddOrder()));
                 },
               ),
             ),
