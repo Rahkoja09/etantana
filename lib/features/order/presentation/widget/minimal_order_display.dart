@@ -20,41 +20,69 @@ class MinimalOrderDisplay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productState = ref.watch(productControllerProvider);
-
-    String getProductName(String productId) {
-      if (productState.product == null) return "Chargement...";
-
-      try {
-        final product = (productState.product as List<ProductEntities>)
-            .firstWhere((p) => p.id == productId);
-        return product.name ?? "Sans nom";
-      } catch (e) {
-        return "Produit inconnu";
+    double calculateTotal() {
+      double total = 0.0;
+      for (int i = 0; i < order.productsAndQuantities!.length; i++) {
+        total +=
+            order.productsAndQuantities![i]["unit_price"] *
+            order.productsAndQuantities![i]["quantity"];
       }
+      return total + double.tryParse(order.deliveryCosts!)!.toInt();
+    }
+
+    MaterialColor getStatusColor(String status) {
+      MaterialColor statusColors;
+      switch (status) {
+        case ("Validée"):
+          {
+            statusColors = Colors.green;
+            break;
+          }
+        case ("Livrée"):
+          {
+            statusColors = Colors.blue;
+            break;
+          }
+        case ("Annulée"):
+          {
+            statusColors = Colors.red;
+            break;
+          }
+        case ("En Attente de Val."):
+          {
+            statusColors = Colors.grey;
+            break;
+          }
+        default:
+          {
+            statusColors = Colors.green;
+          }
+      }
+      return statusColors;
     }
 
     return Container(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border(
-          top: BorderSide(
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.9),
-            width: 0.5,
-          ),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+          width: 0.2,
         ),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainer.withValues(alpha: 0.3),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+              color: getStatusColor(order.status!),
+              borderRadius: BorderRadius.circular(
+                StylesConstants.borderRadius + 10,
+              ),
             ),
             child: Text(
               order.status.toString(),
@@ -76,17 +104,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
 
           if (order.productsAndQuantities?.length == 1) ...[
             Text(
-              getProductName(order.productsAndQuantities![0]["id"].toString()),
-              style: TextStyles.bodyMedium(
-                context: context,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-            ),
-            Text(
-              "Qté(s). commandé : ${order.quantity.toString()}",
+              "${order.productsAndQuantities![0]["product_name"].toString()} x ${order.quantity.toString()}",
               style: TextStyles.bodyMedium(
                 context: context,
                 fontWeight: FontWeight.w600,
@@ -106,7 +124,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
                 return Row(
                   children: [
                     Text(
-                      "-> ${getProductName(order.productsAndQuantities![index]["id"].toString())} . Qté: ${order.productsAndQuantities![index]["quantity"]}",
+                      "-> ${order.productsAndQuantities![index]["product_name"].toString()} x ${order.productsAndQuantities![index]["quantity"]}",
                       style: TextStyles.bodyMedium(
                         context: context,
                         fontWeight: FontWeight.w600,
@@ -131,19 +149,13 @@ class MinimalOrderDisplay extends ConsumerWidget {
           ),
           SizedBox(height: 10),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 10),
+            padding: EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
               border: Border(
                 top: BorderSide(
                   color: Theme.of(
                     context,
                   ).colorScheme.onSurface.withValues(alpha: 0.3),
-                  width: 0.5,
-                ),
-                bottom: BorderSide(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.9),
                   width: 0.5,
                 ),
               ),
@@ -154,7 +166,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
                 Row(
                   children: [
                     Text(
-                      "ID:",
+                      "Total: ",
                       style: TextStyles.bodyMedium(
                         context: context,
                         fontWeight: FontWeight.w500,
@@ -162,7 +174,7 @@ class MinimalOrderDisplay extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      NameMoreShort().shortenName("${order.id}", 5),
+                      "Ar ${calculateTotal()}",
                       style: TextStyles.bodyMedium(
                         context: context,
                         fontWeight: FontWeight.bold,

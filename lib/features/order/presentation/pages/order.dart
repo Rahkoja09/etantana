@@ -256,10 +256,9 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Spacer(),
-
         Text(
           headerText,
-          style: TextStyles.bodyText(
+          style: TextStyles.bodySmall(
             context: context,
             color: Theme.of(
               context,
@@ -270,10 +269,9 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
         SizedBox(width: 4),
         HugeIcon(
           icon: HugeIcons.strokeRoundedCalendar01,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-          size: 17,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+          size: 15,
         ),
-        Spacer(),
       ],
     ),
   );
