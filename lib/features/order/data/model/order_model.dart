@@ -40,7 +40,7 @@ class OrderModel extends OrderEntities {
   MapData toMap() {
     return {
       'id': id,
-      'created_at': createdAt,
+      'created_at': createdAt?.toIso8601String(),
       'status': status,
       'quantity': quantity,
       'invoice_link': invoiceLink,

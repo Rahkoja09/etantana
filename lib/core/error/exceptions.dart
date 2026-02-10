@@ -1,6 +1,7 @@
 class ServerException implements Exception {
   final String message;
-  ServerException({required this.message});
+  final String code;
+  ServerException({required this.message, required this.code});
 }
 
 class CacheException implements Exception {
@@ -15,7 +16,14 @@ class NetworkException implements Exception {
 
 class ApiException implements Exception {
   final String message;
-  ApiException({required this.message});
+  final String? code;
+  ApiException({required this.message, this.code = "000"});
+}
+
+class StorageExceptions implements Exception {
+  final String message;
+  final String? code;
+  StorageExceptions({required this.message, this.code = "000"});
 }
 
 class AuthUserException implements Exception {
@@ -25,5 +33,6 @@ class AuthUserException implements Exception {
 
 class UnexceptedException implements Exception {
   final String message;
-  UnexceptedException({required this.message});
+  final String? code;
+  UnexceptedException({required this.message, this.code = "000"});
 }

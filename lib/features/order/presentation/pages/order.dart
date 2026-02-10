@@ -5,10 +5,17 @@ import 'package:e_tantana/features/order/presentation/controller/order_controlle
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/order/presentation/widget/minimal_order_display.dart';
 import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
+import 'package:e_tantana/shared/widget/button/button.dart';
+import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
+import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
+import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
+import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
+import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,6 +34,20 @@ class _OrderState extends ConsumerState<Order> {
   final TextEditingController _searchController = TextEditingController();
   List<OrderEntities> allOrder = [];
   bool isFetching = false;
+  OrderEntities? selectionForActionOrder;
+
+  // orders swipe actions ---------
+  bool leftActionOrder = false;
+  bool rightActionOrder = false;
+
+  // status update -------------
+  String newStatus = "Validée";
+  List<String> statusList = [
+    "Validée",
+    "Livrée",
+    "Annulée",
+    "En Attente de Val.",
+  ];
 
   @override
   void initState() {
@@ -68,6 +89,7 @@ class _OrderState extends ConsumerState<Order> {
   @override
   Widget build(BuildContext context) {
     final orderState = ref.watch(orderControllerProvider);
+    final orderAction = ref.read(orderControllerProvider.notifier);
 
     ref.listen<OrderStates>(orderControllerProvider, (prev, next) {
       if (next.errorMessage != null &&
@@ -97,122 +119,260 @@ class _OrderState extends ConsumerState<Order> {
     final isInitialLoading = orderState.isLoading && allOrder.isEmpty;
     final displayData = isInitialLoading ? skeletonData : allOrder;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(StylesConstants.spacerContent),
-              child: FloatingSearchBar(
-                controller: _searchController,
-                hintText: "Rechercher une commande",
-                onChanged: (value) {
-                  ref
-                      .read(orderControllerProvider.notifier)
-                      .researchOrder(OrderEntities(clientName: value));
-                },
-                onSortTap: () {},
-              ),
-            ),
-            Expanded(
-              child: AppRefreshIndicator(
-                onRefresh: _getOrder,
-                child:
-                    (displayData.isEmpty && !orderState.isLoading)
-                        ? _buildEmptyState()
-                        : Skeletonizer(
-                          enabled: orderState.isLoading,
-                          effect: LoadingEffect.getCommonEffect(context),
-                          justifyMultiLineText: true,
-                          ignoreContainers: true,
-                          child: ListView.builder(
-                            controller:
-                                isInitialLoading ? null : _scrollController,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: StylesConstants.spacerContent,
-                            ),
-                            itemCount:
-                                displayData.length +
-                                (orderState.isLoading && allOrder.isNotEmpty
-                                    ? 1
-                                    : 0),
-                            itemBuilder: (context, index) {
-                              if (index == displayData.length - 1 &&
-                                  isFetching) {
-                                return Skeletonizer(
-                                  enabled: true,
-                                  effect: LoadingEffect.getCommonEffect(
-                                    context,
-                                  ),
-                                  child: MinimalOrderDisplay(
-                                    order: skeletonData[0],
-                                    onTap: () {},
-                                  ),
-                                );
-                              }
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          body: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(StylesConstants.spacerContent),
+                  child: FloatingSearchBar(
+                    controller: _searchController,
+                    hintText: "Rechercher une commande",
+                    onChanged: (value) {
+                      ref
+                          .read(orderControllerProvider.notifier)
+                          .researchOrder(OrderEntities(clientName: value));
+                    },
+                    onSortTap: () {},
+                  ),
+                ),
+                Expanded(
+                  child: AppRefreshIndicator(
+                    onRefresh: _getOrder,
+                    child:
+                        (displayData.isEmpty && !orderState.isLoading)
+                            ? _buildEmptyState()
+                            : Skeletonizer(
+                              enabled: orderState.isLoading,
+                              effect: LoadingEffect.getCommonEffect(context),
+                              justifyMultiLineText: true,
+                              ignoreContainers: true,
+                              child: ListView.builder(
+                                controller:
+                                    isInitialLoading ? null : _scrollController,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: StylesConstants.spacerContent,
+                                ),
+                                itemCount:
+                                    displayData.length +
+                                    (orderState.isLoading && allOrder.isNotEmpty
+                                        ? 1
+                                        : 0),
+                                itemBuilder: (context, index) {
+                                  if (index == displayData.length - 1 &&
+                                      isFetching) {
+                                    return Skeletonizer(
+                                      enabled: true,
+                                      effect: LoadingEffect.getCommonEffect(
+                                        context,
+                                      ),
+                                      child: MinimalOrderDisplay(
+                                        order: skeletonData[0],
+                                        onTap: () {},
+                                        swipeAction: (String value) {},
+                                      ),
+                                    );
+                                  }
 
-                              if (index >= displayData.length) {
-                                return const SizedBox.shrink();
-                              }
+                                  if (index >= displayData.length) {
+                                    return const SizedBox.shrink();
+                                  }
 
-                              final item = displayData[index];
+                                  final item = displayData[index];
 
-                              bool showDateHeader = false;
+                                  bool showDateHeader = false;
 
-                              if (index == 0) {
-                                showDateHeader = true;
-                              } else {
-                                final prevItem = displayData[index - 1];
+                                  if (index == 0) {
+                                    showDateHeader = true;
+                                  } else {
+                                    final prevItem = displayData[index - 1];
 
-                                final dateCurrent = DateTime(
-                                  item.createdAt!.year,
-                                  item.createdAt!.month,
-                                  item.createdAt!.day,
-                                );
-                                final datePrev = DateTime(
-                                  prevItem.createdAt!.year,
-                                  prevItem.createdAt!.month,
-                                  prevItem.createdAt!.day,
-                                );
+                                    final dateCurrent = DateTime(
+                                      item.createdAt!.year,
+                                      item.createdAt!.month,
+                                      item.createdAt!.day,
+                                    );
+                                    final datePrev = DateTime(
+                                      prevItem.createdAt!.year,
+                                      prevItem.createdAt!.month,
+                                      prevItem.createdAt!.day,
+                                    );
 
-                                if (dateCurrent != datePrev) {
-                                  showDateHeader = true;
-                                }
-                              }
+                                    if (dateCurrent != datePrev) {
+                                      showDateHeader = true;
+                                    }
+                                  }
 
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (showDateHeader)
-                                    _buildDateHeader(item.createdAt!, context),
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 8.h),
-                                    child: MinimalOrderDisplay(
-                                      order: item,
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder:
-                                                (_) => PrinterView(
-                                                  order: displayData[index],
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (showDateHeader)
+                                        _buildDateHeader(
+                                          item.createdAt!,
+                                          context,
+                                        ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 8.h),
+                                        child: MinimalOrderDisplay(
+                                          order: item,
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (_) => PrinterView(
+                                                      order: displayData[index],
+                                                    ),
+                                              ),
+                                            );
+                                          },
+                                          swipeAction: (value) {
+                                            if (value == "leftSwipeOrder") {
+                                              print("test");
+                                              setState(() {
+                                                leftActionOrder = true;
+                                                selectionForActionOrder = item;
+                                              });
+                                            } else if (value ==
+                                                "rightSwipeOrder") {
+                                              showCustomPopup(
+                                                context: context,
+                                                description:
+                                                    "Le status definie l'état actuel de la commande",
+                                                isError: false,
+                                                title: "Modifier le status",
+                                                dismissible: true,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    if (orderState.isLoading)
+                                                      LoadingAnimation.primary(
+                                                        context,
+                                                        size: 30,
+                                                      ),
+                                                    if (!orderState.isLoading)
+                                                      MediumTitleWithDegree(
+                                                        showDegree: false,
+                                                        title:
+                                                            "Status de la commande",
+                                                      ),
+                                                    CustomDropdown(
+                                                      textHint:
+                                                          "Chosir le nouveau status",
+                                                      iconData:
+                                                          HugeIcons
+                                                              .strokeRoundedCheckList,
+                                                      items: statusList,
+                                                      onChanged: (status) {
+                                                        setState(() {
+                                                          newStatus = status!;
+                                                        });
+                                                      },
+                                                    ),
+                                                    SizedBox(height: 30),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Button(
+                                                          onTap:
+                                                              () =>
+                                                                  Navigator.pop(
+                                                                    context,
+                                                                  ),
+                                                          enableNoBackground:
+                                                              true,
+                                                          btnColor:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                          btnText: "Annuler",
+                                                          btnTextColor:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                        ),
+                                                        Button(
+                                                          onTap: () async {
+                                                            final navigator =
+                                                                Navigator.of(
+                                                                  context,
+                                                                );
+                                                            final update = item
+                                                                .copyWith(
+                                                                  status:
+                                                                      newStatus,
+                                                                );
+                                                            await orderAction
+                                                                .updateOrder(
+                                                                  update,
+                                                                );
+
+                                                            await _getOrder();
+                                                            navigator.pop();
+                                                          },
+
+                                                          btnColor:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                          btnText: "Valider",
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-              ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+        if (leftActionOrder)
+          TransparentBackgroundPopUp(
+            widget: ConfirmationDialogue(
+              backGroundColor: Theme.of(context).colorScheme.surface,
+              btnColor: null,
+              isActionDangerous: true,
+              title: "Vouler vous vraiment supprimer commande :",
+              value:
+                  "${selectionForActionOrder!.clientName}\n${selectionForActionOrder!.createdAt}",
+              icon: HugeIcons.strokeRoundedDelete03,
+              isloading: orderState.isLoading,
+              onTapLeftBtn: () async {
+                setState(() {
+                  leftActionOrder = false;
+                });
+              },
+              onTapRightBtn: () async {
+                await ref
+                    .read(orderControllerProvider.notifier)
+                    .deleteOrderById(selectionForActionOrder!.id!);
+                await _getOrder();
+
+                setState(() {
+                  leftActionOrder = false;
+                });
+              },
+            ),
+          ),
+      ],
     );
   }
 

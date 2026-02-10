@@ -6,6 +6,7 @@ import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/domain/repository/product_repository.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductUsecases {
   final ProductRepository _productRepository;
@@ -32,7 +33,7 @@ class ProductUsecases {
       }
       return _productRepository.insertProduct(entities);
     } catch (e) {
-      return Left(ApiFailure(e.toString()));
+      return Left(UnexceptedFailure(e.toString(), "000"));
     }
   }
 

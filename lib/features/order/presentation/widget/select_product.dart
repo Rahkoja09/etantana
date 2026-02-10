@@ -53,13 +53,13 @@ class _SelectProductState extends ConsumerState<SelectProduct> {
     }
 
     ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
+      if (next.error != null && next.error!.message.isNotEmpty) {
         showDialog(
           context: context,
           builder:
               (context) => ErrorDialog(
                 title: "Erreur de récupération produit.",
-                message: next.errorMessage!,
+                message: next.error!.message,
               ),
         );
       }

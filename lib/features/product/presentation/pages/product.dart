@@ -1,4 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
@@ -30,13 +31,17 @@ class Product extends ConsumerStatefulWidget {
 
 class _ProductState extends ConsumerState<Product> {
   final ScrollController _scrollController = ScrollController();
-  final TextEditingController _searchController = TextEditingController();
-  List<ProductEntities> myProducts = [];
+  int listVersion = 0;
   bool isFetching = false;
+
+  // les input ---------
+  final TextEditingController _searchController = TextEditingController();
+
+  List<ProductEntities> myProducts = [];
+
   bool showPopUp = false;
   ProductEntities? selectionForActionProduct;
   String currentFilter = "Tous";
-  int listVersion = 0;
 
   // list des commandes - cmd multiple ---------
   List<MapData> orderList = [];
@@ -68,28 +73,6 @@ class _ProductState extends ConsumerState<Product> {
     });
   }
 
-  double calculateTotal(List<ProductEntities> actualProducts) {
-    double total = 0;
-    for (var item in orderList) {
-      final String currentId = item["id"];
-      final int quantity = item["quantity"];
-      for (var product in actualProducts) {
-        if (product.id == currentId) {
-          if (!productsToOrde.contains(product)) {
-            productsToOrde.add(product);
-          }
-          final price = (product.sellingPrice ?? 0).toDouble();
-          setState(() {
-            total += price * quantity;
-          });
-          break;
-        }
-      }
-    }
-
-    return total;
-  }
-
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.9) {
@@ -114,6 +97,7 @@ class _ProductState extends ConsumerState<Product> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
+    // la list des produit principale --------
     final actualProducts = productState.product ?? [];
 
     final skeletonData = List.generate(
@@ -152,7 +136,7 @@ class _ProductState extends ConsumerState<Product> {
                         ),
                       );
                     },
-                    totalAmount: calculateTotal(actualProducts),
+                    totalAmount: calculateTotal(actualProducts, orderList),
                   ),
                 if (!orderList.isNotEmpty)
                   Container(
@@ -184,12 +168,12 @@ class _ProductState extends ConsumerState<Product> {
                         FlatChipSelector(
                           options: criterialListSort,
                           selectedOption: currentFilter,
-                          onSelect: (value) {
+                          onSelect: (value) async {
                             setState(() => currentFilter = value);
                             switch (value) {
                               case ("Tous"):
                                 {
-                                  getProduct();
+                                  await getProduct();
                                   break;
                                 }
                               case ("Futurs produits"):
@@ -212,7 +196,7 @@ class _ProductState extends ConsumerState<Product> {
                                 }
                               default:
                                 {
-                                  getProduct();
+                                  await getProduct();
                                   break;
                                 }
                             }
@@ -393,7 +377,6 @@ class _ProductState extends ConsumerState<Product> {
                 await ref
                     .read(productControllerProvider.notifier)
                     .deleteProductById(selectionForActionProduct!.id!);
-                await getProduct();
                 setState(() {
                   showPopUp = false;
                 });

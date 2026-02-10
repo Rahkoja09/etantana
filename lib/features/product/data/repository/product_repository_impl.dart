@@ -59,14 +59,21 @@ class ProductRepositoryImpl implements ProductRepository {
       try {
         final res = await action();
         return Right(res);
+      } on ServerException catch (e) {
+        if (e.code.startsWith('5')) {
+          return Left(ServerFailure.fromException(e));
+        }
+        return Left(ServerFailure.fromException(e));
       } on ApiException catch (e) {
         return Left(ApiFailure.fromException(e));
       } on AuthUserException catch (e) {
         return Left(AuthFailure.fromException(e));
       } catch (e) {
-        return Left(UnexceptedFailure(e.toString()));
+        return Left(UnexceptedFailure(e.toString(), "000"));
       }
     }
-    return const Left(NetworkFailure("Pas de connexion internet"));
+    return const Left(
+      NetworkFailure("Pas de connexion internet", "Network_01"),
+    );
   }
 }

@@ -18,7 +18,7 @@ class ProductDataSourceImpl implements ProductDataSource {
         );
       }
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -31,7 +31,7 @@ class ProductDataSourceImpl implements ProductDataSource {
           await _client.from("product").select().eq("id", productId).single();
       return ProductModel.fromMap(res);
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -59,7 +59,7 @@ class ProductDataSourceImpl implements ProductDataSource {
               .single();
       return ProductModel.fromMap(res);
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -111,7 +111,7 @@ class ProductDataSourceImpl implements ProductDataSource {
       final res = await query;
       return (res as List).map((data) => ProductModel.fromMap(data)).toList();
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -130,7 +130,7 @@ class ProductDataSourceImpl implements ProductDataSource {
               .single();
       return ProductModel.fromMap(res);
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }

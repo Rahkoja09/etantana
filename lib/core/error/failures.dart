@@ -1,61 +1,65 @@
-import 'package:e_tantana/core/error/exceptions.dart';
 import 'package:equatable/equatable.dart';
+import 'package:e_tantana/core/error/exceptions.dart';
 
 abstract class Failure extends Equatable {
   final String message;
-  const Failure(this.message);
+  final String code;
+  const Failure(this.message, this.code);
 
   @override
   List<Object> get props => [message];
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure(super.message);
+  const ServerFailure(super.message, super.code);
 
   factory ServerFailure.fromException(ServerException exception) {
-    return ServerFailure(exception.message);
+    return ServerFailure(exception.message, exception.code);
   }
 }
 
 class AuthFailure extends Failure {
-  const AuthFailure(super.message);
+  const AuthFailure(super.message, super.code);
 
   factory AuthFailure.fromException(AuthUserException exception) {
-    return AuthFailure(exception.message);
+    return AuthFailure(exception.message, "Auth_01");
   }
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure(super.message);
+  const CacheFailure(super.message, super.code);
   factory CacheFailure.fromException(CacheException exception) {
-    return CacheFailure(exception.message);
+    return CacheFailure(exception.message, "Cache_01");
   }
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure(super.message);
+  const NetworkFailure(super.message, super.code);
 
   factory NetworkFailure.fromException(NetworkException exception) {
-    return NetworkFailure(exception.message);
+    return NetworkFailure(exception.message, "Network_01");
   }
 }
 
-class ValidationFailure extends Failure {
-  const ValidationFailure(super.message);
+class StorageFailure extends Failure {
+  const StorageFailure(super.message, super.code);
+  factory StorageFailure.fromException(ApiException exception) {
+    return StorageFailure(exception.message, exception.code!);
+  }
 }
 
 class ApiFailure extends Failure {
-  const ApiFailure(super.message);
+  const ApiFailure(super.message, super.code);
 
   factory ApiFailure.fromException(ApiException exception) {
-    return ApiFailure(exception.message);
+    return ApiFailure(exception.message, exception.code!);
   }
 }
 
 class UnexceptedFailure extends Failure {
-  const UnexceptedFailure(super.message);
+  const UnexceptedFailure(super.message, super.code);
 
   factory UnexceptedFailure.fromException(UnexceptedException exception) {
-    return UnexceptedFailure(exception.message);
+    return UnexceptedFailure(exception.message, "000");
   }
 }

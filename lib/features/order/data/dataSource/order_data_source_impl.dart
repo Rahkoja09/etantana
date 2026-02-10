@@ -13,7 +13,7 @@ class OrderDataSourceImpl implements OrderDataSource {
     try {
       await _client.from("order").delete().eq("id", orderId);
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -26,7 +26,7 @@ class OrderDataSourceImpl implements OrderDataSource {
           await _client.from("order").select().eq("id", orderId).single();
       return OrderModel.fromMap(res);
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -53,7 +53,7 @@ class OrderDataSourceImpl implements OrderDataSource {
               .single();
       return OrderModel.fromMap(res);
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -97,7 +97,7 @@ class OrderDataSourceImpl implements OrderDataSource {
       final res = await query;
       return (res as List).map((data) => OrderModel.fromMap(data)).toList();
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
@@ -107,10 +107,16 @@ class OrderDataSourceImpl implements OrderDataSource {
   Future<OrderModel> updateOrder(OrderEntities entity) async {
     try {
       final updates = OrderModel.fromEntity(entity).toMap();
-      final res = await _client.from("order").update(updates);
+      final res =
+          await _client
+              .from("order")
+              .update(updates)
+              .eq("id", entity.id!)
+              .select()
+              .single();
       return OrderModel.fromMap(res);
     } on PostgrestException catch (e) {
-      throw ApiException(message: e.message);
+      throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }

@@ -124,12 +124,12 @@ class _AddProductState extends ConsumerState<AddProduct> {
     final productAction = ref.read(productControllerProvider.notifier);
 
     ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
+      if (next.error != null && next.error!.message.isNotEmpty) {
         showToast(
           context,
           title: "Erreur",
           isError: true,
-          description: next.errorMessage!,
+          description: next.error!.message,
         );
       }
       if (next.product != null && next.isLoading == false) {

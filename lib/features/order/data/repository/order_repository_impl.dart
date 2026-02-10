@@ -55,9 +55,11 @@ class OrderRepositoryImpl implements OrderRepository {
       } on AuthUserException catch (e) {
         return Left(AuthFailure.fromException(e));
       } catch (e) {
-        return Left(UnexceptedFailure(e.toString()));
+        return Left(UnexceptedFailure(e.toString(), "000"));
       }
     }
-    return const Left(NetworkFailure("Pas de connexion internet"));
+    return const Left(
+      NetworkFailure("Pas de connexion internet", "Network_01"),
+    );
   }
 }

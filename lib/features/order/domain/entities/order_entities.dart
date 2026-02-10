@@ -28,6 +28,35 @@ class OrderEntities extends Equatable {
     this.deliveryCosts,
   });
 
+  OrderEntities copyWith({
+    String? id,
+    DateTime? createdAt,
+    String? status,
+    String? invoiceLink,
+    List<MapData>? productsAndQuantities,
+    int? quantity,
+    String? details,
+    String? clientName,
+    String? clientTel,
+    String? clientAdrs,
+    String? deliveryCosts,
+  }) {
+    return OrderEntities(
+      id: id ?? this.id,
+      clientName: clientName ?? this.clientName,
+      clientAdrs: clientAdrs ?? this.clientAdrs,
+      clientTel: clientTel ?? this.clientTel,
+      createdAt: createdAt ?? this.createdAt,
+      deliveryCosts: deliveryCosts ?? this.deliveryCosts,
+      details: details ?? this.details,
+      invoiceLink: invoiceLink ?? this.invoiceLink,
+      productsAndQuantities:
+          productsAndQuantities ?? this.productsAndQuantities,
+      quantity: quantity ?? this.quantity,
+      status: status ?? this.status,
+    );
+  }
+
   @override
   List<Object?> get props => [
     id,

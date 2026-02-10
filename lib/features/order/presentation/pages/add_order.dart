@@ -15,7 +15,6 @@ import 'package:e_tantana/features/order/presentation/widget/multiple_product_vi
 import 'package:e_tantana/features/order/presentation/widget/select_product.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
-import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
 import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
@@ -120,7 +119,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
       final int quantity = item["quantity"];
       for (var product in actualProducts) {
         if (product!.id == currentId) {
-          final price = (product!.sellingPrice ?? 0).toDouble();
+          final price = (product.sellingPrice ?? 0).toDouble();
           setState(() {
             total += price * quantity;
           });

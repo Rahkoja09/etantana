@@ -1,20 +1,22 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:e_tantana/core/error/exceptions.dart';
-import 'package:e_tantana/core/network/network_info.dart';
-import 'package:e_tantana/core/utils/tools/isUrl.dart';
-import 'package:e_tantana/shared/media/media_services.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_compress/video_compress.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+
+import 'package:e_tantana/core/error/exceptions.dart';
+import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/core/utils/tools/isUrl.dart';
+import 'package:e_tantana/shared/media/media_services.dart';
 
 class MediaServiceImpl implements MediaServices {
   final SupabaseClient _supabase;
@@ -137,8 +139,12 @@ class MediaServiceImpl implements MediaServices {
           .timeout(const Duration(seconds: 20));
 
       return getPublicUrl(filePath, bucketName);
+    } on StorageException catch (e) {
+      throw StorageExceptions(message: e.message, code: e.statusCode);
+    } on ServerException catch (e) {
+      throw ServerException(message: e.message, code: e.code);
     } catch (e) {
-      throw ApiException(message: "Échec de l'upload: $e");
+      throw UnexceptedException(message: " $e");
     }
   }
 
@@ -152,25 +158,34 @@ class MediaServiceImpl implements MediaServices {
   }) async {
     final List<String> urls = [];
 
-    for (int i = 0; i < files.length; i++) {
-      try {
-        final String url = await uploadMedia(
-          file: files[i],
-          uid: uid,
-          type: type,
-          entityId: entityId,
-          bucketName: bucketName,
-        );
-        urls.add(url);
-      } catch (e) {
-        continue;
+    try {
+      for (int i = 0; i < files.length; i++) {
+        try {
+          final String url = await uploadMedia(
+            file: files[i],
+            uid: uid,
+            type: type,
+            entityId: entityId,
+            bucketName: bucketName,
+          );
+          urls.add(url);
+        } catch (e) {
+          continue;
+        }
       }
-    }
 
-    if (urls.isEmpty) {
-      throw ApiException(message: "Aucun fichier n'a pu être uploadé");
+      if (urls.isEmpty) {
+        throw ApiException(message: "Aucun fichier n'a pu être uploadé");
+      }
+
+      return urls.join(',');
+    } on StorageException catch (e) {
+      throw StorageExceptions(message: e.message, code: e.statusCode);
+    } on ServerException catch (e) {
+      throw ServerException(message: e.message, code: e.code);
+    } catch (e) {
+      throw UnexceptedException(message: " $e");
     }
-    return urls.join(',');
   }
 
   @override
@@ -209,14 +224,28 @@ class MediaServiceImpl implements MediaServices {
 
   @override
   String getPublicUrl(String filePath, String bucketName) {
-    return _supabase.storage.from(bucketName).getPublicUrl(filePath);
+    try {
+      return _supabase.storage.from(bucketName).getPublicUrl(filePath);
+    } on StorageException catch (e) {
+      throw StorageExceptions(message: e.message, code: e.statusCode);
+    } on ServerException catch (e) {
+      throw ServerException(message: e.message, code: e.code);
+    } catch (e) {
+      throw UnexceptedException(message: " $e");
+    }
   }
 
   @override
   Future<void> deleteFile(String filePath, String bucketName) async {
     try {
       await _supabase.storage.from(bucketName).remove([filePath]);
-    } catch (_) {}
+    } on StorageException catch (e) {
+      throw StorageExceptions(message: e.message, code: e.statusCode);
+    } on ServerException catch (e) {
+      throw ServerException(message: e.message, code: e.code);
+    } catch (e) {
+      throw UnexceptedException(message: " $e");
+    }
   }
 
   @override

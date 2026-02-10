@@ -60,7 +60,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   ? "assets/medias/icons/app_icon.png"
                   : "assets/medias/icons/app_icon.png",
             ),
-            height: 33,
+            height: 25.h,
           ),
 
           Row(
