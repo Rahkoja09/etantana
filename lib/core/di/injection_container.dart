@@ -1,4 +1,8 @@
 import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/features/delivring/data/repository/delivering_repository_impl.dart';
+import 'package:e_tantana/features/delivring/data/source/delivering_remote_source.dart';
+import 'package:e_tantana/features/delivring/domain/repository/delivering_repository.dart';
+import 'package:e_tantana/features/delivring/domain/usecases/delivering_usecases.dart';
 import 'package:e_tantana/features/home/data/dataSrouce/dashboard_stats_data_source.dart';
 import 'package:e_tantana/features/home/data/dataSrouce/dashboard_stats_data_source_impl.dart';
 import 'package:e_tantana/features/home/data/repository/dashboard_stats_repository_impl.dart';
@@ -32,6 +36,7 @@ Future<void> init() async {
   _initOrder();
   _initMediaService();
   _initDashboard();
+  _initDelivering();
 }
 
 // supabase_client, internet connection, network -------------
@@ -75,4 +80,14 @@ Future<void> _initMediaService() async {
   sl.registerLazySingleton<MediaServices>(
     () => MediaServiceImpl(sl(), sl(), sl()),
   );
+}
+
+Future<void> _initDelivering() async {
+  sl.registerLazySingleton<DeliveringRemoteSource>(
+    () => DeliveringRemoteSourceImpl((sl())),
+  );
+  sl.registerLazySingleton<DeliveringRepository>(
+    () => DeliveringRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton(() => DeliveringUsecases(sl()));
 }

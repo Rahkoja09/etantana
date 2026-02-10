@@ -7,10 +7,10 @@ import 'package:e_tantana/features/delivring/data/source/delivering_remote_sourc
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
 import 'package:e_tantana/features/delivring/domain/repository/delivering_repository.dart';
 
-class DeliveringRepositoryImp implements DeliveringRepository {
+class DeliveringRepositoryImpl implements DeliveringRepository {
   final DeliveringRemoteSource _remoteSource;
   final NetworkInfo _networkInfo;
-  DeliveringRepositoryImp(this._remoteSource, this._networkInfo);
+  DeliveringRepositoryImpl(this._remoteSource, this._networkInfo);
 
   @override
   ResultVoid deleteDeliveringById(String id) async {
