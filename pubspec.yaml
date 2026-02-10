@@ -71,6 +71,7 @@ dependencies:
   get_it: ^9.2.0
 
   #for open street map -----
+  mapbox_maps_flutter: ^2.18.0
   geolocator: ^14.0.2
   geocoding: ^4.0.0
   http: ^1.5.0

@@ -134,52 +134,58 @@ class _MinimalOrderDisplayState extends State<MinimalOrderDisplay> {
                 ),
               ),
 
-              if (widget.order.productsAndQuantities?.length == 1) ...[
-                Text(
-                  "${widget.order.productsAndQuantities![0]["product_name"].toString()} x ${widget.order.quantity.toString()}",
-                  style: TextStyles.bodyMedium(
-                    context: context,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                ),
-              ],
-              if (widget.order.productsAndQuantities != null &&
-                  widget.order.productsAndQuantities!.length > 1) ...[
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: widget.order.productsAndQuantities?.length,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        Text(
-                          "-> ${widget.order.productsAndQuantities![index]["product_name"].toString()} x ${widget.order.productsAndQuantities![index]["quantity"]}",
-                          style: TextStyles.bodyMedium(
-                            context: context,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
-                          ),
+              SizedBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.order.productsAndQuantities?.length == 1) ...[
+                      Text(
+                        "${widget.order.productsAndQuantities![0]["product_name"].toString()} x ${widget.order.quantity.toString()}",
+                        style: TextStyles.bodyMedium(
+                          context: context,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-              Text(
-                "Liv: ${widget.order.clientAdrs} (${widget.order.deliveryCosts.toString()} Ar)",
-                style: TextStyles.bodyText(
-                  context: context,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 11,
-                  color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ],
+                    if (widget.order.productsAndQuantities != null &&
+                        widget.order.productsAndQuantities!.length > 1) ...[
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: widget.order.productsAndQuantities?.length,
+                        itemBuilder: (context, index) {
+                          return Row(
+                            children: [
+                              Text(
+                                "-> ${widget.order.productsAndQuantities![index]["product_name"].toString()} x ${widget.order.productsAndQuantities![index]["quantity"]}",
+                                style: TextStyles.bodyMedium(
+                                  context: context,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.5),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                    Text(
+                      "Liv: ${widget.order.clientAdrs} (${widget.order.deliveryCosts.toString()} Ar)",
+                      style: TextStyles.bodyText(
+                        context: context,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
                 ),
               ),
-              SizedBox(height: 10),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(

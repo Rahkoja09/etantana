@@ -97,7 +97,7 @@ class _ProductState extends ConsumerState<Product> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
-    // la list des produit principale --------
+    // la list des produit principale --------------------
     final actualProducts = productState.product ?? [];
 
     final skeletonData = List.generate(

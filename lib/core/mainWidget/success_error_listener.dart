@@ -5,9 +5,9 @@ import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GlobalErrorListener extends ConsumerWidget {
+class SuccessErrorListener extends ConsumerWidget {
   final Widget child;
-  const GlobalErrorListener({super.key, required this.child});
+  const SuccessErrorListener({super.key, required this.child});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

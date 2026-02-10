@@ -1,7 +1,7 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/mainWidget/global_error_listener.dart';
+import 'package:e_tantana/core/mainWidget/success_error_listener.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/home/presentation/pages/home.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
@@ -107,41 +107,19 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
 
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       },
-      child: GlobalErrorListener(
+      child: SuccessErrorListener(
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           extendBody: true,
           appBar: const AppBarCustom(),
           //endDrawer: const SideBar(),
 
-          // IndexedStack save state of pages ----------
+          // IndexedStack save state of pages eto ooo ----------
           body: NotificationListener<ScrollNotification>(
             onNotification: onScrollNotification,
             child: IndexedStack(
               index: _bottomNavIndex,
-              children: [
-                Home(),
-                Product(),
-                Order(),
-                Exemple(),
-                /*PrinterView(
-                      order:
-                          widget.order ??
-                          OrderEntities(
-                            id: "Null",
-                            createdAt: DateTime.now(),
-                            status: "Null",
-                            productId: "Null",
-                            quantity: 0,
-                            details: "Null",
-                            clientName: "Rakoto",
-                            clientTel: "03x xx xxx xx",
-                            clientAdrs: "xxxx, xxx, Antananarivo",
-                            deliveryCosts: "xxxx.x Ar",
-                            invoiceLink: "",
-                          ),
-                    ),*/
-              ],
+              children: [Home(), Product(), Order(), Exemple()],
             ),
           ),
 

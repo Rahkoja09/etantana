@@ -26,9 +26,9 @@ class LoadingAnimation {
     );
   }
 
-  static Widget dotwave(BuildContext context, {double? size}) {
+  static Widget dotwave(BuildContext context, {double? size, Color? color}) {
     return LoadingAnimationWidget.staggeredDotsWave(
-      color: Theme.of(context).colorScheme.onSurface,
+      color: color ?? Theme.of(context).colorScheme.onSurface,
       size: size ?? 30.w,
     );
   }

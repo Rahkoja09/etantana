@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_tantana/core/utils/tools/isUrl.dart';
+import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:flutter/material.dart';
 
 class ImageViewer extends StatelessWidget {
@@ -14,7 +16,17 @@ class ImageViewer extends StatelessWidget {
         borderRadius: BorderRadius.circular(11),
         child:
             isUrl(imageFileOrLink)
-                ? Image.network(imageFileOrLink, fit: BoxFit.cover)
+                ? CachedNetworkImage(
+                  imageUrl: imageFileOrLink,
+                  fit: BoxFit.cover,
+                  placeholder:
+                      (context, url) => Container(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        child: LoadingAnimation.adaptive(context),
+                      ),
+                  errorWidget:
+                      (context, url, error) => const Icon(Icons.broken_image),
+                )
                 : Image.asset(imageFileOrLink!, fit: BoxFit.cover),
       ),
     );
