@@ -23,24 +23,22 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
 
       final List<dynamic> ordersData = await _client
           .from('order')
-          .select('id, quantity, product(selling_price)')
+          .select('id, products_and_quantities')
           .gte('created_at', todayStart);
 
       int totalOrders = ordersData.length;
       double dailyRevenue = 0;
 
       for (var order in ordersData) {
-        final dynamic product = order['product'];
+        final dynamic productsOrdered = order['products_and_quantities'];
 
         double price = 0.0;
-        if (product is Map) {
-          price = (product['selling_price'] as num?)?.toDouble() ?? 0.0;
-        } else if (product is List && product.isNotEmpty) {
-          price = (product[0]['selling_price'] as num?)?.toDouble() ?? 0.0;
+        for (var product in productsOrdered) {
+          price +=
+              double.tryParse(product["selling_price"])! *
+              double.tryParse(product["quantity"])!;
         }
-
-        final int qty = (order['quantity'] as num?)?.toInt() ?? 0;
-        dailyRevenue += (price * qty);
+        dailyRevenue += price;
       }
 
       return DashboardStatsModel(
