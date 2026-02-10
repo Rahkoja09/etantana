@@ -9,6 +9,7 @@ import 'package:e_tantana/features/splashView/presentation/pages/splash_view.dar
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_theme/json_theme.dart';
@@ -24,6 +25,8 @@ Future<void> main() async {
 
   final lightJson = jsonDecode(lightStr);
   final darkJson = jsonDecode(darkStr);
+
+  await dotenv.load(fileName: ".env");
 
   lightTheme = ThemeDecoder.decodeThemeData(lightJson)!;
   darkTheme = ThemeDecoder.decodeThemeData(darkJson)!;
