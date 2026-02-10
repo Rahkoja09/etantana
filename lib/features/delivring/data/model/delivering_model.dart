@@ -14,6 +14,7 @@ class DeliveringModel extends DeliveringEntity {
     super.orderProductDetails,
     super.status,
     super.userDetails,
+    super.deliveringAdresse,
   });
 
   factory DeliveringModel.fromMap(MapData data) {
@@ -41,6 +42,7 @@ class DeliveringModel extends DeliveringEntity {
       deliveringPrice: (data['delivering_price'] as num?)?.toDouble(),
       description: data['description'] as String?,
       status: data['status'] as String?,
+      deliveringAdresse: data['delivering_adresse'] as String,
     );
   }
 
@@ -57,6 +59,7 @@ class DeliveringModel extends DeliveringEntity {
       'delivering_price': deliveringPrice,
       'description': description,
       'status': status,
+      'delivering_adresse': deliveringAdresse,
     };
   }
 
@@ -73,6 +76,7 @@ class DeliveringModel extends DeliveringEntity {
       deliveringPrice: entity.deliveringPrice,
       description: entity.description,
       status: entity.status,
+      deliveringAdresse: entity.deliveringAdresse,
     );
   }
 }

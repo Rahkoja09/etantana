@@ -13,6 +13,7 @@ class DeliveringEntity extends Equatable {
   final double? deliveringPrice;
   final String? description;
   final String? status;
+  final String? deliveringAdresse;
 
   DeliveringEntity({
     this.id,
@@ -26,6 +27,7 @@ class DeliveringEntity extends Equatable {
     this.orderProductDetails,
     this.userDetails,
     this.status,
+    this.deliveringAdresse,
   });
 
   DeliveringEntity copyWith({
@@ -40,6 +42,7 @@ class DeliveringEntity extends Equatable {
     double? deliveringPrice,
     String? description,
     String? status,
+    String? deliveringAdresse,
   }) {
     return DeliveringEntity(
       id: id ?? this.id,
@@ -54,6 +57,7 @@ class DeliveringEntity extends Equatable {
       deliveringPrice: deliveringPrice ?? this.deliveringPrice,
       description: description ?? this.description,
       status: status ?? this.status,
+      deliveringAdresse: deliveringAdresse ?? this.deliveringAdresse,
     );
   }
 
@@ -69,5 +73,6 @@ class DeliveringEntity extends Equatable {
     deliveringPrice,
     description,
     status,
+    deliveringAdresse,
   ];
 }
