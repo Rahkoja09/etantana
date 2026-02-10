@@ -8,7 +8,11 @@ abstract class DeliveringRemoteSource {
   Future<DeliveringModel> insertDelivering(DeliveringEntity entity);
   Future<void> deleteDeliveringById(String id);
   Future<DeliveringModel> updateDeliveringById(DeliveringEntity? entity);
-  Future<List<DeliveringModel>> searchDelivering(DeliveringEntity criteriales);
+  Future<List<DeliveringModel>> searchDelivering(
+    DeliveringEntity criteriales, {
+    int start = 0,
+    int end = 9,
+  });
   Future<DeliveringModel> selectDeliveringById(String id);
 }
 
@@ -37,21 +41,51 @@ class DeliveringRemoteSourceImpl implements DeliveringRemoteSource {
 
   @override
   Future<List<DeliveringModel>> searchDelivering(
-    DeliveringEntity criteriales,
-  ) async {
+    DeliveringEntity? criteriales, {
+    int start = 0,
+    int end = 9,
+  }) async {
     try {
-      var query = _client.from("delivering").select();
+      dynamic query = _client.from("delivering").select("*");
 
-      if (criteriales.status != null) {
-        query = query.eq('status', criteriales.status!);
+      if (criteriales != null) {
+        if (criteriales.id != null) query = query.eq("id", criteriales.id!);
+        if (criteriales.orderId != null)
+          query = query.eq("order_id", criteriales.orderId!);
+        if (criteriales.status != null)
+          query = query.eq("status", criteriales.status!);
+        if (criteriales.description != null) {
+          query = query.ilike("description", '%${criteriales.description}%');
+        }
+        if (criteriales.deliveringPrice != null) {
+          query = query.eq("delivering_price", criteriales.deliveringPrice!);
+        }
+        if (criteriales.dateOfDelivering != null) {
+          query = query.eq(
+            "date_of_delivering",
+            criteriales.dateOfDelivering!.toIso8601String(),
+          );
+        }
+        if (criteriales.userDetails != null &&
+            criteriales.userDetails!['user_name'] != null) {
+          final nameToSearch = criteriales.userDetails!['user_name'];
+          query = query.filter(
+            "user_details->>user_name",
+            "ilike",
+            "%$nameToSearch%",
+          );
+        }
       }
-      if (criteriales.orderId != null) {
-        query = query.eq('order_id', criteriales.orderId!);
-      }
 
-      final List data = await query.order('created_at', ascending: false);
+      query = query.order("created_at", ascending: false);
 
-      return data.map((e) => DeliveringModel.fromMap(e)).toList();
+      query = query.range(start, end);
+
+      final res = await query;
+
+      return (res as List)
+          .map((data) => DeliveringModel.fromMap(data))
+          .toList();
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {

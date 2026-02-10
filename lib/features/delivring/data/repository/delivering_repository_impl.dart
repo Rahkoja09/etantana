@@ -28,10 +28,12 @@ class DeliveringRepositoryImpl implements DeliveringRepository {
 
   @override
   ResultFuture<List<DeliveringEntity>> searchDelivering(
-    DeliveringEntity criteriales,
-  ) async {
+    DeliveringEntity criteriales, {
+    int start = 0,
+    int end = 9,
+  }) async {
     return await _executeAction(
-      () => _remoteSource.searchDelivering(criteriales),
+      () => _remoteSource.searchDelivering(criteriales, start: start, end: end),
     );
   }
 

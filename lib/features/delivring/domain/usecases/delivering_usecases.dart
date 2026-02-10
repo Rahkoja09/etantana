@@ -22,9 +22,11 @@ class DeliveringUsecases {
   }
 
   ResultFuture<List<DeliveringEntity>> searchDelivering(
-    DeliveringEntity criteriales,
-  ) async {
-    return await _repo.searchDelivering(criteriales);
+    DeliveringEntity criteriales, {
+    int start = 0,
+    int end = 9,
+  }) async {
+    return await _repo.searchDelivering(criteriales, end: end, start: start);
   }
 
   ResultFuture<DeliveringEntity> selectDeliveringById(String id) async {
