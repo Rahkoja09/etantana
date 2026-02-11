@@ -3,13 +3,16 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/mainWidget/success_error_listener.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
+import 'package:e_tantana/features/delivring/presentation/pages/delivery.dart';
 import 'package:e_tantana/features/home/presentation/pages/home.dart';
+import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
 import 'package:e_tantana/features/nav_bar/presentation/exemple.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
+import 'package:e_tantana/shared/widget/map/mapbox_map_widget.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +67,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
     HugeIcons.strokeRoundedHome01,
     HugeIcons.strokeRoundedPackage,
     HugeIcons.strokeRoundedShoppingBasketCheckIn01,
-    HugeIcons.strokeRoundedChart01,
+    HugeIcons.strokeRoundedDeliveryTruck02,
   ];
 
   bool onScrollNotification(ScrollNotification notification) {
@@ -111,7 +114,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           extendBody: true,
-          appBar: const AppBarCustom(),
+          appBar: _bottomNavIndex == 3 ? null : const AppBarCustom(),
           //endDrawer: const SideBar(),
 
           // IndexedStack save state of pages eto ooo ----------
@@ -119,7 +122,93 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
             onNotification: onScrollNotification,
             child: IndexedStack(
               index: _bottomNavIndex,
-              children: [Home(), Product(), Order(), Exemple()],
+              children: [
+                Home(),
+                Product(),
+                Order(),
+                Delivery(
+                  deliveries: [
+                    MapEntity(
+                      id: '1',
+                      location: 'antananarivo - andraisoro',
+                      status: 'pending',
+                      date: DateTime.now(),
+                      price: 5000,
+                    ),
+
+                    MapEntity(
+                      id: '2',
+                      location: 'antananarivo - ampanitokana',
+                      status: 'in_progress',
+                      date: DateTime.now(),
+                      price: 7500,
+                    ),
+                    MapEntity(
+                      id: '3',
+                      location: 'antananarivo - analakely',
+                      status: 'delivered',
+                      date: DateTime.now().subtract(const Duration(days: 1)),
+                      price: 6000,
+                    ),
+                    MapEntity(
+                      id: '4',
+                      location: 'antananarivo - anosibe',
+                      status: 'pending',
+                      date: DateTime.now().add(const Duration(days: 1)),
+                      price: 8000,
+                    ),
+                    MapEntity(
+                      id: '5',
+                      location: 'antananarivo - avaradoary',
+                      status: 'in_progress',
+                      date: DateTime.now(),
+                      price: 4500,
+                    ),
+                    MapEntity(
+                      id: '6',
+                      location: 'antananarivo - ankadikely',
+                      status: 'delivered',
+                      date: DateTime.now(),
+                      price: 5500,
+                    ),
+                    MapEntity(
+                      id: '7',
+                      location: 'antananarivo - antsakaviro',
+                      status: 'pending',
+                      date: DateTime.now().add(const Duration(days: 2)),
+                      price: 9000,
+                    ),
+                    MapEntity(
+                      id: '8',
+                      location: 'antananarivo - ampasapito',
+                      status: 'in_progress',
+                      date: DateTime.now(),
+                      price: 6500,
+                    ),
+                    MapEntity(
+                      id: '9',
+                      location: 'antananarivo - itaosy',
+                      status: 'pending',
+                      date: DateTime.now(),
+                      price: 7000,
+                    ),
+                    MapEntity(
+                      id: '10',
+                      location: 'antananarivo - ivandry',
+                      status: 'delivered',
+                      date: DateTime.now().subtract(const Duration(days: 2)),
+                      price: 8500,
+                    ),
+                    MapEntity(
+                      id: '11',
+                      location: 'antananarivo - avaratra ankatso',
+                      status: 'pending',
+                      date: DateTime.now(),
+                      price: 5000,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 
@@ -188,7 +277,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
       case 2:
         return "Commande";
       case 3:
-        return "Statistique"; // soon.. : livraison or other  -------
+        return "Livraison"; // soon.. : livraison or other  -------
       default:
         return "Accueil";
     }

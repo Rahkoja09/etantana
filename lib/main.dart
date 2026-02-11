@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:e_tantana/config/constants/app_const.dart';
+import 'package:e_tantana/config/constants/mapBox_const.dart';
 import 'package:e_tantana/config/constants/supabase_api_constants.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart' as di;
@@ -13,6 +14,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_theme/json_theme.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart'
+    show MapboxOptions;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 
@@ -35,6 +38,7 @@ Future<void> main() async {
     url: SupabaseApiConstants.apiUrl,
     anonKey: SupabaseApiConstants.apiKey,
   );
+  MapboxOptions.setAccessToken(MapboxConst.mapxBoxAccessToken);
 
   await di.init();
 
