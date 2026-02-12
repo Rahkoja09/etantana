@@ -40,10 +40,11 @@ Future<void> init() async {
 
   // inject per features -----------
   _initProduct();
+  _initDelivering();
   _initOrder();
   _initMediaService();
   _initDashboard();
-  _initDelivering();
+
   _initMap();
 }
 
@@ -53,7 +54,7 @@ Future<void> _initCore() async {
       MapboxGeocodeService(
         accessToken: dotenv.env['MAPBOX_ACCESS_TOKEN'] ?? "",
       ).accessToken;
-  sl.registerLazySingleton(() => http.Client);
+  sl.registerLazySingleton(() => http.Client());
   sl.registerLazySingleton(() => accessTokenMapBox);
   sl.registerLazySingleton(() => Supabase.instance.client);
   sl.registerLazySingleton(() => InternetConnection());

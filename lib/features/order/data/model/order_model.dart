@@ -14,6 +14,7 @@ class OrderModel extends OrderEntities {
     super.clientTel,
     super.clientAdrs,
     super.deliveryCosts,
+    super.deliveryDate,
   });
 
   factory OrderModel.fromMap(MapData data) {
@@ -34,6 +35,7 @@ class OrderModel extends OrderEntities {
       clientAdrs: data['client_adrs'],
       details: data['details'],
       deliveryCosts: data['delivery_costs'],
+      deliveryDate: DateTime.parse(data["delivery_date"]),
     );
   }
 
@@ -50,6 +52,7 @@ class OrderModel extends OrderEntities {
       'client_adrs': clientAdrs,
       'details': details,
       'delivery_costs': deliveryCosts,
+      'delivery_date': deliveryDate,
     };
   }
 
@@ -66,6 +69,7 @@ class OrderModel extends OrderEntities {
       clientAdrs: entity.clientAdrs,
       invoiceLink: entity.invoiceLink,
       deliveryCosts: entity.deliveryCosts,
+      deliveryDate: entity.deliveryDate,
     );
   }
 
@@ -81,6 +85,7 @@ class OrderModel extends OrderEntities {
     String? clientTel,
     String? clientAdrs,
     String? deliveryCosts,
+    DateTime? deliveryDate,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -95,6 +100,7 @@ class OrderModel extends OrderEntities {
       quantity: quantity ?? this.quantity,
       status: status ?? this.status,
       deliveryCosts: deliveryCosts ?? this.deliveryCosts,
+      deliveryDate: deliveryDate ?? this.deliveryDate,
     );
   }
 }

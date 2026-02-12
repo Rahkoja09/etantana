@@ -67,15 +67,21 @@ class _DateInputState extends State<DateInput> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Theme.of(context).colorScheme.onSurface),
+          border: Border.all(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
+          ),
         ),
         child: Row(
           children: [
             HugeIcon(
               icon: widget.iconData,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.3),
               size: 20.w,
             ),
             SizedBox(width: 12.w),
@@ -84,7 +90,9 @@ class _DateInputState extends State<DateInput> {
                 displayText,
                 style: TextStyles.bodyMedium(
                   context: context,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
               ),
             ),

@@ -165,6 +165,6 @@ class DeliveringController extends StateNotifier<DeliveringStates> {
 
 final deliveringControllerProvider =
     StateNotifierProvider<DeliveringController, DeliveringStates>((ref) {
-      final orderUsecases = sl<DeliveringUsecases>();
-      return DeliveringController(orderUsecases);
+      final deliveringUsecases = sl<DeliveringUsecases>();
+      return DeliveringController(deliveringUsecases);
     });

@@ -1,3 +1,6 @@
+import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
+import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
+import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +46,8 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   String? variantsForServer;
   String? selectedStatus;
   List<ProductEntities?>? selectedProductEntity;
-
+  String deliveryCity = "Antananarivo";
+  DateTime? deliveryDate;
   TextEditingController clientName = TextEditingController();
   TextEditingController clientTel = TextEditingController();
   TextEditingController clientAdrs = TextEditingController();
@@ -70,7 +74,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   String? errorClientTel;
   String? errorAdrsClient;
   String? errorDeliveryCosts;
-
+  String? errorDeliveryDate;
   String? errorProdName;
   String? errorProdQty;
   String? errorStatus;
@@ -84,6 +88,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   bool _validateFields() {
     setState(() {
       // Validation Produit ----------
+
       errorProdName =
           selectedProductEntity == null ? "Veuillez choisir un produit" : null;
       errorProdQty =
@@ -91,6 +96,8 @@ class _AddOrderState extends ConsumerState<AddOrder> {
       errorStatus = selectedStatus == null ? "Le status est obligatoire" : null;
 
       // Validation Client --------------
+      errorDeliveryDate =
+          deliveryDate == null ? "Veuillez choisir la date de livraison" : null;
       errorClientTel =
           clientTel.text.isEmpty ? "Le Numéro client est obligatoire" : null;
       errorAdrsClient =
@@ -106,7 +113,8 @@ class _AddOrderState extends ConsumerState<AddOrder> {
         errorStatus == null &&
         errorClientTel == null &&
         errorAdrsClient == null &&
-        errorDeliveryCosts == null;
+        errorDeliveryCosts == null &&
+        errorDeliveryDate == null;
   }
 
   double calculateTotal(
@@ -139,28 +147,6 @@ class _AddOrderState extends ConsumerState<AddOrder> {
     final orderState = ref.watch(orderControllerProvider);
     final orderAction = ref.read(orderControllerProvider.notifier);
     final productAction = ref.read(productControllerProvider.notifier);
-
-    ref.listen<OrderStates>(orderControllerProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
-        showDialog(
-          context: context,
-          builder:
-              (context) => ErrorDialog(
-                title: "Erreur de création commande.",
-                message: next.errorMessage!,
-              ),
-        );
-      }
-      if (next.order != null && next.isLoading == false) {
-        showToast(
-          context,
-          title: 'Commande passée.',
-          isError: false,
-          description:
-              "La commande de M./Mm ${clientName.text.trim()} est ajoutée avec succès!",
-        );
-      }
-    });
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -237,7 +223,6 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                             showDegree: false,
                             title: "Détails du panier",
                           ),
-
                           Row(
                             children: [
                               MiniTextCard(
@@ -384,11 +369,40 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                     degree: 1,
                     title: "Adresse de Livraison",
                   ),
-                  SimpleInput(
-                    textHint: "ex: Analakely - Commune",
-                    iconData: HugeIcons.strokeRoundedMapsLocation01,
-                    textEditControlleur: clientAdrs,
-                    maxLines: 1,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: CustomDropdown(
+                          value: deliveryCity,
+                          textHint: "ville",
+                          iconData: HugeIcons.strokeRoundedMaps,
+                          items: [
+                            "Antananarivo",
+                            "Fianarantsoa",
+                            "Toamasina",
+                            "Antsirabe",
+                            'Diego',
+                            "Mahajanga",
+                          ],
+                          onChanged: (selectedCity) {
+                            setState(() {
+                              deliveryCity = selectedCity!;
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        flex: 1,
+                        child: SimpleInput(
+                          textHint: "ex: Analakely",
+                          iconData: HugeIcons.strokeRoundedMapsLocation01,
+                          textEditControlleur: clientAdrs,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
                   ),
                   ShowInputError(message: errorAdrsClient),
 
@@ -405,7 +419,23 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                     maxLines: 1,
                   ),
                   ShowInputError(message: errorDeliveryCosts),
-
+                  SizedBox(height: 20.h),
+                  MediumTitleWithDegree(
+                    showDegree: true,
+                    degree: 1,
+                    title: "Date de Livraison",
+                  ),
+                  DateInput(
+                    iconData: HugeIcons.strokeRoundedCalendarAdd01,
+                    textHint: "Date de livraison",
+                    isRange: false,
+                    onDateSelected: (selectedDate) {
+                      setState(() {
+                        deliveryDate = selectedDate;
+                      });
+                    },
+                  ),
+                  ShowInputError(message: errorDeliveryDate),
                   SizedBox(height: 30.h),
                 ],
               ),
@@ -431,7 +461,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
             }
 
             final orderData = OrderEntities(
-              clientAdrs: clientAdrs.text.trim(),
+              clientAdrs: "${deliveryCity.trim()} - ${clientAdrs.text.trim()}",
               clientName: clientName.text.trim(),
               clientTel: clientTel.text.trim(),
               deliveryCosts: fraisDeLiv.text.trim(),
@@ -439,8 +469,10 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               productsAndQuantities: widget.orderListToOrderWithQuantity,
               quantity: qteProduit,
               status: selectedStatus,
+              deliveryDate: deliveryDate,
             );
-            await orderAction.insertOrder(orderData);
+
+            await orderAction.processOrderFlow(orderData);
             for (
               int i = 0;
               i < widget.orderListToOrderWithQuantity!.length;

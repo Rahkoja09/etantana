@@ -69,9 +69,9 @@ class OrderController extends StateNotifier<OrderStates> {
   }
 
   //  INSERTION ---è--------
-  Future<void> insertOrder(OrderEntities entity) async {
+  Future<void> processOrderFlow(OrderEntities entity) async {
     _setLoadingState();
-    final res = await _orderUsecases.insertOrder(entity);
+    final res = await _orderUsecases.processOrderFlow(entity);
     res.fold((error) => _setError(error), (success) {
       state = state.copyWith(
         isLoading: false,

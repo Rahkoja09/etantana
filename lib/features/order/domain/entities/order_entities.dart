@@ -13,6 +13,7 @@ class OrderEntities extends Equatable {
   final String? clientTel;
   final String? clientAdrs;
   final String? deliveryCosts;
+  final DateTime? deliveryDate;
 
   const OrderEntities({
     this.id,
@@ -26,6 +27,7 @@ class OrderEntities extends Equatable {
     this.clientTel,
     this.clientAdrs,
     this.deliveryCosts,
+    this.deliveryDate,
   });
 
   OrderEntities copyWith({
@@ -40,6 +42,7 @@ class OrderEntities extends Equatable {
     String? clientTel,
     String? clientAdrs,
     String? deliveryCosts,
+    DateTime? deliveryDate,
   }) {
     return OrderEntities(
       id: id ?? this.id,
@@ -54,6 +57,7 @@ class OrderEntities extends Equatable {
           productsAndQuantities ?? this.productsAndQuantities,
       quantity: quantity ?? this.quantity,
       status: status ?? this.status,
+      deliveryDate: deliveryDate ?? this.deliveryDate,
     );
   }
 
@@ -69,5 +73,6 @@ class OrderEntities extends Equatable {
     clientName,
     clientTel,
     clientAdrs,
+    deliveryDate,
   ];
 }

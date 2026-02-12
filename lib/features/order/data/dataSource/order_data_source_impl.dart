@@ -48,6 +48,7 @@ class OrderDataSourceImpl implements OrderDataSource {
                 'client_adrs': entity.clientAdrs,
                 'details': entity.details,
                 'delivery_costs': entity.deliveryCosts,
+                'delivery_date': entity.deliveryDate!.toIso8601String(),
               })
               .select()
               .single();
@@ -77,6 +78,7 @@ class OrderDataSourceImpl implements OrderDataSource {
         final clientName = criterial.clientName;
         final clientTel = criterial.clientTel;
         final clientAdrs = criterial.clientAdrs;
+        final deliveryDate = criterial.deliveryDate;
 
         if (status != null) query = query.eq("status", status);
         if (invoiceLink != null) query = query.eq("invoice_link", invoiceLink);
@@ -90,6 +92,8 @@ class OrderDataSourceImpl implements OrderDataSource {
         }
         if (clientTel != null) query = query.eq("client_tel", clientTel);
         if (clientAdrs != null) query = query.eq("client_adrs", clientAdrs);
+        if (deliveryDate != null)
+          query = query.eq('delivery_date', deliveryDate);
       }
 
       query = query.order("created_at", ascending: false);

@@ -52,7 +52,7 @@ class DeliveringModel extends DeliveringEntity {
       'order_id': orderId,
       'order_product_details': orderProductDetails,
       'date_of_delivering': dateOfDelivering?.toIso8601String(),
-      'created_at': createdAt?.toIso8601String(),
+      'created_at': (createdAt ?? DateTime.now()).toIso8601String(),
       'user_details': userDetails,
       'delivering_state': deliveringState,
       'delivering_service_details': deliveringServiceDetails,

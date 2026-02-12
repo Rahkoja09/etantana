@@ -117,40 +117,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
 
   @override
   Widget build(BuildContext context) {
-    final width =
-        MediaQuery.of(context).size.width - (StylesConstants.spacerContent * 2);
-
     final productState = ref.watch(productControllerProvider);
     final productAction = ref.read(productControllerProvider.notifier);
-
-    ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.error != null && next.error!.message.isNotEmpty) {
-        showToast(
-          context,
-          title: "Erreur",
-          isError: true,
-          description: next.error!.message,
-        );
-      }
-      if (next.product != null && next.isLoading == false) {
-        if (widget.productToEdit != null) {
-          showToast(
-            context,
-            title: 'Modification produit réussi.',
-            isError: false,
-            description:
-                "${nomProduitInput.text.trim()} est modifié avec succès!",
-          );
-        } else {
-          showToast(
-            context,
-            title: 'Ajout produit réussi.',
-            isError: false,
-            description: "${nomProduitInput.text.trim()} ajouté avec succès!",
-          );
-        }
-      }
-    });
     final double contentSpacer = 20.h;
     final double sectionSpacer = 50.h;
     return Stack(
