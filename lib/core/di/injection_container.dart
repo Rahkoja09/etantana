@@ -24,7 +24,7 @@ import 'package:e_tantana/features/product/domain/repository/product_repository.
 import 'package:e_tantana/features/product/domain/usecases/product_usecases.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/media/media_services_impl.dart';
-import 'package:e_tantana/shared/widget/map/services/mapbox_geoservice.dart';
+import 'package:e_tantana/features/map/presentation/services/mapbox_geoservice.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
@@ -108,10 +108,16 @@ Future<void> _initDelivering() async {
 }
 
 // map feature- ------------
+// Exemple pour Map
 Future<void> _initMap() async {
-  sl.registerLazySingleton<MapRepository>(() => MapRepositoryImpl(sl(), sl()));
-  sl.registerLazySingleton<MapRemoteDataSource>(
-    () => MapRemoteDataSourceImpl(client: sl(), accessToken: sl()),
+  sl.registerLazySingleton<MapRepository>(
+    () => MapRepositoryImpl(sl<MapRemoteDataSource>(), sl<NetworkInfo>()),
   );
-  sl.registerLazySingleton(() => MapUsecases(sl()));
+  sl.registerLazySingleton<MapRemoteDataSource>(
+    () => MapRemoteDataSourceImpl(
+      client: sl<http.Client>(),
+      accessToken: sl<String>(),
+    ),
+  );
+  sl.registerLazySingleton(() => MapUsecases(sl<MapRepository>()));
 }

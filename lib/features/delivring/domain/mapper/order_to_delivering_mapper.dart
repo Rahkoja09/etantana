@@ -1,4 +1,5 @@
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
+import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 
 extension OrderToDeliveringMapper on OrderEntities {
@@ -18,6 +19,19 @@ extension OrderToDeliveringMapper on OrderEntities {
         "client_address": clientAdrs,
       },
       status: status,
+    );
+  }
+}
+
+extension deliveryToMapEntityMapper on DeliveringEntity {
+  MapEntity toMapEntity() {
+    return MapEntity(
+      date: dateOfDelivering!,
+      id: id!,
+      location: deliveringAdresse!,
+      price: deliveringPrice!,
+      status: status!,
+      clientName: userDetails!["client_name"],
     );
   }
 }

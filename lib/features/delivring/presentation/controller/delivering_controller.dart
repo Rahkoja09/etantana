@@ -91,8 +91,10 @@ class DeliveringController extends StateNotifier<DeliveringStates> {
       action: action,
     );
 
+    final searchCriteria = criterial ?? DeliveringEntity();
+
     final res = await _usecases.searchDelivering(
-      criterial!,
+      searchCriteria,
       start: 0,
       end: _pageSize - 1,
     );
@@ -109,7 +111,7 @@ class DeliveringController extends StateNotifier<DeliveringStates> {
   }
 
   // page suivante du lazy loading ------
-  Future<void> loadNextPage(DeliveringEntity? criterial) async {
+  Future<void> loadNextPage() async {
     final action = deliveringAction.deliveringLoadNextPage;
     if (state.isLoading || _isLastPage) return;
 

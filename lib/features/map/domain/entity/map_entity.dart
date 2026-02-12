@@ -9,6 +9,7 @@ class MapEntity extends Equatable {
   final String status;
   final DateTime date;
   final double price;
+  final String? clientName;
 
   MapEntity({
     required this.id,
@@ -18,6 +19,7 @@ class MapEntity extends Equatable {
     required this.status,
     required this.date,
     required this.price,
+    this.clientName,
   });
 
   MapEntity copyWith({
@@ -28,6 +30,7 @@ class MapEntity extends Equatable {
     String? status,
     DateTime? date,
     double? price,
+    String? clientName,
   }) {
     return MapEntity(
       id: id ?? this.id,
@@ -37,6 +40,7 @@ class MapEntity extends Equatable {
       status: status ?? this.status,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      clientName: clientName ?? this.clientName,
     );
   }
 
@@ -47,6 +51,7 @@ class MapEntity extends Equatable {
       status: delivering.status!,
       date: delivering.dateOfDelivering!,
       price: delivering.deliveringPrice!,
+      clientName: delivering.userDetails!["client_name"],
     );
   }
 
@@ -59,5 +64,6 @@ class MapEntity extends Equatable {
     status,
     latitude,
     longitude,
+    clientName,
   ];
 }

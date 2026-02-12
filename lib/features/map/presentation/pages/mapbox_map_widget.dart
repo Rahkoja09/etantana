@@ -2,8 +2,10 @@ import 'dart:math' as Math;
 
 import 'package:e_tantana/config/constants/mapBox_const.dart';
 import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
-import 'package:e_tantana/shared/widget/map/services/mapbox_geoservice.dart';
+import 'package:e_tantana/features/map/presentation/controller/map_controller.dart';
+import 'package:e_tantana/features/map/presentation/services/mapbox_geoservice.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class DeliveryMapConfig {
@@ -30,20 +32,17 @@ class DeliveryMapConfig {
   });
 }
 
-class DeliveryMapWidget extends StatefulWidget {
+class DeliveryMapWidget extends ConsumerStatefulWidget {
   final DeliveryMapConfig config;
 
   const DeliveryMapWidget({Key? key, required this.config}) : super(key: key);
 
   @override
-  State<DeliveryMapWidget> createState() => DeliveryMapWidgetState();
+  ConsumerState<DeliveryMapWidget> createState() => DeliveryMapWidgetState();
 }
 
-class DeliveryMapWidgetState extends State<DeliveryMapWidget> {
+class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
   MapboxMap? mapboxMap;
-  final MapboxGeocodeService geocodeService = MapboxGeocodeService(
-    accessToken: String.fromEnvironment(MapboxConst.mapxBoxAccessToken),
-  );
 
   final Map<String, CircleAnnotation> _circleAnnotations = {};
   CircleAnnotationManager? _circleAnnotationManager;
@@ -87,6 +86,7 @@ class DeliveryMapWidgetState extends State<DeliveryMapWidget> {
   }
 
   Future<void> _addDeliveryCircle(MapEntity delivery) async {
+    final mapState = ref.watch(mapControllerProvider);
     if (_circleAnnotationManager == null || _pointAnnotationManager == null)
       return;
 
@@ -94,14 +94,16 @@ class DeliveryMapWidgetState extends State<DeliveryMapWidget> {
       late double lat, lng;
 
       if (delivery.latitude == null || delivery.longitude == null) {
-        final result = await geocodeService.searchLocation(delivery.location);
+        await ref
+            .read(mapControllerProvider.notifier)
+            .getCoordinatesFromAddress(delivery.location);
 
-        if (result == null) {
+        if (mapState.locations == null) {
           return;
         }
 
-        lat = result.latitude;
-        lng = result.longitude;
+        lat = mapState.locations!.latitude!;
+        lng = mapState.locations!.longitude!;
       } else {
         lat = delivery.latitude!;
         lng = delivery.longitude!;
@@ -181,16 +183,19 @@ class DeliveryMapWidgetState extends State<DeliveryMapWidget> {
   }
 
   Future<void> navigateToDelivery(MapEntity delivery) async {
+    final mapState = ref.watch(mapControllerProvider);
     if (mapboxMap == null) return;
 
     try {
       late double lat, lng;
 
       if (delivery.latitude == null || delivery.longitude == null) {
-        final result = await geocodeService.searchLocation(delivery.location);
-        if (result == null) return;
-        lat = result.latitude;
-        lng = result.longitude;
+        await ref
+            .read(mapControllerProvider.notifier)
+            .getCoordinatesFromAddress(delivery.location);
+        if (mapState.locations == null) return;
+        lat = mapState.locations!.latitude!;
+        lng = mapState.locations!.longitude!;
       } else {
         lat = delivery.latitude!;
         lng = delivery.longitude!;

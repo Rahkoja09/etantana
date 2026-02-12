@@ -12,7 +12,7 @@ import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
-import 'package:e_tantana/shared/widget/map/mapbox_map_widget.dart';
+import 'package:e_tantana/features/map/presentation/pages/mapbox_map_widget.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
 import 'package:flutter/material.dart';
@@ -122,93 +122,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
             onNotification: onScrollNotification,
             child: IndexedStack(
               index: _bottomNavIndex,
-              children: [
-                Home(),
-                Product(),
-                Order(),
-                Delivery(
-                  deliveries: [
-                    MapEntity(
-                      id: '1',
-                      location: 'antananarivo - andraisoro',
-                      status: 'pending',
-                      date: DateTime.now(),
-                      price: 5000,
-                    ),
-
-                    MapEntity(
-                      id: '2',
-                      location: 'antananarivo - ampanitokana',
-                      status: 'in_progress',
-                      date: DateTime.now(),
-                      price: 7500,
-                    ),
-                    MapEntity(
-                      id: '3',
-                      location: 'antananarivo - analakely',
-                      status: 'delivered',
-                      date: DateTime.now().subtract(const Duration(days: 1)),
-                      price: 6000,
-                    ),
-                    MapEntity(
-                      id: '4',
-                      location: 'antananarivo - anosibe',
-                      status: 'pending',
-                      date: DateTime.now().add(const Duration(days: 1)),
-                      price: 8000,
-                    ),
-                    MapEntity(
-                      id: '5',
-                      location: 'antananarivo - avaradoary',
-                      status: 'in_progress',
-                      date: DateTime.now(),
-                      price: 4500,
-                    ),
-                    MapEntity(
-                      id: '6',
-                      location: 'antananarivo - ankadikely',
-                      status: 'delivered',
-                      date: DateTime.now(),
-                      price: 5500,
-                    ),
-                    MapEntity(
-                      id: '7',
-                      location: 'antananarivo - antsakaviro',
-                      status: 'pending',
-                      date: DateTime.now().add(const Duration(days: 2)),
-                      price: 9000,
-                    ),
-                    MapEntity(
-                      id: '8',
-                      location: 'antananarivo - ampasapito',
-                      status: 'in_progress',
-                      date: DateTime.now(),
-                      price: 6500,
-                    ),
-                    MapEntity(
-                      id: '9',
-                      location: 'antananarivo - itaosy',
-                      status: 'pending',
-                      date: DateTime.now(),
-                      price: 7000,
-                    ),
-                    MapEntity(
-                      id: '10',
-                      location: 'antananarivo - ivandry',
-                      status: 'delivered',
-                      date: DateTime.now().subtract(const Duration(days: 2)),
-                      price: 8500,
-                    ),
-                    MapEntity(
-                      id: '11',
-                      location: 'antananarivo - avaratra ankatso',
-                      status: 'pending',
-                      date: DateTime.now(),
-                      price: 5000,
-                    ),
-                  ],
-                ),
-              ],
+              children: [Home(), Product(), Order(), Delivery()],
             ),
           ),
 

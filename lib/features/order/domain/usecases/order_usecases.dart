@@ -37,8 +37,35 @@ class OrderUsecases {
 
   ResultVoid deleteOrderById(String orderId) =>
       _orderRepository.deleteOrderById(orderId);
-  ResultFuture<OrderEntities> updateOrder(OrderEntities entity) =>
-      _orderRepository.updateOrder(entity);
+  ResultFuture<OrderEntities> updateOrder(OrderEntities entity) async {
+    try {
+      final orderRes = await _orderRepository.updateOrder(entity);
+
+      return await orderRes.fold((failure) async => Left(failure), (
+        order,
+      ) async {
+        final deliveringRes = await _deliveringRepository.selectDeliveringById(
+          order.id!,
+        );
+
+        return await deliveringRes.fold((failure) async => Left(failure), (
+          delivery,
+        ) async {
+          final updates = delivery.copyWith(status: order.status);
+          final deliveryUpdateRes = await _deliveringRepository
+              .updateDeliveringByI(updates);
+
+          return deliveryUpdateRes.fold(
+            (failure) => Left(failure),
+            (_) => Right(order),
+          );
+        });
+      });
+    } catch (e) {
+      return Left(UnexceptedFailure(e.toString(), "500"));
+    }
+  }
+
   ResultFuture<List<OrderEntities>> researchOrder(
     OrderEntities? criterial, {
     int start = 0,

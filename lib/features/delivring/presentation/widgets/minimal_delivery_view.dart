@@ -1,20 +1,30 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart'; // Ajuste selon ton import réel
 import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
 import 'package:e_tantana/shared/widget/actions/swipe_action.dart';
+import 'package:e_tantana/shared/widget/loading/loading.dart';
+import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 class MinimalDeliverieView extends StatelessWidget {
   final MapEntity delivery;
+  final bool isLoading;
   final VoidCallback? onTap;
 
-  const MinimalDeliverieView({super.key, required this.delivery, this.onTap});
+  const MinimalDeliverieView({
+    super.key,
+    required this.delivery,
+    this.onTap,
+    required this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final statusColor = _getStatusColor(delivery.status ?? "");
+    final statusColor = getStatusColor(delivery.status ?? "");
 
     return SwipeAction(
       dismissibleKey: ValueKey(delivery.id),
@@ -39,14 +49,15 @@ class MinimalDeliverieView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Liv_${delivery.id}",
-                      style: TextStyle(
-                        color: colorScheme.primary,
+                      "${delivery.clientName}",
+                      style: TextStyles.bodyText(
+                        context: context,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
                       ),
                     ),
                     _buildStatusBadge(
+                      context,
                       delivery.status ?? "pending",
                       statusColor,
                     ),
@@ -54,18 +65,28 @@ class MinimalDeliverieView extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                // Ligne 2 : Adresse (Grosse et grasse)
-                Text(
-                  delivery.location,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: colorScheme.onSurface,
-                    letterSpacing: -0.5,
+                if (isLoading)
+                  Text(
+                    "Chargement...",
+                    style: TextStyles.bodyMedium(
+                      context: context,
+                      fontWeight: FontWeight.w800,
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                if (!isLoading)
+                  Text(
+                    delivery.location,
+                    style: TextStyles.bodyMedium(
+                      context: context,
+                      fontWeight: FontWeight.w800,
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 const SizedBox(height: 10),
 
                 Row(
@@ -81,8 +102,8 @@ class MinimalDeliverieView extends StatelessWidget {
                         const SizedBox(width: 3),
                         Text(
                           DateFormat('dd/mm/yy').format(delivery.date),
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: TextStyles.bodySmall(
+                            context: context,
                             color: colorScheme.onSurface.withValues(alpha: 0.4),
                             fontWeight: FontWeight.w500,
                           ),
@@ -92,8 +113,8 @@ class MinimalDeliverieView extends StatelessWidget {
                     // Section Prix
                     Text(
                       "frais. ${NumberFormat('#,###').format(delivery.price)} Ar",
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: TextStyles.bodyMedium(
+                        context: context,
                         fontWeight: FontWeight.w900,
                         color: colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
@@ -109,7 +130,7 @@ class MinimalDeliverieView extends StatelessWidget {
   }
 
   // Le badge de l'image (Fond bleu clair, texte bleu foncé)
-  Widget _buildStatusBadge(String status, Color color) {
+  Widget _buildStatusBadge(BuildContext context, String status, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -118,8 +139,8 @@ class MinimalDeliverieView extends StatelessWidget {
       ),
       child: Text(
         status.replaceAll('_', ' ').toUpperCase(),
-        style: TextStyle(
-          fontSize: 11,
+        style: TextStyles.bodySmall(
+          context: context,
           fontWeight: FontWeight.bold,
           color: color,
         ),
@@ -127,16 +148,34 @@ class MinimalDeliverieView extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return Colors.orange;
-      case 'in_progress':
-        return Colors.blueAccent;
-      case 'delivered':
-        return Colors.green;
+  MaterialColor getStatusColor(String status) {
+    MaterialColor statusColors;
+    switch (status) {
+      case ("Validée"):
+        {
+          statusColors = Colors.green;
+          break;
+        }
+      case ("Livrée"):
+        {
+          statusColors = Colors.blue;
+          break;
+        }
+      case ("Annulée"):
+        {
+          statusColors = Colors.red;
+          break;
+        }
+      case ("En Attente de Val."):
+        {
+          statusColors = Colors.grey;
+          break;
+        }
       default:
-        return Colors.blueGrey;
+        {
+          statusColors = Colors.green;
+        }
     }
+    return statusColors;
   }
 }

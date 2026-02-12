@@ -97,7 +97,11 @@ class DeliveringRemoteSourceImpl implements DeliveringRemoteSource {
   Future<DeliveringModel> selectDeliveringById(String id) async {
     try {
       final data =
-          await _client.from("delivering").select().eq("id", id).single();
+          await _client
+              .from("delivering")
+              .select()
+              .or("id.eq.$id,order_id.eq.$id")
+              .single();
 
       return DeliveringModel.fromMap(data);
     } on PostgrestException catch (e) {

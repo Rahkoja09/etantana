@@ -29,16 +29,24 @@ class MapModel extends MapEntity {
     String originalLocation,
     double price,
   ) {
-    final properties = json['properties'] as Map<String, dynamic>;
-    final geometry = json['geometry'] as Map<String, dynamic>;
-    final coordinates = geometry['coordinates'] as List<dynamic>;
+    final properties = json['properties'] as Map<String, dynamic>? ?? {};
+    final geometry = json['geometry'] as Map<String, dynamic>? ?? {};
+    final coordinates = geometry['coordinates'] as List<dynamic>? ?? [];
+    final longitude =
+        coordinates.isNotEmpty ? (coordinates[0] as num).toDouble() : 0.0;
+    final latitude =
+        coordinates.length > 1 ? (coordinates[1] as num).toDouble() : 0.0;
 
     return MapModel(
-      id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id:
+          json['id'] as String? ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       location:
-          properties['full_address'] ?? properties['name'] ?? originalLocation,
-      latitude: (coordinates[1] as num).toDouble(),
-      longitude: (coordinates[0] as num).toDouble(),
+          properties['full_address'] as String? ??
+          properties['name'] as String? ??
+          originalLocation,
+      latitude: latitude,
+      longitude: longitude,
       status: 'pending',
       date: DateTime.now(),
       price: price,
