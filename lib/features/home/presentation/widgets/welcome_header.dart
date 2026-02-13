@@ -17,7 +17,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 125.h,
+      height: 175.h,
       child: ListView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -28,6 +28,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
             headText: "Je",
             bodyText: "Gère",
             commenteText: "Mes Produits, commandes et factures",
+            themeColor: Colors.blue,
           ),
           SizedBox(width: StylesConstants.spacerContent),
           PresentationCard(
@@ -36,6 +37,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
             headText: "Je",
             bodyText: "Révise",
             commenteText: "Mes Statistiques, Recettes et inventaires",
+            themeColor: Colors.green,
           ),
         ],
       ),

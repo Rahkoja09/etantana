@@ -6,7 +6,6 @@ import 'package:hugeicons/hugeicons.dart';
 class BigStatView extends StatelessWidget {
   final String title;
   final String cycle;
-
   final IconData icon;
   final String value;
   final String moneySign;
@@ -23,40 +22,87 @@ class BigStatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 110,
-      padding: EdgeInsets.all(StylesConstants.spacerContent),
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 0.2,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-        ),
-        color: Theme.of(context).colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Stack(
+      children: [
+        Container(
+          height: 110,
+          padding: EdgeInsets.all(StylesConstants.spacerContent),
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 0.2,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.3),
+            ),
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+          ),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(
-                        StylesConstants.borderRadius,
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(
+                            StylesConstants.borderRadius,
+                          ),
+                        ),
+                        child: HugeIcon(
+                          icon: icon,
+                          color: Colors.white,
+                          size: 15,
+                        ),
                       ),
-                    ),
-                    child: HugeIcon(icon: icon, color: Colors.white, size: 15),
+                      SizedBox(width: 5),
+                      Text(
+                        title,
+                        style: TextStyles.bodyMedium(
+                          context: context,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        value,
+                        style: TextStyles.titleSmall(
+                          context: context,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        moneySign,
+                        style: TextStyles.bodySmall(
+                          context: context,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                children: [
                   Text(
-                    title,
+                    cycle,
                     style: TextStyles.bodyMedium(
                       context: context,
                       color: Theme.of(
@@ -66,61 +112,25 @@ class BigStatView extends StatelessWidget {
                   ),
                 ],
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value,
-                    style: TextStyles.titleSmall(
-                      context: context,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    moneySign,
-                    style: TextStyles.bodySmall(
-                      context: context,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.4),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                cycle,
-                style: TextStyles.bodyMedium(
-                  context: context,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  increasePercent,
-                  style: TextStyles.bodyMedium(
-                    context: context,
-                    color: Colors.green,
-                  ),
-                ),
-              ),
-            ],
+        ),
+
+        Positioned(
+          bottom: -15,
+          right: -15,
+          child: Transform.rotate(
+            angle: -0.25,
+            child: Icon(
+              Icons.account_balance_wallet_rounded,
+              size: 80,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.1),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

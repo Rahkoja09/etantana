@@ -83,7 +83,7 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                     ? Theme.of(
                       context,
                     ).colorScheme.error.withValues(alpha: 0.15)
-                    : Theme.of(context).colorScheme.surface,
+                    : Theme.of(context).colorScheme.surfaceContainerLowest,
           ),
           child: Row(
             children: [

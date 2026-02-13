@@ -101,9 +101,7 @@ class _MinimalOrderDisplayState extends State<MinimalOrderDisplay> {
               ).colorScheme.onSurface.withValues(alpha: 0.2),
               width: 0.2,
             ),
-            color: Theme.of(
-              context,
-            ).colorScheme.surfaceContainer.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.surfaceContainerLowest,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

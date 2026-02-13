@@ -1,4 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/home/domain/entities/dashboard_stats_entities.dart';
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/home/presentation/states/dashboard_states.dart';
@@ -71,7 +72,25 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            MediumTitleWithDegree(showDegree: false, title: "Tableau de bord"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                MediumTitleWithDegree(
+                  showDegree: false,
+                  title: "Tableau de bord",
+                ),
+                InkWell(
+                  child: Text(
+                    "voir plus",
+                    style: TextStyles.bodyMedium(
+                      context: context,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 10.h),
             Row(
               children: [

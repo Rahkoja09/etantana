@@ -79,17 +79,15 @@ class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
         await mapboxMap!.annotations.createCircleAnnotationManager();
     _pointAnnotationManager =
         await mapboxMap!.annotations.createPointAnnotationManager();
-
+    await Future.delayed(const Duration(seconds: 2));
     for (var delivery in widget.config.deliveries) {
       await _addDeliveryCircle(delivery);
     }
   }
 
   Future<void> _addDeliveryCircle(MapEntity delivery) async {
-    final mapState = ref.watch(mapControllerProvider);
     if (_circleAnnotationManager == null || _pointAnnotationManager == null)
       return;
-
     try {
       late double lat, lng;
 
@@ -98,12 +96,15 @@ class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
             .read(mapControllerProvider.notifier)
             .getCoordinatesFromAddress(delivery.location);
 
+        final mapState = ref.read(mapControllerProvider);
+
         if (mapState.locations == null) {
           return;
         }
 
         lat = mapState.locations!.latitude!;
         lng = mapState.locations!.longitude!;
+        print('Coordonnées trouvées: $lat, $lng');
       } else {
         lat = delivery.latitude!;
         lng = delivery.longitude!;
@@ -120,27 +121,19 @@ class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
             widget.config.zoom,
           ),
           circleColor: circleColor.value,
-          circleOpacity: 0.3,
+          circleOpacity: 0.1,
           circleStrokeColor: circleColor.value,
-          circleStrokeWidth: 2.0,
-          circleStrokeOpacity: 0.8,
+          circleStrokeWidth: 1.0,
+          circleStrokeOpacity: 0.5,
           circleSortKey: 1.0,
         ),
       );
-
-      await _pointAnnotationManager!.create(
-        PointAnnotationOptions(
-          geometry: Point(coordinates: Position(lng, lat)),
-          iconImage: "blue-dot",
-          iconSize: 1.0,
-        ),
-      );
+      await _addCenterPoint(lat, lng, delivery);
 
       _circleAnnotations[delivery.id] = circle;
-
-      await _addCenterPoint(lat, lng, delivery);
+      print(' Cercle ajouté pour: ${delivery.location}');
     } catch (e) {
-      print('Erreur ajout cercle: $e');
+      print(' Erreur ajout cercle: $e');
     }
   }
 
@@ -170,16 +163,34 @@ class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
   }
 
   Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return Colors.orange;
-      case 'in_progress':
-        return Colors.blue;
-      case 'delivered':
-        return Colors.green;
+    MaterialColor statusColors;
+    switch (status) {
+      case ("Validée"):
+        {
+          statusColors = Colors.green;
+          break;
+        }
+      case ("Livrée"):
+        {
+          statusColors = Colors.blue;
+          break;
+        }
+      case ("Annulée"):
+        {
+          statusColors = Colors.red;
+          break;
+        }
+      case ("En Attente de Val."):
+        {
+          statusColors = Colors.grey;
+          break;
+        }
       default:
-        return Colors.grey;
+        {
+          statusColors = Colors.green;
+        }
     }
+    return statusColors;
   }
 
   Future<void> navigateToDelivery(MapEntity delivery) async {

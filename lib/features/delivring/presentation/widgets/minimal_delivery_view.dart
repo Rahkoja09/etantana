@@ -65,28 +65,16 @@ class MinimalDeliverieView extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                if (isLoading)
-                  Text(
-                    "Chargement...",
-                    style: TextStyles.bodyMedium(
-                      context: context,
-                      fontWeight: FontWeight.w800,
-                      color: colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                  delivery.location,
+                  style: TextStyles.bodyMedium(
+                    context: context,
+                    fontWeight: FontWeight.w800,
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
-                if (!isLoading)
-                  Text(
-                    delivery.location,
-                    style: TextStyles.bodyMedium(
-                      context: context,
-                      fontWeight: FontWeight.w800,
-                      color: colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 10),
 
                 Row(

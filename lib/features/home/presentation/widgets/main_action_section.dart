@@ -1,3 +1,4 @@
+import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/home/presentation/widgets/action_card.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
@@ -15,7 +16,22 @@ class MainActionsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MediumTitleWithDegree(showDegree: false, title: "Actions rapide"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            MediumTitleWithDegree(showDegree: false, title: "Actions rapides"),
+            InkWell(
+              child: Text(
+                "voir plus",
+                style: TextStyles.bodyMedium(
+                  context: context,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ],
+        ),
         SizedBox(height: 10.h),
         Row(
           children: [

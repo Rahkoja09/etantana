@@ -1,4 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/utils/tools/count_delivery.dart';
 import 'package:e_tantana/features/delivring/domain/mapper/order_to_delivering_mapper.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
 import 'package:e_tantana/features/delivring/presentation/widgets/minimal_delivery_view.dart';
@@ -8,7 +10,9 @@ import 'package:e_tantana/features/map/presentation/states/map_states.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/features/map/presentation/pages/mapbox_map_widget.dart';
+import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -100,25 +104,60 @@ class _DeliveryState extends ConsumerState<Delivery> {
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
           Center(
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 10),
-              width: 60,
-              height: 10,
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
+            child:
+                mapState.isLoading
+                    ? LoadingAnimation.primary(context, size: 20)
+                    : Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      width: 40,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
           ),
           Padding(
-            padding: EdgeInsets.all(10),
-            child: FloatingSearchBar(
-              controller: searchDelivering,
-              onSortTap: () {},
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10.0,
+              vertical: 15.0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Les livraisons",
+                  style: TextStyles.titleSmall(
+                    fontSize: 18,
+                    context: context,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(
+                      StylesConstants.borderRadius,
+                    ),
+                  ),
+                  child: Text(
+                    "${CountDelivery.countDeliveryWithStatus(displayData, "Validée")} livraison(s)",
+                    style: TextStyles.bodySmall(
+                      context: context,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -136,9 +175,9 @@ class _DeliveryState extends ConsumerState<Delivery> {
                         ignoreContainers: true,
                         justifyMultiLineText: true,
                         child: ListView.builder(
+                          padding: EdgeInsets.zero,
                           controller:
                               isInitialLoading ? null : _scrollController,
-                          shrinkWrap: false,
                           itemCount:
                               displayData.length +
                               (deliveringState.isLoading &&
@@ -158,7 +197,6 @@ class _DeliveryState extends ConsumerState<Delivery> {
                                 ),
                               );
                             }
-
                             final delivery = displayData[index];
                             return MinimalDeliverieView(
                               delivery: delivery,
@@ -197,7 +235,9 @@ class _DeliveryState extends ConsumerState<Delivery> {
   Widget _buildMap() {
     final deliveringState = ref.watch(deliveringControllerProvider);
     final actualDeliverings = deliveringState.deliverings ?? [];
+
     final mapEntities = actualDeliverings.map((d) => d.toMapEntity()).toList();
+
     return DeliveryMapWidget(
       key: _mapKey,
       config: DeliveryMapConfig(
