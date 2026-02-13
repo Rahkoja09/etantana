@@ -1,3 +1,4 @@
+import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,8 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
 
   @override
   Widget build(BuildContext context) {
-    Color iconColor = Colors.white;
+    Color iconColor = Colors.black;
+    double iconSize = 25;
     final theme = ref.watch(themeProvider);
     return AppBar(
       actions: <Widget>[Container()],
@@ -54,25 +56,31 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image(
-            image: AssetImage(
-              theme == lightTheme
-                  ? "assets/medias/icons/app_icon.png"
-                  : "assets/medias/icons/app_icon.png",
-            ),
-            height: 25.h,
+          Row(
+            children: [
+              Image(
+                image: AssetImage(
+                  theme == lightTheme
+                      ? "assets/medias/icons/app_icon.png"
+                      : "assets/medias/icons/app_icon.png",
+                ),
+                height: 25.h,
+              ),
+              SizedBox(width: 10),
+              Text(
+                "${AppConst.appName}",
+                style: TextStyles.titleSmall(
+                  fontSize: 18,
+                  context: context,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ],
           ),
 
           Row(
             children: [
-              IconButton(
-                onPressed: () {},
-                icon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedNotification03,
-                  color: iconColor,
-                  size: 25,
-                ),
-              ),
               IconButton(
                 onPressed: () {
                   setState(() {
@@ -80,22 +88,29 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                         theme == darkTheme ? lightTheme : darkTheme;
                   });
                 },
-                icon: HugeIcon(
-                  icon:
-                      theme == darkTheme
-                          ? HugeIcons.strokeRoundedSun01
-                          : HugeIcons.strokeRoundedMoon02,
+                icon: Icon(
+                  theme == darkTheme
+                      ? Icons.dark_mode_rounded
+                      : Icons.light_mode_rounded,
+                  color: theme == lightTheme ? Colors.white60 : Colors.black54,
+                  size: iconSize,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.notifications_rounded,
                   color: iconColor,
-                  size: 25,
+                  size: iconSize,
                 ),
               ),
 
               IconButton(
                 onPressed: () {},
-                icon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedSettings02,
+                icon: Icon(
+                  Icons.settings_rounded,
                   color: iconColor,
-                  size: 25,
+                  size: iconSize,
                 ),
               ),
             ],

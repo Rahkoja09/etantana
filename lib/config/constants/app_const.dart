@@ -1,4 +1,4 @@
 class AppConst {
-  static String appName = "e_tantana";
+  static String appName = "etantana";
   static String defaultImage = "assets/medias/logos/defaultImage.png";
 }

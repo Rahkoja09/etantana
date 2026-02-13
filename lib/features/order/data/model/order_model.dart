@@ -52,7 +52,7 @@ class OrderModel extends OrderEntities {
       'client_adrs': clientAdrs,
       'details': details,
       'delivery_costs': deliveryCosts,
-      'delivery_date': deliveryDate,
+      'delivery_date': deliveryDate!.toIso8601String(),
     };
   }
 
