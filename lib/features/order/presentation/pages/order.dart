@@ -414,23 +414,39 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
     padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Spacer(),
         Text(
-          headerText,
-          style: TextStyles.bodySmall(
+          "Mes commandes",
+          style: TextStyles.bodyMedium(
             context: context,
             color: Theme.of(
               context,
-            ).colorScheme.onSurface.withValues(alpha: 0.4),
+            ).colorScheme.onSurface.withValues(alpha: 0.8),
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(width: 4),
-        HugeIcon(
-          icon: HugeIcons.strokeRoundedCalendar01,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-          size: 15,
+        Row(
+          children: [
+            Text(
+              "---- $headerText",
+              style: TextStyles.bodySmall(
+                context: context,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(width: 4),
+            HugeIcon(
+              icon: HugeIcons.strokeRoundedCalendar01,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.8),
+              size: 15,
+            ),
+          ],
         ),
       ],
     ),

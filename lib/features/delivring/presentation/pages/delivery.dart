@@ -70,10 +70,37 @@ class _DeliveryState extends ConsumerState<Delivery> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(flex: 4, child: _buildMap()),
-          Expanded(flex: 6, child: _buildDeliveryList()),
+          Positioned.fill(bottom: 200.h, child: _buildMap()),
+
+          Positioned(
+            top: 250.h,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(StylesConstants.borderRadius * 2),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(StylesConstants.borderRadius * 2),
+                ),
+                child: _buildDeliveryList(),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -101,7 +128,10 @@ class _DeliveryState extends ConsumerState<Delivery> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(top: StylesConstants.spacerContent),
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
 

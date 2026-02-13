@@ -1,13 +1,9 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart'; // Ajuste selon ton import réel
 import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
 import 'package:e_tantana/shared/widget/actions/swipe_action.dart';
-import 'package:e_tantana/shared/widget/loading/loading.dart';
-import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 class MinimalDeliverieView extends StatelessWidget {
   final MapEntity delivery;
@@ -36,10 +32,16 @@ class MinimalDeliverieView extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerLowest,
+              color:
+                  isDelivred(delivery.status)
+                      ? colorScheme.surface
+                      : colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
               border: Border.all(
-                color: colorScheme.outlineVariant.withOpacity(0.3),
+                color:
+                    isDelivred(delivery.status)
+                        ? colorScheme.outlineVariant.withValues(alpha: 0.1)
+                        : colorScheme.outlineVariant.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -67,9 +69,13 @@ class MinimalDeliverieView extends StatelessWidget {
 
                 Text(
                   delivery.location,
-                  style: TextStyles.bodyMedium(
-                    context: context,
+                  style: TextStyle(
+                    decoration:
+                        isDelivred(delivery.status)
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
                     fontWeight: FontWeight.w800,
+                    fontFamily: 'Nonito',
                     color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   maxLines: 1,
@@ -101,8 +107,13 @@ class MinimalDeliverieView extends StatelessWidget {
                     // Section Prix
                     Text(
                       "frais. ${NumberFormat('#,###').format(delivery.price)} Ar",
-                      style: TextStyles.bodyMedium(
-                        context: context,
+                      style: TextStyle(
+                        fontFamily: 'Nonito',
+                        decoration:
+                            isDelivred(delivery.status)
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                        fontSize: 12,
                         fontWeight: FontWeight.w900,
                         color: colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
@@ -115,6 +126,10 @@ class MinimalDeliverieView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool isDelivred(String status) {
+    return status.toLowerCase() == "Livrée".toLowerCase();
   }
 
   // Le badge de l'image (Fond bleu clair, texte bleu foncé)
