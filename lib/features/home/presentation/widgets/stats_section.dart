@@ -36,7 +36,7 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
     revenue: 0.0,
     revenueIncrease: "+0%",
     totalOrders: 0,
-    totalProducts: 0,
+    deliveryToday: 0,
   );
 
   Future<void> getDashboard() async {
@@ -97,7 +97,7 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
                 Expanded(
                   child: StatNumberView(
                     icon: HugeIcons.strokeRoundedInvoice,
-                    title: "Commandes",
+                    title: "Commande(s)",
                     value: "${dashboard.totalOrders}",
                   ),
                 ),
@@ -105,8 +105,8 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
                 Expanded(
                   child: StatNumberView(
                     icon: HugeIcons.strokeRoundedPackage03,
-                    title: "Produits",
-                    value: "${dashboard.totalProducts}",
+                    title: "Livraison(s)",
+                    value: "${dashboard.deliveryToday}",
                   ),
                 ),
               ],

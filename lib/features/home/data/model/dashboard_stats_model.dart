@@ -7,7 +7,7 @@ class DashboardStatsModel extends DashboardStatsEntities {
     required super.revenue,
     required super.revenueIncrease,
     required super.totalOrders,
-    required super.totalProducts,
+    required super.deliveryToday,
   });
 
   factory DashboardStatsModel.fromMap(MapData data) {
@@ -16,7 +16,7 @@ class DashboardStatsModel extends DashboardStatsEntities {
       revenue: (data['revenue'] as num?)?.toDouble() ?? 0.0,
       revenueIncrease: data['revenue_increase'] as String? ?? "0%",
       totalOrders: (data['total_orders'] as num?)?.toInt() ?? 0,
-      totalProducts: (data['total_products'] as num?)?.toInt() ?? 0,
+      deliveryToday: (data['delivery_today'] as num?)?.toInt() ?? 0,
     );
   }
 
@@ -26,7 +26,7 @@ class DashboardStatsModel extends DashboardStatsEntities {
       'revenue': revenue,
       'revenue_increase': revenueIncrease,
       'total_orders': totalOrders,
-      'total_products': totalProducts,
+      'delivery_today': deliveryToday,
     };
   }
 
@@ -36,7 +36,7 @@ class DashboardStatsModel extends DashboardStatsEntities {
       revenue: entity.revenue,
       revenueIncrease: entity.revenueIncrease,
       totalOrders: entity.totalOrders,
-      totalProducts: entity.totalProducts,
+      deliveryToday: entity.deliveryToday,
     );
   }
 
@@ -45,14 +45,14 @@ class DashboardStatsModel extends DashboardStatsEntities {
     double? revenue,
     String? revenueIncrease,
     int? totalOrders,
-    int? totalProducts,
+    int? deliveryToday,
   }) {
     return DashboardStatsModel(
       period: period ?? this.period,
       revenue: revenue ?? this.revenue,
       revenueIncrease: revenueIncrease ?? this.revenueIncrease,
       totalOrders: totalOrders ?? this.totalOrders,
-      totalProducts: totalProducts ?? this.totalProducts,
+      deliveryToday: deliveryToday ?? this.deliveryToday,
     );
   }
 }

@@ -2,14 +2,14 @@ import 'package:equatable/equatable.dart';
 
 class DashboardStatsEntities extends Equatable {
   final int? totalOrders;
-  final int? totalProducts;
+  final int? deliveryToday;
   final double? revenue;
   final String? revenueIncrease;
   final String? period;
 
   const DashboardStatsEntities({
     this.totalOrders,
-    this.totalProducts,
+    this.deliveryToday,
     this.revenue,
     this.revenueIncrease,
     this.period,
@@ -18,7 +18,7 @@ class DashboardStatsEntities extends Equatable {
   @override
   List<Object?> get props => [
     totalOrders,
-    totalProducts,
+    deliveryToday,
     revenue,
     revenueIncrease,
     period,

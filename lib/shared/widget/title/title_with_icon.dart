@@ -17,13 +17,14 @@ class TitleWithIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon, size: 20, color: themeColor),
+        Icon(icon, size: 25, color: themeColor),
         SizedBox(width: 10),
         Text(
           title,
-          style: TextStyles.bodyText(
+          style: TextStyles.titleSmall(
+            fontSize: 17,
             context: context,
             fontWeight: boldTitle ? FontWeight.bold : FontWeight.w400,
           ),

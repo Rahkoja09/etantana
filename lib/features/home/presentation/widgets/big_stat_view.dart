@@ -88,7 +88,7 @@ class _BigStatViewState extends State<BigStatView> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            isRecetteVisible ? widget.value : "x_-",
+                            isRecetteVisible ? widget.value : "x,xx,xxx,xxx",
                             style: TextStyles.titleSmall(
                               context: context,
                               fontSize: 20,

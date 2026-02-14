@@ -10,16 +10,16 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
   @override
   Future<DashboardStatsModel> getDashboardStats() async {
     try {
-      final productRes = await _client
-          .from('product')
-          .select('*')
-          .count(CountOption.exact);
-
-      final int totalProducts = productRes.count;
-
       final now = DateTime.now();
       final todayStart =
           DateTime(now.year, now.month, now.day).toIso8601String();
+      final deliveryRes = await _client
+          .from('delivering')
+          .select('*')
+          .gte('created_at', todayStart)
+          .count(CountOption.exact);
+
+      final int deliveryToday = deliveryRes.count;
 
       final List<dynamic> ordersData = await _client
           .from('order')
@@ -34,9 +34,7 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
 
         double price = 0.0;
         for (var product in productsOrdered) {
-          price +=
-              double.tryParse(product["unit_price"])! *
-              double.tryParse(product["quantity"])!;
+          price += product["unit_price"]! * product["quantity"]!;
         }
         dailyRevenue += price;
       }
@@ -46,7 +44,7 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
         revenue: dailyRevenue,
         revenueIncrease: "+0%",
         totalOrders: totalOrders,
-        totalProducts: totalProducts,
+        deliveryToday: deliveryToday,
       );
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message);
