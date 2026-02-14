@@ -15,7 +15,7 @@ import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
-import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
+import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

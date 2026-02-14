@@ -12,7 +12,7 @@ import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/features/map/presentation/pages/mapbox_map_widget.dart';
 import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
-import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
+import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

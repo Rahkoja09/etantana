@@ -135,8 +135,7 @@ class MediaServiceImpl implements MediaServices {
             filePath,
             file,
             fileOptions: FileOptions(contentType: contentType, upsert: true),
-          )
-          .timeout(const Duration(seconds: 20));
+          );
 
       return getPublicUrl(filePath, bucketName);
     } on StorageException catch (e) {

@@ -5,7 +5,7 @@ import 'package:e_tantana/features/product/presentation/states/product_state.dar
 import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
-import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
+import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

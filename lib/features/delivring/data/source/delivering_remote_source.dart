@@ -114,7 +114,7 @@ class DeliveringRemoteSourceImpl implements DeliveringRemoteSource {
   @override
   Future<void> deleteDeliveringById(String id) async {
     try {
-      await _client.from("delivering").delete().eq("id", id);
+      await _client.from("delivering").delete().or("id.eq.$id,order_id.eq.$id");
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {

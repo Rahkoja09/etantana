@@ -35,8 +35,24 @@ class OrderUsecases {
     }
   }
 
-  ResultVoid deleteOrderById(String orderId) =>
-      _orderRepository.deleteOrderById(orderId);
+  ResultVoid deleteOrderById(String orderId) async {
+    try {
+      final deliveringRes = await _deliveringRepository.deleteDeliveringById(
+        orderId,
+      );
+
+      return await deliveringRes.fold((failure) async => Left(failure), (
+        _,
+      ) async {
+        final orderRes = await _orderRepository.deleteOrderById(orderId);
+
+        return orderRes.fold((failure) => Left(failure), (_) => Right(null));
+      });
+    } catch (e) {
+      return Left(UnexceptedFailure(e.toString(), "500"));
+    }
+  }
+
   ResultFuture<OrderEntities> updateOrder(OrderEntities entity) async {
     try {
       final orderRes = await _orderRepository.updateOrder(entity);

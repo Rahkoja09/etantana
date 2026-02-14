@@ -3,7 +3,7 @@ import 'package:e_tantana/features/home/presentation/widgets/action_card.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
-import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
+import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';

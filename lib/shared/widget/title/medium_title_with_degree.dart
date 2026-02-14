@@ -26,6 +26,9 @@ class MediumTitleWithDegree extends StatelessWidget {
             style: TextStyles.bodyText(
               context: context,
               fontWeight: FontWeight.bold,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             children:
                 showDegree

@@ -1,6 +1,10 @@
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
+import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
+import 'package:e_tantana/shared/widget/input/swith_selector.dart';
+import 'package:e_tantana/shared/widget/others/price_viewer.dart';
+import 'package:e_tantana/shared/widget/title/title_with_icon.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,8 +33,10 @@ import 'package:e_tantana/shared/widget/others/mini_text_card.dart';
 import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/text/horizontal_divider.dart';
-import 'package:e_tantana/shared/widget/text/medium_title_with_degree.dart';
+import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/show_input_error.dart';
+
+enum DeliveryStatus { pending, validated, delivered, cancelled }
 
 class AddOrder extends ConsumerStatefulWidget {
   List<MapData>? orderListToOrderWithQuantity;
@@ -253,45 +259,61 @@ class _AddOrderState extends ConsumerState<AddOrder> {
 
                   ShowInputError(message: errorProdName),
 
+                  SizedBox(height: 40.h),
+
+                  TitleWithIcon(
+                    boldTitle: true,
+                    icon: Icons.shopping_bag,
+                    title: "Détails de la commande",
+                    themeColor: Theme.of(context).colorScheme.primary,
+                  ),
                   SizedBox(height: 20.h),
 
                   if (widget.productToOrder == null ||
                       widget.productToOrder!.length == 1)
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.3),
-                          width: 0.5,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: InputNumberOnlyMinus(
+                            minimumValue: 0,
+                            onValueChanged: (newValue) {
+                              setState(() {
+                                qteProduit = newValue;
+                                widget.orderListToOrderWithQuantity = [
+                                  {
+                                    "id": selectedProductEntity?[0]?.id,
+                                    "quantity": newValue,
+                                    "unit_price":
+                                        selectedProductEntity?[0]?.sellingPrice,
+                                    "product_name":
+                                        selectedProductEntity?[0]?.name,
+                                    "purchase_price":
+                                        selectedProductEntity?[0]
+                                            ?.purchasePrice,
+                                  },
+                                ];
+                              });
+                            },
+                            title: "Quantité(s)",
+                            showDegree: false,
+                            showTitle: true,
+                            initialValue: qteProduit.toInt(),
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(
-                          StylesConstants.borderRadius,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: PriceViewer(
+                            showTitle: true,
+                            title: "Prix unitaire",
+                            showDegree: false,
+                            moneySign: "Ar",
+                            price:
+                                selectedProductEntity?[0]?.sellingPrice ?? 0.0,
+                          ),
                         ),
-                      ),
-                      child: NumberInput(
-                        value: qteProduit.toInt(),
-                        title: "Quantité produit(s)",
-                        onValueChanged: (qte) {
-                          setState(() {
-                            qteProduit = qte;
-                            widget.orderListToOrderWithQuantity = [
-                              {
-                                "id": selectedProductEntity?[0]?.id,
-                                "quantity": qte,
-                                "unit_price":
-                                    selectedProductEntity?[0]?.sellingPrice,
-                                "product_name": selectedProductEntity?[0]?.name,
-                                "purchase_price":
-                                    selectedProductEntity?[0]?.purchasePrice,
-                              },
-                            ];
-                          });
-                        },
-                      ),
+                      ],
                     ),
+
                   ShowInputError(message: errorProdQty),
 
                   SizedBox(height: 20.h),
@@ -300,18 +322,29 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                     degree: 2,
                     title: "Status de la commande",
                   ),
-
-                  CustomDropdown(
-                    iconData: HugeIcons.strokeRoundedCheckList,
-                    onChanged: (val) {
+                  SwithSelector(
+                    themeColor: Theme.of(context).colorScheme.primary,
+                    options: DeliveryStatus.values,
+                    initialValue: DeliveryStatus.pending,
+                    labelBuilder: (status) {
+                      switch (status) {
+                        case DeliveryStatus.pending:
+                          return "En attente";
+                        case DeliveryStatus.validated:
+                          return "Validée";
+                        case DeliveryStatus.delivered:
+                          return "Livrée";
+                        case DeliveryStatus.cancelled:
+                          return "Annulée";
+                      }
+                    },
+                    onChanged: (newValue) {
                       setState(() {
-                        selectedStatus = val;
+                        selectedStatus = newValue.name;
                       });
                     },
-                    items: statusList,
-                    textHint: "Selectionner",
-                    value: selectedStatus,
                   ),
+
                   ShowInputError(message: errorStatus),
 
                   SizedBox(height: 20.h),
@@ -328,12 +361,13 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                     },
                   ),
 
-                  SizedBox(height: 10.h),
-                  HorizontalDivider(
-                    width: width,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.4),
+                  SizedBox(height: 40.h),
+
+                  TitleWithIcon(
+                    boldTitle: true,
+                    icon: Icons.person,
+                    title: "Informations client",
+                    themeColor: Theme.of(context).colorScheme.primary,
                   ),
                   SizedBox(height: 20.h),
 
@@ -406,6 +440,14 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                   ),
                   ShowInputError(message: errorAdrsClient),
 
+                  SizedBox(height: 40.h),
+
+                  TitleWithIcon(
+                    boldTitle: true,
+                    icon: Icons.delivery_dining_sharp,
+                    title: "Logistiques",
+                    themeColor: Theme.of(context).colorScheme.primary,
+                  ),
                   SizedBox(height: 20.h),
                   MediumTitleWithDegree(
                     showDegree: true,

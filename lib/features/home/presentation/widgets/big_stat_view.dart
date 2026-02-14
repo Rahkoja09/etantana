@@ -3,7 +3,7 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class BigStatView extends StatelessWidget {
+class BigStatView extends StatefulWidget {
   final String title;
   final String cycle;
   final IconData icon;
@@ -20,6 +20,12 @@ class BigStatView extends StatelessWidget {
     required this.increasePercent,
   });
 
+  @override
+  State<BigStatView> createState() => _BigStatViewState();
+}
+
+class _BigStatViewState extends State<BigStatView> {
+  bool isRecetteVisible = false;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -58,14 +64,14 @@ class BigStatView extends StatelessWidget {
                           ),
                         ),
                         child: HugeIcon(
-                          icon: icon,
+                          icon: widget.icon,
                           color: Colors.white,
                           size: 15,
                         ),
                       ),
                       SizedBox(width: 5),
                       Text(
-                        title,
+                        widget.title,
                         style: TextStyles.bodyMedium(
                           context: context,
                           color: Theme.of(
@@ -78,16 +84,38 @@ class BigStatView extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        value,
-                        style: TextStyles.titleSmall(
-                          context: context,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            isRecetteVisible ? widget.value : "x_-",
+                            style: TextStyles.titleSmall(
+                              context: context,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          IconButton(
+                            onLongPress: () {
+                              setState(() {
+                                isRecetteVisible = !isRecetteVisible;
+                              });
+                            },
+                            icon: Icon(
+                              isRecetteVisible
+                                  ? Icons.visibility_rounded
+                                  : Icons.visibility_off_rounded,
+                              size: 18,
+                            ),
+                            onPressed: () {
+                              print("nope, nothing!");
+                            },
+                          ),
+                        ],
                       ),
                       Text(
-                        moneySign,
+                        widget.moneySign,
                         style: TextStyles.bodySmall(
                           context: context,
                           color: Theme.of(
@@ -102,7 +130,7 @@ class BigStatView extends StatelessWidget {
               Column(
                 children: [
                   Text(
-                    cycle,
+                    widget.cycle,
                     style: TextStyles.bodyMedium(
                       context: context,
                       color: Theme.of(

@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
+import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -35,16 +36,12 @@ class _MultipleProductViewOrderState extends State<MultipleProductViewOrder> {
 
           return Padding(
             padding: EdgeInsets.only(right: 8.w),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Image.network(
-                imageUrl,
-                height: 40.h,
-                width: 40.w,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (context, error, stackTrace) =>
-                        Icon(Icons.broken_image, size: 30.sp),
+            child: SizedBox(
+              height: 40.h,
+              width: 40.w,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: ImageViewer(imageFileOrLink: imageUrl),
               ),
             ),
           );

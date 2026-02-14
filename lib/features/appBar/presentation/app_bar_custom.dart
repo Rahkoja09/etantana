@@ -64,11 +64,11 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                       ? "assets/medias/icons/app_icon.png"
                       : "assets/medias/icons/app_icon.png",
                 ),
-                height: 25.h,
+                height: 15.h,
               ),
-              SizedBox(width: 10),
+
               Text(
-                "${AppConst.appName}",
+                "-tantana",
                 style: TextStyles.titleSmall(
                   fontSize: 18,
                   context: context,

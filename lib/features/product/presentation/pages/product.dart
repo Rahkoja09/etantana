@@ -285,6 +285,7 @@ class _ProductState extends ConsumerState<Product> {
                                                 "purchase_price":
                                                     item.purchasePrice,
                                               });
+                                              productsToOrde.add(item);
                                             }
                                           } else {
                                             if (index != -1) {
