@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
 
@@ -18,7 +19,7 @@ class MapModel extends MapEntity {
       location: map['location'] as String,
       latitude: (map['latitude'] as num?)?.toDouble(),
       longitude: (map['longitude'] as num?)?.toDouble(),
-      status: map['status'] as String,
+      status: _mapStringToStatus(map['status'] as String),
       date: DateTime.parse(map['date'] as String),
       price: (map['price'] as num).toDouble(),
     );
@@ -47,7 +48,7 @@ class MapModel extends MapEntity {
           originalLocation,
       latitude: latitude,
       longitude: longitude,
-      status: 'pending',
+      status: DeliveryStatus.pending,
       date: DateTime.now(),
       price: price,
     );
@@ -75,5 +76,13 @@ class MapModel extends MapEntity {
       date: entity.date,
       price: entity.price,
     );
+  }
+
+  static DeliveryStatus _mapStringToStatus(String? statusName) {
+    try {
+      return DeliveryStatus.values.byName(statusName!);
+    } catch (_) {
+      return DeliveryStatus.pending;
+    }
   }
 }

@@ -110,7 +110,7 @@ class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
         lng = delivery.longitude!;
       }
 
-      final circleColor = _getStatusColor(delivery.status);
+      final circleColor = _getStatusColor(delivery.status.name);
 
       final circle = await _circleAnnotationManager!.create(
         CircleAnnotationOptions(

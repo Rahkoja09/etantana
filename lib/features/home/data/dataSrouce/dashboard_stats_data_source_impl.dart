@@ -35,7 +35,7 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
         double price = 0.0;
         for (var product in productsOrdered) {
           price +=
-              double.tryParse(product["selling_price"])! *
+              double.tryParse(product["unit_price"])! *
               double.tryParse(product["quantity"])!;
         }
         dailyRevenue += price;

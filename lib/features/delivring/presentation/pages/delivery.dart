@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/utils/tools/count_delivery.dart';
 import 'package:e_tantana/features/delivring/domain/mapper/order_to_delivering_mapper.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
@@ -116,7 +117,7 @@ class _DeliveryState extends ConsumerState<Delivery> {
       (index) => MapEntity(
         id: "default",
         date: DateTime.now(),
-        status: "default",
+        status: DeliveryStatus.pending,
         price: 0.0,
         location: "default",
       ),
@@ -180,7 +181,7 @@ class _DeliveryState extends ConsumerState<Delivery> {
                     ),
                   ),
                   child: Text(
-                    "${CountDelivery.countDeliveryWithStatus(displayData, "Validée")} livraison(s)",
+                    "${CountDelivery.countDeliveryWithStatus(displayData, DeliveryStatus.validated.name)} livraison(s)",
                     style: TextStyles.bodySmall(
                       context: context,
                       color: Theme.of(context).colorScheme.primary,

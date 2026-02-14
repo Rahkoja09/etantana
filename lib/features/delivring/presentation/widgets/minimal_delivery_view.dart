@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
 import 'package:e_tantana/shared/widget/actions/swipe_action.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +21,7 @@ class MinimalDeliverieView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final statusColor = getStatusColor(delivery.status ?? "");
+    final statusColor = delivery.status.color;
 
     return SwipeAction(
       dismissibleKey: ValueKey(delivery.id),
@@ -60,7 +61,7 @@ class MinimalDeliverieView extends StatelessWidget {
                     ),
                     _buildStatusBadge(
                       context,
-                      delivery.status ?? "pending",
+                      delivery.status.label,
                       statusColor,
                     ),
                   ],
@@ -128,16 +129,15 @@ class MinimalDeliverieView extends StatelessWidget {
     );
   }
 
-  bool isDelivred(String status) {
-    return status.toLowerCase() == "Livrée".toLowerCase();
+  bool isDelivred(DeliveryStatus status) {
+    return status == DeliveryStatus.delivered;
   }
 
-  // Le badge de l'image (Fond bleu clair, texte bleu foncé)
   Widget _buildStatusBadge(BuildContext context, String status, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -149,36 +149,5 @@ class MinimalDeliverieView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  MaterialColor getStatusColor(String status) {
-    MaterialColor statusColors;
-    switch (status) {
-      case ("Validée"):
-        {
-          statusColors = Colors.green;
-          break;
-        }
-      case ("Livrée"):
-        {
-          statusColors = Colors.blue;
-          break;
-        }
-      case ("Annulée"):
-        {
-          statusColors = Colors.red;
-          break;
-        }
-      case ("En Attente de Val."):
-        {
-          statusColors = Colors.grey;
-          break;
-        }
-      default:
-        {
-          statusColors = Colors.green;
-        }
-    }
-    return statusColors;
   }
 }

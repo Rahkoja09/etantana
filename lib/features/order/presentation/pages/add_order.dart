@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
@@ -36,8 +37,6 @@ import 'package:e_tantana/shared/widget/text/horizontal_divider.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 
-enum DeliveryStatus { pending, validated, delivered, cancelled }
-
 class AddOrder extends ConsumerStatefulWidget {
   List<MapData>? orderListToOrderWithQuantity;
   final List<ProductEntities?>? productToOrder;
@@ -50,7 +49,7 @@ class AddOrder extends ConsumerStatefulWidget {
 class _AddOrderState extends ConsumerState<AddOrder> {
   int qteProduit = 1;
   String? variantsForServer;
-  String? selectedStatus;
+  DeliveryStatus? selectedStatus;
   List<ProductEntities?>? selectedProductEntity;
   String deliveryCity = "Antananarivo";
   DateTime? deliveryDate;
@@ -68,13 +67,6 @@ class _AddOrderState extends ConsumerState<AddOrder> {
       });
     }
   }
-
-  List<String> statusList = [
-    "Validée",
-    "Livrée",
-    "Annulée",
-    "En Attente de Val.",
-  ];
 
   // les ereur -------------
   String? errorClientTel;
@@ -326,21 +318,10 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                     themeColor: Theme.of(context).colorScheme.primary,
                     options: DeliveryStatus.values,
                     initialValue: DeliveryStatus.pending,
-                    labelBuilder: (status) {
-                      switch (status) {
-                        case DeliveryStatus.pending:
-                          return "En attente";
-                        case DeliveryStatus.validated:
-                          return "Validée";
-                        case DeliveryStatus.delivered:
-                          return "Livrée";
-                        case DeliveryStatus.cancelled:
-                          return "Annulée";
-                      }
-                    },
+                    labelBuilder: (status) => status.label,
                     onChanged: (newValue) {
                       setState(() {
-                        selectedStatus = newValue.name;
+                        selectedStatus = newValue;
                       });
                     },
                   ),

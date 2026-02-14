@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/shared/widget/actions/swipe_action.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,37 +36,6 @@ class _MinimalOrderDisplayState extends State<MinimalOrderDisplay> {
         }
       }
       return total;
-    }
-
-    MaterialColor getStatusColor(String status) {
-      MaterialColor statusColors;
-      switch (status) {
-        case ("Validée"):
-          {
-            statusColors = Colors.green;
-            break;
-          }
-        case ("Livrée"):
-          {
-            statusColors = Colors.blue;
-            break;
-          }
-        case ("Annulée"):
-          {
-            statusColors = Colors.red;
-            break;
-          }
-        case ("En Attente de Val."):
-          {
-            statusColors = Colors.grey;
-            break;
-          }
-        default:
-          {
-            statusColors = Colors.green;
-          }
-      }
-      return statusColors;
     }
 
     return SwipeAction(
@@ -109,13 +79,13 @@ class _MinimalOrderDisplayState extends State<MinimalOrderDisplay> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
-                  color: getStatusColor(widget.order.status ?? ""),
+                  color: widget.order.status!.materialColor,
                   borderRadius: BorderRadius.circular(
                     StylesConstants.borderRadius + 10,
                   ),
                 ),
                 child: Text(
-                  widget.order.status.toString(),
+                  widget.order.status!.label,
                   style: TextStyles.bodySmall(
                     context: context,
                     color: Colors.white,

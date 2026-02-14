@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
@@ -41,12 +42,12 @@ class _OrderState extends ConsumerState<Order> {
   bool rightActionOrder = false;
 
   // status update -------------
-  String newStatus = "Validée";
+  String newStatus = "validated";
   List<String> statusList = [
-    "Validée",
-    "Livrée",
-    "Annulée",
-    "En Attente de Val.",
+    DeliveryStatus.validated.name,
+    DeliveryStatus.delivered.name,
+    DeliveryStatus.pending.name,
+    DeliveryStatus.cancelled.name,
   ];
 
   @override
@@ -113,6 +114,7 @@ class _OrderState extends ConsumerState<Order> {
         quantity: 1,
         createdAt: DateTime.now(),
         deliveryCosts: "1000",
+        status: DeliveryStatus.pending,
       ),
     );
 
@@ -264,6 +266,7 @@ class _OrderState extends ConsumerState<Order> {
                                                     CustomDropdown(
                                                       textHint:
                                                           "Chosir le nouveau status",
+
                                                       iconData:
                                                           HugeIcons
                                                               .strokeRoundedCheckList,
@@ -304,10 +307,13 @@ class _OrderState extends ConsumerState<Order> {
                                                                 Navigator.of(
                                                                   context,
                                                                 );
-                                                            final update = item
-                                                                .copyWith(
-                                                                  status:
-                                                                      newStatus,
+                                                            final update =
+                                                                item.copyWith(
+                                                                  status: DeliveryStatus
+                                                                      .values
+                                                                      .byName(
+                                                                        newStatus,
+                                                                      ),
                                                                 );
                                                             await orderAction
                                                                 .updateOrder(
@@ -430,11 +436,11 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
           children: [
             Text(
               "---- $headerText",
-              style: TextStyles.bodySmall(
+              style: TextStyles.bodyMedium(
                 context: context,
                 color: Theme.of(
                   context,
-                ).colorScheme.onSurface.withValues(alpha: 0.4),
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -443,7 +449,7 @@ Widget _buildDateHeader(DateTime date, BuildContext context) {
               icon: HugeIcons.strokeRoundedCalendar01,
               color: Theme.of(
                 context,
-              ).colorScheme.onSurface.withValues(alpha: 0.8),
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
               size: 15,
             ),
           ],

@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
 import 'package:equatable/equatable.dart';
 
@@ -6,7 +7,7 @@ class MapEntity extends Equatable {
   final String location;
   final double? latitude;
   final double? longitude;
-  final String status;
+  final DeliveryStatus status;
   final DateTime date;
   final double price;
   final String? clientName;
@@ -27,7 +28,7 @@ class MapEntity extends Equatable {
     String? location,
     double? latitude,
     double? longitude,
-    String? status,
+    DeliveryStatus? status,
     DateTime? date,
     double? price,
     String? clientName,

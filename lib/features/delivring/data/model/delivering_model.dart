@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
 
@@ -41,7 +42,7 @@ class DeliveringModel extends DeliveringEntity {
       deliveringServiceDetails: data['delivering_service_details'] as MapData?,
       deliveringPrice: (data['delivering_price'] as num?)?.toDouble(),
       description: data['description'] as String?,
-      status: data['status'] as String?,
+      status: _mapStringToStatus(data['status'] as String?),
       deliveringAdresse: data['delivering_adresse'] as String,
     );
   }
@@ -58,7 +59,7 @@ class DeliveringModel extends DeliveringEntity {
       'delivering_service_details': deliveringServiceDetails,
       'delivering_price': deliveringPrice,
       'description': description,
-      'status': status,
+      'status': status?.name,
       'delivering_adresse': deliveringAdresse,
     };
   }
@@ -78,5 +79,13 @@ class DeliveringModel extends DeliveringEntity {
       status: entity.status,
       deliveringAdresse: entity.deliveringAdresse,
     );
+  }
+
+  static DeliveryStatus _mapStringToStatus(String? statusName) {
+    try {
+      return DeliveryStatus.values.byName(statusName!);
+    } catch (_) {
+      return DeliveryStatus.pending;
+    }
   }
 }

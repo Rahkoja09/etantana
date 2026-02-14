@@ -10,7 +10,7 @@ extension OrderToDeliveringMapper on OrderEntities {
       deliveringAdresse: clientAdrs,
       deliveringPrice: double.tryParse(deliveryCosts ?? "0"),
       deliveringState: [
-        {"status": status, "reason": ""},
+        {"status": status?.name, "reason": ""},
       ],
       orderProductDetails: productsAndQuantities,
       userDetails: {

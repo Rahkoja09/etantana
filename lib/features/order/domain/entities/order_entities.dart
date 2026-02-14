@@ -1,10 +1,11 @@
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:equatable/equatable.dart';
 
 class OrderEntities extends Equatable {
   final String? id;
   final DateTime? createdAt;
-  final String? status;
+  final DeliveryStatus? status;
   final String? invoiceLink;
   final List<MapData>? productsAndQuantities;
   final int? quantity;
@@ -33,7 +34,7 @@ class OrderEntities extends Equatable {
   OrderEntities copyWith({
     String? id,
     DateTime? createdAt,
-    String? status,
+    DeliveryStatus? status,
     String? invoiceLink,
     List<MapData>? productsAndQuantities,
     int? quantity,

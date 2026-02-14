@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:equatable/equatable.dart';
 
@@ -12,7 +13,7 @@ class DeliveringEntity extends Equatable {
   final MapData? deliveringServiceDetails;
   final double? deliveringPrice;
   final String? description;
-  final String? status;
+  final DeliveryStatus? status;
   final String? deliveringAdresse;
 
   DeliveringEntity({
@@ -41,7 +42,7 @@ class DeliveringEntity extends Equatable {
     MapData? deliveringServiceDetails,
     double? deliveringPrice,
     String? description,
-    String? status,
+    DeliveryStatus? status,
     String? deliveringAdresse,
   }) {
     return DeliveringEntity(

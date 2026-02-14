@@ -7,7 +7,7 @@ class CountDelivery {
   ) {
     int count = 0;
     for (int i = 0; i < deliveries.length; i++) {
-      if (deliveries[i].status.toLowerCase() == status.toLowerCase()) {
+      if (deliveries[i].status.name == status) {
         count++;
       }
     }

@@ -39,7 +39,7 @@ class OrderDataSourceImpl implements OrderDataSource {
           await _client
               .from("order")
               .insert({
-                'status': entity.status,
+                'status': entity.status?.name,
                 'quantity': entity.quantity,
                 'invoice_link': entity.invoiceLink,
                 'products_and_quantities': entity.productsAndQuantities,
