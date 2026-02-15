@@ -6,6 +6,7 @@ import 'package:e_tantana/features/order/presentation/controller/order_controlle
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/order/presentation/widget/minimal_order_display.dart';
 import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
+import 'package:e_tantana/features/printer/presentation/providers/interaction_invoice_data_provider.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
@@ -223,6 +224,13 @@ class _OrderState extends ConsumerState<Order> {
                                         child: MinimalOrderDisplay(
                                           order: item,
                                           onTap: () {
+                                            print(item);
+                                            ref
+                                                .read(
+                                                  interactionInvoiceDataNotifierProvider
+                                                      .notifier,
+                                                )
+                                                .initOrder(item);
                                             Navigator.of(context).push(
                                               MaterialPageRoute(
                                                 builder:

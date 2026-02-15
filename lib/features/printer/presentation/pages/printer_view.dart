@@ -3,16 +3,12 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
-import 'package:e_tantana/features/printer/presentation/invoiceModels/first/pages/first.dart';
-import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
-import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
-import 'package:e_tantana/features/product/presentation/states/product_state.dart';
+import 'package:e_tantana/features/printer/presentation/providers/interaction_invoice_data_provider.dart';
+import 'package:e_tantana/features/printer/presentation/providers/invoice_model_list_provider.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
-import 'package:e_tantana/shared/widget/loading/loading.dart';
-import 'package:e_tantana/shared/widget/loading/loading_animation.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/vertical_custom_divider.dart';
@@ -44,16 +40,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
 
   @override
   Widget build(BuildContext context) {
-    double totalProducts = 0.0;
-    if (widget.order.productsAndQuantities != null) {
-      for (int i = 0; i < widget.order.productsAndQuantities!.length; i++) {
-        totalProducts +=
-            widget.order.productsAndQuantities![i]["unit_price"] *
-            (widget.order.productsAndQuantities![i]["quantity"] ?? 1);
-      }
-    }
-    print('le prix total est : =====> $totalProducts');
-    final double grandTotal = totalProducts + _deliveryCosts;
+    final allInvoiceModelsState = ref.watch(allInvoiceModelsProvider);
     return Scaffold(
       appBar: SimpleAppbar(
         title: "Facturation commande",
@@ -75,13 +62,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 trackpadScrollCausesScale: true,
                 minScale: 0.1,
                 maxScale: 4.0,
-                child: First(
-                  totalProducts: totalProducts,
-                  orderList: widget.order.productsAndQuantities ?? [],
-                  order: widget.order,
-                  deliveryCost: _deliveryCosts,
-                  grandTotal: grandTotal,
-                ),
+                child: allInvoiceModelsState[0].getModel,
               ),
             ),
           ),
@@ -90,7 +71,10 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
             bottom: 10.h,
             left: 10.w,
             right: 10.w,
-            child: _buildToolbar(grandTotal, widget.order, totalProducts),
+            child: _buildToolbar(
+              allInvoiceModelsState[0].getModel,
+              widget.order,
+            ),
           ),
         ],
       ),
@@ -106,11 +90,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
     );
   }
 
-  Widget _buildToolbar(
-    double grandTotal,
-    OrderEntities order,
-    double totalProducts,
-  ) {
+  Widget _buildToolbar(Widget invoiceModel, OrderEntities order) {
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surface,
@@ -141,13 +121,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 order.id!,
                 order.clientName!,
                 _screenshotController,
-                First(
-                  totalProducts: totalProducts,
-                  orderList: widget.order.productsAndQuantities!,
-                  order: widget.order,
-                  deliveryCost: _deliveryCosts,
-                  grandTotal: grandTotal,
-                ),
+                invoiceModel,
               );
             }),
             VerticalCustomDivider(
@@ -163,13 +137,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 order.id!,
                 order.clientName!,
                 _screenshotController,
-                First(
-                  totalProducts: totalProducts,
-                  orderList: widget.order.productsAndQuantities!,
-                  order: widget.order,
-                  deliveryCost: _deliveryCosts,
-                  grandTotal: grandTotal,
-                ),
+                invoiceModel,
               );
             }),
             VerticalCustomDivider(
@@ -185,13 +153,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 order.id!,
                 order.clientName!,
                 _screenshotController,
-                First(
-                  totalProducts: totalProducts,
-                  orderList: widget.order.productsAndQuantities!,
-                  order: widget.order,
-                  deliveryCost: _deliveryCosts,
-                  grandTotal: grandTotal,
-                ),
+                invoiceModel,
               );
             }),
           ],
@@ -226,6 +188,9 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
     final deliveryController = TextEditingController(
       text: _deliveryCosts.toString(),
     );
+    final interactionInvoiceDataAction = ref.read(
+      interactionInvoiceDataNotifierProvider.notifier,
+    );
 
     showCustomPopup(
       title: "Ajouter les tarifs",
@@ -258,6 +223,9 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                   setState(() {
                     _deliveryCosts =
                         double.tryParse(deliveryController.text) ?? 0.0;
+                    interactionInvoiceDataAction.setDeliveryCost(
+                      _deliveryCosts,
+                    );
                   });
                   Navigator.pop(context);
                 },

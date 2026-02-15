@@ -2,7 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FirstFooter extends StatelessWidget {
-  const FirstFooter({super.key});
+  final String societyName;
+  final String societyPhoneNumber;
+  final String societyQrCodeLinkOrderFile;
+  final String societyQrCodeSendWhere;
+  final String societySlogan;
+  const FirstFooter({
+    super.key,
+    required this.societyName,
+    required this.societyPhoneNumber,
+    required this.societyQrCodeLinkOrderFile,
+    required this.societyQrCodeSendWhere,
+    required this.societySlogan,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +28,12 @@ class FirstFooter extends StatelessWidget {
             SizedBox(
               height: 130,
               width: 130,
-              child: Image(
-                image: AssetImage('assets/medias/logos/scan_me.png'),
-              ),
+              child: Image(image: AssetImage(societyQrCodeLinkOrderFile)),
             ),
             Column(
               children: [
                 Text(
-                  "<= Facebook",
+                  "<= $societyQrCodeSendWhere",
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontFamily: "Nonito",
@@ -33,7 +43,7 @@ class FirstFooter extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
                 Text(
-                  "0380516686",
+                  "$societyPhoneNumber",
                   style: TextStyle(
                     fontSize: 22.sp,
                     fontWeight: FontWeight.bold,
@@ -43,7 +53,7 @@ class FirstFooter extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
                 Text(
-                  "nmv",
+                  "$societyName",
                   style: TextStyle(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.bold,

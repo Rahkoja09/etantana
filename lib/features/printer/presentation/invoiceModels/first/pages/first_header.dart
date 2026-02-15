@@ -40,7 +40,7 @@ class FirstHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "> ${orderList[index]["product_name"]}",
+                  ">> ${orderList[index]["product_name"]}",
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -62,7 +62,7 @@ class FirstHeader extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 5.h),
+        SizedBox(height: 15.h),
       ],
     );
   }
