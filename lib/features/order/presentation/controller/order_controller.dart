@@ -86,9 +86,9 @@ class OrderController extends StateNotifier<OrderStates> {
   }
 
   //  MISE À JOUR ---((()))
-  Future<void> updateOrder(OrderEntities entity) async {
+  Future<void> updateOrderFlow(OrderEntities entity) async {
     _setLoadingState();
-    final res = await _orderUsecases.updateOrder(entity);
+    final res = await _orderUsecases.updateOrderFlow(entity);
     res.fold((error) => _setError(error), (updatedOrder) {
       final newList =
           state.order

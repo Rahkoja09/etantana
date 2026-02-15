@@ -7,6 +7,8 @@ import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/order/presentation/widget/minimal_order_display.dart';
 import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/features/printer/presentation/providers/interaction_invoice_data_provider.dart';
+import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
+import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
@@ -91,7 +93,9 @@ class _OrderState extends ConsumerState<Order> {
   @override
   Widget build(BuildContext context) {
     final orderState = ref.watch(orderControllerProvider);
+    final productState = ref.watch(productControllerProvider);
     final orderAction = ref.read(orderControllerProvider.notifier);
+    final productAction = ref.read(productControllerProvider.notifier);
 
     ref.listen<OrderStates>(orderControllerProvider, (prev, next) {
       if (next.errorMessage != null &&
@@ -149,7 +153,9 @@ class _OrderState extends ConsumerState<Order> {
                         (displayData.isEmpty && !orderState.isLoading)
                             ? _buildEmptyState()
                             : Skeletonizer(
-                              enabled: orderState.isLoading,
+                              enabled:
+                                  orderState.isLoading ||
+                                  productState.isLoading,
                               effect: LoadingEffect.getCommonEffect(context),
                               justifyMultiLineText: true,
                               ignoreContainers: true,
@@ -249,100 +255,119 @@ class _OrderState extends ConsumerState<Order> {
                                               });
                                             } else if (value ==
                                                 "rightSwipeOrder") {
-                                              showCustomPopup(
-                                                context: context,
-                                                description:
-                                                    "Le status definie l'état actuel de la commande",
-                                                isError: false,
-                                                title: "Modifier le status",
-                                                dismissible: true,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    if (orderState.isLoading)
-                                                      LoadingAnimation.primary(
-                                                        context,
-                                                        size: 30,
-                                                      ),
-                                                    if (!orderState.isLoading)
-                                                      MediumTitleWithDegree(
-                                                        showDegree: false,
-                                                        title:
-                                                            "Status de la commande",
-                                                      ),
-                                                    CustomDropdown(
-                                                      textHint:
-                                                          "Chosir le nouveau status",
+                                              if (item.status !=
+                                                  DeliveryStatus.cancelled) {
+                                                showCustomPopup(
+                                                  context: context,
+                                                  description:
+                                                      "Le status definie l'état actuel de la commande",
+                                                  isError: false,
+                                                  title: "Modifier le status",
+                                                  dismissible: true,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      if (orderState.isLoading)
+                                                        LoadingAnimation.primary(
+                                                          context,
+                                                          size: 30,
+                                                        ),
+                                                      if (!orderState.isLoading)
+                                                        MediumTitleWithDegree(
+                                                          showDegree: false,
+                                                          title:
+                                                              "Status de la commande",
+                                                        ),
+                                                      CustomDropdown(
+                                                        textHint:
+                                                            "Chosir le nouveau status",
 
-                                                      iconData:
-                                                          HugeIcons
-                                                              .strokeRoundedCheckList,
-                                                      items: statusList,
-                                                      onChanged: (status) {
-                                                        setState(() {
-                                                          newStatus = status!;
-                                                        });
-                                                      },
-                                                    ),
-                                                    SizedBox(height: 30),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Button(
-                                                          onTap:
-                                                              () =>
-                                                                  Navigator.pop(
+                                                        iconData:
+                                                            HugeIcons
+                                                                .strokeRoundedCheckList,
+                                                        items: statusList,
+                                                        onChanged: (status) {
+                                                          setState(() {
+                                                            newStatus = status!;
+                                                          });
+                                                        },
+                                                      ),
+                                                      SizedBox(height: 30),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Button(
+                                                            onTap:
+                                                                () =>
+                                                                    Navigator.pop(
+                                                                      context,
+                                                                    ),
+                                                            enableNoBackground:
+                                                                true,
+                                                            btnColor:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary,
+                                                            btnText: "Annuler",
+                                                            btnTextColor:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary,
+                                                          ),
+                                                          Button(
+                                                            onTap: () async {
+                                                              final navigator =
+                                                                  Navigator.of(
                                                                     context,
-                                                                  ),
-                                                          enableNoBackground:
-                                                              true,
-                                                          btnColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                          btnText: "Annuler",
-                                                          btnTextColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                        ),
-                                                        Button(
-                                                          onTap: () async {
-                                                            final navigator =
-                                                                Navigator.of(
-                                                                  context,
-                                                                );
-                                                            final update =
-                                                                item.copyWith(
-                                                                  status: DeliveryStatus
-                                                                      .values
-                                                                      .byName(
-                                                                        newStatus,
-                                                                      ),
-                                                                );
-                                                            await orderAction
-                                                                .updateOrder(
-                                                                  update,
-                                                                );
+                                                                  );
+                                                              final update =
+                                                                  item.copyWith(
+                                                                    status: DeliveryStatus
+                                                                        .values
+                                                                        .byName(
+                                                                          newStatus,
+                                                                        ),
+                                                                  );
+                                                              await orderAction
+                                                                  .updateOrderFlow(
+                                                                    update,
+                                                                  );
+                                                              if (newStatus ==
+                                                                  DeliveryStatus
+                                                                      .cancelled
+                                                                      .name) {
+                                                                await productAction
+                                                                    .restoreProductQtyByStatus(
+                                                                      item.productsAndQuantities!,
+                                                                    );
+                                                              }
 
-                                                            await _getOrder();
-                                                            navigator.pop();
-                                                          },
+                                                              await _getOrder();
+                                                              navigator.pop();
+                                                            },
 
-                                                          btnColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                          btnText: "Valider",
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
+                                                            btnColor:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary,
+                                                            btnText: "Valider",
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
                                             }
                                           },
                                         ),

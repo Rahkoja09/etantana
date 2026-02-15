@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/domain/usecases/product_usecases.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
@@ -60,6 +61,18 @@ class ProductController extends StateNotifier<ProductState> {
         product: newList,
         action: action,
       );
+    });
+  }
+
+  Future<void> restoreProductQtyByStatus(List<MapData> orderList) async {
+    final action = productAction.restoreProductQtyByStatus;
+    _setLoadingState(action: action);
+    final res = await _productUsecases.restoreProductQtyByStatus(orderList);
+
+    res.fold((error) => _setError(error: error, action: action), (
+      success,
+    ) async {
+      await researchProduct(null);
     });
   }
 

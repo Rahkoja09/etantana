@@ -496,26 +496,6 @@ class _AddOrderState extends ConsumerState<AddOrder> {
             );
 
             await orderAction.processOrderFlow(orderData);
-            for (
-              int i = 0;
-              i < widget.orderListToOrderWithQuantity!.length;
-              i++
-            ) {
-              await productAction.getProductById(
-                widget.orderListToOrderWithQuantity![i]["id"],
-              );
-              final updates = selectedProductEntity![i]!.copyWith(
-                id: widget.orderListToOrderWithQuantity![i]["id"],
-                quantity:
-                    ((selectedProductEntity![i]!.quantity!) -
-                            (widget
-                                .orderListToOrderWithQuantity![i]["quantity"]))
-                        .toInt(),
-              );
-              await productAction.updateProduct(updates);
-            }
-            await productAction.researchProduct(null);
-            await updateHomeDashboard();
 
             // réinitialiser les inputs -------------
             qteProduit = 0;

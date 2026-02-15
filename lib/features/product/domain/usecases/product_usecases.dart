@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
@@ -39,6 +40,38 @@ class ProductUsecases {
 
   ResultFuture<ProductEntities> updateProduct(ProductEntities entities) =>
       _productRepository.updateProduct(entities);
+
+  ResultVoid restoreProductQtyByStatus(List<MapData> orderList) async {
+    try {
+      for (var orderItem in orderList) {
+        final productResult = await getProductById(orderItem["id"]);
+
+        await productResult.fold(
+          (failure) =>
+              throw Exception("Produit introuvable : ${orderItem["id"]}"),
+          (product) async {
+            final qtyToRestore =
+                int.tryParse(orderItem["quantity"].toString()) ?? 0;
+            final currentQty = product.quantity ?? 0;
+
+            final updatedProduct = product.copyWith(
+              quantity: currentQty + qtyToRestore,
+            );
+            final updateRes = await _productRepository.updateProduct(
+              updatedProduct,
+            );
+            if (updateRes.isLeft()) {
+              throw Exception("Échec de la mise à jour pour ${product.name}");
+            }
+          },
+        );
+      }
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString(), '000'));
+    }
+  }
+
   ResultVoid deleteProductById(String productId) =>
       _productRepository.deleteProductById(productId);
   ResultFuture<ProductEntities> getProductById(String productId) =>

@@ -6,14 +6,21 @@ import 'package:e_tantana/features/delivring/domain/mapper/order_to_delivering_m
 import 'package:e_tantana/features/delivring/domain/repository/delivering_repository.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/repository/order_repository.dart';
+import 'package:e_tantana/features/product/domain/repository/product_repository.dart';
 
 class OrderUsecases {
   final OrderRepository _orderRepository;
   final DeliveringRepository _deliveringRepository;
-  OrderUsecases(this._orderRepository, this._deliveringRepository);
+  final ProductRepository _productRepository;
+  OrderUsecases(
+    this._orderRepository,
+    this._deliveringRepository,
+    this._productRepository,
+  );
 
   ResultFuture<OrderEntities> getOrderById(String orderId) =>
       _orderRepository.getOrderById(orderId);
+
   ResultFuture<OrderEntities> processOrderFlow(OrderEntities entity) async {
     try {
       final orderRes = await _orderRepository.insertOrder(entity);
@@ -25,10 +32,26 @@ class OrderUsecases {
         final deliveryRes = await _deliveringRepository.insertDelivering(
           deliveringData,
         );
-        return deliveryRes.fold(
-          (failure) => Left(failure),
-          (_) => Right(order),
-        );
+        return deliveryRes.fold((failure) => Left(failure), (
+          deliveringData,
+        ) async {
+          for (var order in entity.productsAndQuantities!) {
+            final productRes = await _productRepository.getProductById(
+              order["id"],
+            );
+            await productRes.fold((error) async => Left(error), (
+              product,
+            ) async {
+              final quantity = product.quantity;
+              final update = product.copyWith(
+                quantity:
+                    quantity! - int.tryParse(order["quantity"].toString())!,
+              );
+              await _productRepository.updateProduct(update);
+            });
+          }
+          return Right(order);
+        });
       });
     } catch (e) {
       return Left(UnexceptedFailure(e.toString(), "500"));
@@ -53,7 +76,7 @@ class OrderUsecases {
     }
   }
 
-  ResultFuture<OrderEntities> updateOrder(OrderEntities entity) async {
+  ResultFuture<OrderEntities> updateOrderFlow(OrderEntities entity) async {
     try {
       final orderRes = await _orderRepository.updateOrder(entity);
 

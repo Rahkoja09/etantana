@@ -10,6 +10,7 @@ enum productAction {
   deleteProduct,
   sortProduct,
   loadNextPage,
+  restoreProductQtyByStatus,
 }
 
 class ProductState<T> extends Equatable {

@@ -15,6 +15,8 @@ class ProductModel extends ProductEntities {
     super.purchasePrice,
     super.sellingPrice,
     super.futureProduct,
+    super.isPack,
+    super.packComposition,
   });
 
   factory ProductModel.fromMap(MapData data) {
@@ -31,6 +33,13 @@ class ProductModel extends ProductEntities {
       purchasePrice: data['purchase_price'].toDouble(),
       sellingPrice: data['selling_price'].toDouble(),
       futureProduct: data["future_product"],
+      packComposition:
+          data['pack_composition'] != null
+              ? (data['pack_composition'] as List)
+                  .map((item) => Map<String, dynamic>.from(item))
+                  .toList()
+              : null,
+      isPack: data['is_pack'],
     );
   }
 
@@ -48,6 +57,8 @@ class ProductModel extends ProductEntities {
       'purchase_price': purchasePrice,
       'selling_price': sellingPrice,
       "future_product": futureProduct,
+      'is_pack': isPack,
+      'pack_composition': packComposition,
     };
   }
 
@@ -65,6 +76,8 @@ class ProductModel extends ProductEntities {
       purchasePrice: entity.purchasePrice,
       sellingPrice: entity.sellingPrice,
       futureProduct: entity.futureProduct,
+      isPack: entity.isPack,
+      packComposition: entity.packComposition,
     );
   }
 
@@ -81,6 +94,8 @@ class ProductModel extends ProductEntities {
     double? purchasePrice,
     double? sellingPrice,
     bool? futureProduct,
+    bool? isPack,
+    List<MapData>? packComposition,
   }) {
     return ProductModel(
       name: name ?? this.name,
@@ -95,6 +110,8 @@ class ProductModel extends ProductEntities {
       purchasePrice: purchasePrice ?? this.purchasePrice,
       sellingPrice: sellingPrice ?? this.sellingPrice,
       futureProduct: futureProduct ?? this.futureProduct,
+      isPack: isPack ?? this.isPack,
+      packComposition: packComposition ?? this.packComposition,
     );
   }
 }

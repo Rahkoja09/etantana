@@ -64,7 +64,6 @@ class OrderModel extends OrderEntities {
     return {
       'id': id,
       'created_at': createdAt?.toIso8601String(),
-
       'status': status?.name,
       'quantity': quantity,
       'invoice_link': invoiceLink,
