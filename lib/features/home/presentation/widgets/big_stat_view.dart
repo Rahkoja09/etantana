@@ -7,9 +7,11 @@ class BigStatView extends StatefulWidget {
   final String title;
   final String cycle;
   final IconData icon;
+  final IconData? BigStyleIcon;
   final String value;
   final String moneySign;
   final String increasePercent;
+  final Color? themeColor;
   const BigStatView({
     super.key,
     required this.title,
@@ -18,6 +20,8 @@ class BigStatView extends StatefulWidget {
     required this.value,
     required this.moneySign,
     required this.increasePercent,
+    this.themeColor,
+    this.BigStyleIcon,
   });
 
   @override
@@ -40,9 +44,9 @@ class _BigStatViewState extends State<BigStatView> {
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.3),
             ),
-            color: Theme.of(
-              context,
-            ).colorScheme.primary.withValues(alpha: 0.05),
+            color:
+                widget.themeColor?.withValues(alpha: 0.05) ??
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
           ),
           child: Row(
@@ -150,7 +154,7 @@ class _BigStatViewState extends State<BigStatView> {
           child: Transform.rotate(
             angle: -0.25,
             child: Icon(
-              Icons.account_balance_wallet_rounded,
+              widget.BigStyleIcon ?? Icons.account_balance_wallet_rounded,
               size: 80,
               color: Theme.of(
                 context,

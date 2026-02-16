@@ -17,16 +17,21 @@ class SimpleAppbar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       centerTitle: true,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      elevation: 2,
+      shadowColor: Colors.grey,
 
       title: Text(
         title,
-        style: TextStyles.titleMedium(context: context, color: Colors.white),
+        style: TextStyles.titleMedium(
+          context: context,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
       leading: IconButton(
-        icon: HugeIcon(
-          icon: HugeIcons.strokeRoundedCircleArrowLeft01,
-          color: Colors.white,
+        icon: Icon(
+          Icons.arrow_back_rounded,
+          color: Theme.of(context).colorScheme.onSurface,
           size: 22,
         ),
         onPressed: onBack,

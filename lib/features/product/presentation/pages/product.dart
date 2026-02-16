@@ -6,6 +6,8 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
+import 'package:e_tantana/features/product/presentation/widgets/create_pack.dart';
+import 'package:e_tantana/features/product/presentation/widgets/create_pack_summary_floating.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
 import 'package:e_tantana/features/product/presentation/widgets/order_summary_floating_bar.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
@@ -33,6 +35,11 @@ class _ProductState extends ConsumerState<Product> {
   final ScrollController _scrollController = ScrollController();
   int listVersion = 0;
   bool isFetching = false;
+
+  // create pack ----------
+  bool productIsSelected = false;
+  List<MapData> packComposition = [];
+  int packLenght = 0;
 
   // les input ---------
   final TextEditingController _searchController = TextEditingController();
@@ -118,6 +125,24 @@ class _ProductState extends ConsumerState<Product> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (productIsSelected)
+                  CreatePackSummaryFloating(
+                    onCancel: () {
+                      setState(() {
+                        productIsSelected = false;
+                      });
+                    },
+                    onValidate: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (_) =>
+                                  CreatePack(packComposition: packComposition),
+                        ),
+                      );
+                    },
+                    packCompositionLenght: packLenght,
+                  ),
                 if (orderList.isNotEmpty)
                   OrderSummaryFloatingBar(
                     itemCount: orderList.length,
@@ -239,13 +264,18 @@ class _ProductState extends ConsumerState<Product> {
                                       effect: LoadingEffect.getCommonEffect(
                                         context,
                                       ),
-                                      child: MinimalProductView(
-                                        selectedQuantity: (quantity) {},
-                                        index: 0,
-                                        onDelete: () {},
-                                        product: displayList[0],
-                                        onEdit: () {},
-                                        onOrder: () {},
+                                      child: Row(
+                                        children: [
+                                          MinimalProductView(
+                                            selectedQuantity: (quantity) {},
+                                            index: 0,
+                                            onDelete: () {},
+                                            product: displayList[0],
+                                            onEdit: () {},
+                                            onOrder: () {},
+                                            onLongPress: () {},
+                                          ),
+                                        ],
                                       ),
                                     );
                                   }
@@ -254,97 +284,151 @@ class _ProductState extends ConsumerState<Product> {
                                   }
 
                                   final item = displayList[index];
+                                  final bool isThisProductSelected =
+                                      packComposition.any(
+                                        (element) => element['id'] == item.id,
+                                      );
                                   return Column(
                                     children: [
-                                      MinimalProductView(
-                                        isSelected:
-                                            orderList.indexWhere(
+                                      Row(
+                                        children: [
+                                          if (productIsSelected)
+                                            SizedBox(
+                                              height: 30,
+                                              width: 30,
+                                              child: Checkbox(
+                                                value: isThisProductSelected,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    if (value == true) {
+                                                      packComposition.add({
+                                                        'id': item.id,
+                                                        'quantity':
+                                                            item.quantity,
+                                                        'purchase_price':
+                                                            item.purchasePrice,
+                                                        'selling_price':
+                                                            item.sellingPrice,
+                                                        'image': item.images,
+                                                        'name': item.name,
+                                                      });
+                                                      packLenght =
+                                                          packComposition
+                                                              .length;
+                                                    } else {
+                                                      packComposition
+                                                          .removeWhere(
+                                                            (element) =>
+                                                                element['id'] ==
+                                                                item.id,
+                                                          );
+                                                      packLenght =
+                                                          packComposition
+                                                              .length;
+                                                    }
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          SizedBox(width: 5),
+                                          Expanded(
+                                            child: MinimalProductView(
+                                              onLongPress: () {
+                                                setState(() {
+                                                  productIsSelected =
+                                                      !productIsSelected;
+                                                });
+                                              },
+                                              selectedQuantity: (quantity) {
+                                                final index = orderList
+                                                    .indexWhere(
                                                       (element) =>
                                                           element["id"] ==
                                                           item.id,
-                                                    ) !=
-                                                    -1
-                                                ? true
-                                                : false,
-                                        selectedQuantity: (quantity) {
-                                          final index = orderList.indexWhere(
-                                            (element) =>
-                                                element["id"] == item.id,
-                                          );
+                                                    );
 
-                                          if (quantity > 0) {
-                                            if (index != -1) {
-                                              orderList[index]["quantity"] =
-                                                  quantity;
-                                            } else {
-                                              orderList.add({
-                                                "id": item.id,
-                                                "quantity": quantity,
-                                                "unit_price": item.sellingPrice,
-                                                "product_name": item.name,
-                                                "purchase_price":
-                                                    item.purchasePrice,
-                                              });
-                                              productsToOrde.add(item);
-                                            }
-                                          } else {
-                                            if (index != -1) {
-                                              orderList.removeAt(index);
-                                            }
-                                          }
+                                                if (quantity > 0) {
+                                                  if (index != -1) {
+                                                    orderList[index]["quantity"] =
+                                                        quantity;
+                                                  } else {
+                                                    orderList.add({
+                                                      "id": item.id,
+                                                      "quantity": quantity,
+                                                      "unit_price":
+                                                          item.sellingPrice,
+                                                      "product_name": item.name,
+                                                      "purchase_price":
+                                                          item.purchasePrice,
+                                                    });
+                                                    productsToOrde.add(item);
+                                                  }
+                                                } else {
+                                                  if (index != -1) {
+                                                    orderList.removeAt(index);
+                                                  }
+                                                }
 
-                                          setState(() {});
-                                        },
-                                        index: index + 1,
-                                        onDelete: () {
-                                          setState(() {
-                                            showPopUp = true;
-                                          });
-                                          setState(() {
-                                            selectionForActionProduct = item;
-                                          });
-                                        },
-                                        product: item,
-                                        onEdit: () {
-                                          setState(() {
-                                            selectionForActionProduct = item;
-                                          });
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (_) => AddProduct(
-                                                    isFutureProduct: false,
-                                                    productToEdit:
-                                                        selectionForActionProduct,
+                                                setState(() {});
+                                              },
+                                              index: index + 1,
+                                              onDelete: () {
+                                                setState(() {
+                                                  showPopUp = true;
+                                                });
+                                                setState(() {
+                                                  selectionForActionProduct =
+                                                      item;
+                                                });
+                                              },
+                                              product: item,
+                                              onEdit: () {
+                                                setState(() {
+                                                  selectionForActionProduct =
+                                                      item;
+                                                });
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (_) => AddProduct(
+                                                          isFutureProduct:
+                                                              false,
+                                                          productToEdit:
+                                                              selectionForActionProduct,
+                                                        ),
                                                   ),
-                                            ),
-                                          );
-                                        },
-                                        onOrder: () {
-                                          setState(() {
-                                            selectionForActionProduct = item;
-                                            orderList.add({
-                                              "id": item.id,
-                                              "quantity": 1,
-                                              "unit_price": item.sellingPrice,
-                                              "product_name": item.name,
-                                              "purchase_price":
-                                                  item.purchasePrice,
-                                            });
-                                          });
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (_) => AddOrder(
-                                                    orderListToOrderWithQuantity:
-                                                        orderList,
-                                                    productToOrder: [
-                                                      selectionForActionProduct,
-                                                    ],
+                                                );
+                                              },
+                                              onOrder: () {
+                                                setState(() {
+                                                  selectionForActionProduct =
+                                                      item;
+                                                  orderList.add({
+                                                    "id": item.id,
+                                                    "quantity": 1,
+                                                    "unit_price":
+                                                        item.sellingPrice,
+                                                    "product_name": item.name,
+                                                    "purchase_price":
+                                                        item.purchasePrice,
+                                                  });
+                                                });
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (_) => AddOrder(
+                                                          orderListToOrderWithQuantity:
+                                                              orderList,
+                                                          productToOrder: [
+                                                            selectionForActionProduct,
+                                                          ],
+                                                        ),
                                                   ),
+                                                );
+                                              },
                                             ),
-                                          );
-                                        },
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(height: 5),
                                     ],

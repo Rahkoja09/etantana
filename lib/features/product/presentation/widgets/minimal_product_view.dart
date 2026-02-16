@@ -16,8 +16,8 @@ class MinimalProductView extends StatefulWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onOrder;
+  final VoidCallback onLongPress;
   final ValueChanged<int> selectedQuantity;
-  final bool? isSelected;
 
   const MinimalProductView({
     super.key,
@@ -27,7 +27,7 @@ class MinimalProductView extends StatefulWidget {
     required this.onDelete,
     required this.onOrder,
     required this.selectedQuantity,
-    this.isSelected = false,
+    required this.onLongPress,
   });
 
   @override
@@ -66,6 +66,7 @@ class _MinimalProductViewState extends State<MinimalProductView> {
         alignment: Alignment.centerRight,
       ),
       child: GestureDetector(
+        onLongPress: widget.onLongPress,
         onTap: widget.onEdit,
         child: Container(
           height: 80.h,
@@ -87,10 +88,6 @@ class _MinimalProductViewState extends State<MinimalProductView> {
           ),
           child: Row(
             children: [
-              if (widget.isSelected!) ...[
-                Checkbox(value: true, onChanged: (value) {}),
-                SizedBox(width: 18.w),
-              ],
               ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: SizedBox(
