@@ -37,7 +37,8 @@ class MinimalProductView extends StatefulWidget {
 class _MinimalProductViewState extends State<MinimalProductView> {
   @override
   Widget build(BuildContext context) {
-    bool outOfStock = (widget.product.quantity ?? 0) <= 0;
+    final bool outOfStock = (widget.product.quantity ?? 0) <= 0;
+    final bool isPackProduct = widget.product.isPack ?? false;
 
     return Dismissible(
       key: Key(widget.product.id.toString()),
@@ -68,82 +69,119 @@ class _MinimalProductViewState extends State<MinimalProductView> {
       child: GestureDetector(
         onLongPress: widget.onLongPress,
         onTap: widget.onEdit,
-        child: Container(
-          height: 80.h,
-          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-            border: Border.all(
-              width: 0.2,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.3),
-            ),
-            color:
-                outOfStock
-                    ? Theme.of(
-                      context,
-                    ).colorScheme.error.withValues(alpha: 0.15)
-                    : Theme.of(context).colorScheme.surfaceContainerLowest,
-          ),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: SizedBox(
-                  width: 58.w,
-                  height: 58.h,
-                  child: ImageViewer(
-                    imageFileOrLink:
-                        widget.product.images ?? AppConst.defaultImage,
-                  ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              height: 80.h,
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  StylesConstants.borderRadius,
                 ),
+                border: Border.all(
+                  width: 0.2,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.3),
+                ),
+                color:
+                    outOfStock
+                        ? Theme.of(context).colorScheme.error.withOpacity(0.15)
+                        : isPackProduct
+                        ? Colors.blue.withOpacity(
+                          0.1,
+                        ) // Fond bleuté léger pour les packs
+                        : Theme.of(context).colorScheme.surfaceContainerLowest,
               ),
-              SizedBox(width: 16.w),
+              child: Row(
+                children: [
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: SizedBox(
+                          width: 58.w,
+                          height: 58.h,
+                          child: ImageViewer(
+                            imageFileOrLink:
+                                isPackProduct
+                                    ? "assets/medias/logos/pack_default_image.jpg"
+                                    : widget.product.images ??
+                                        AppConst.defaultImage,
+                          ),
+                        ),
+                      ),
+                      if (isPackProduct)
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(
+                                StylesConstants.borderRadius,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "+${widget.product.packComposition?.length ?? 0}",
+                                style: TextStyles.bodyText(
+                                  context: context,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(width: 16.w),
 
-              // Infos Produit ------------------
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+                  Expanded(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          NameMoreShort().shortenName(
-                                widget.product.name!,
-                                30,
-                              ) ??
-                              "Sans nom",
-                          maxLines: 1,
-                          style: TextStyles.bodyText(
-                            context: context,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 3.h),
-                        Text(
-                          outOfStock
-                              ? "Rupture de Stock"
-                              : "Stock . ${widget.product.quantity}",
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            color:
-                                outOfStock
-                                    ? Colors.red.shade400
-                                    : Theme.of(context).colorScheme.onSurface
-                                        .withValues(alpha: 0.4),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              NameMoreShort().shortenName(
+                                    widget.product.name!,
+                                    30,
+                                  ) ??
+                                  "Sans nom",
+                              maxLines: 1,
+                              style: TextStyles.bodyText(
+                                context: context,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 3.h),
+                            Text(
+                              outOfStock
+                                  ? "Rupture de Stock"
+                                  : "Stock . ${widget.product.quantity}",
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color:
+                                    outOfStock
+                                        ? Colors.red.shade400
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.4),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Ar ${widget.product.sellingPrice ?? 0}",
@@ -153,28 +191,76 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
+                            SizedBox(
+                              height: 20.h,
+                              child: NumberInput(
+                                value: 0,
+                                onValueChanged: (value) {
+                                  setState(
+                                    () => widget.selectedQuantity(value),
+                                  );
+                                },
+                                noBorder: true,
+                                minValue: 0,
+                              ),
+                            ),
                           ],
                         ),
-                        SizedBox(
-                          height: 20.h,
-                          child: NumberInput(
-                            value: 0,
-                            onValueChanged: (value) {
-                              setState(() => widget.selectedQuantity(value));
-                            },
-                            noBorder: true,
-                            minValue: 0,
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isPackProduct)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Transform.rotate(
+                  angle: 0.00,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(12),
+                        topRight: Radius.circular(StylesConstants.borderRadius),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          HugeIcons.strokeRoundedPackage02,
+                          color: Colors.white,
+                          size: 14.sp,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          "PACK",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.8,
                           ),
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-
-              SizedBox(width: 5.w),
-            ],
-          ),
+          ],
         ),
       ),
     );
