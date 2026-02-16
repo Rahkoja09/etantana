@@ -41,35 +41,58 @@ class ProductUsecases {
   ResultFuture<ProductEntities> updateProduct(ProductEntities entities) =>
       _productRepository.updateProduct(entities);
 
+  // xxxxx piramide de la mort, à refaire avec un rpc postgress xxxx --------------
   ResultVoid restoreProductQtyByStatus(List<MapData> orderList) async {
     try {
       for (var orderItem in orderList) {
-        final productResult = await getProductById(orderItem["id"]);
+        final String productId = orderItem["id"];
+        final int qtyToRestore =
+            int.tryParse(orderItem["quantity"].toString()) ?? 0;
 
-        await productResult.fold(
-          (failure) =>
-              throw Exception("Produit introuvable : ${orderItem["id"]}"),
-          (product) async {
-            final qtyToRestore =
-                int.tryParse(orderItem["quantity"].toString()) ?? 0;
-            final currentQty = product.quantity ?? 0;
+        final productRes = await _productRepository.getProductById(productId);
 
-            final updatedProduct = product.copyWith(
-              quantity: currentQty + qtyToRestore,
-            );
-            final updateRes = await _productRepository.updateProduct(
-              updatedProduct,
-            );
-            if (updateRes.isLeft()) {
-              throw Exception("Échec de la mise à jour pour ${product.name}");
+        await productRes.fold((failure) async => Left(failure), (
+          product,
+        ) async {
+          await _updateStockRestore(product, qtyToRestore);
+
+          if (product.isPack == true && product.packComposition != null) {
+            final List<dynamic> components =
+                product.packComposition as List<dynamic>;
+
+            for (var component in components) {
+              final String compId = component["id"];
+
+              const int qtyToRestorePerPack = 1;
+              final int totalToRestoreForComponent =
+                  qtyToRestorePerPack * qtyToRestore;
+
+              final compRes = await _productRepository.getProductById(compId);
+
+              await compRes.fold((error) => null, (compProduct) async {
+                await _updateStockRestore(
+                  compProduct,
+                  totalToRestoreForComponent,
+                );
+              });
             }
-          },
-        );
+          }
+        });
       }
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString(), '000'));
+      return Left(UnexceptedFailure(e.toString(), "500"));
     }
+  }
+
+  Future<void> _updateStockRestore(
+    ProductEntities product,
+    int quantityToAdd,
+  ) async {
+    final currentQty = product.quantity ?? 0;
+    final newQuantity = currentQty + quantityToAdd;
+    final update = product.copyWith(quantity: newQuantity);
+    await _productRepository.updateProduct(update);
   }
 
   ResultVoid deleteProductById(String productId) =>

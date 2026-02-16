@@ -74,7 +74,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
       selectedType = p.type;
       isFutureProduct = p.futureProduct ?? false;
       _productImage = p.images;
-      variantsForServer = p.details!;
+      variantsForServer = p.details ?? "";
     }
   }
 
@@ -82,6 +82,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
   bool showPopUp = false;
 
   List<String> typeOfProductList = [
+    'Pack',
     "Électronique & High-Tech",
     "Beauté et Esthétique",
     "Consommables & Alimentation",
@@ -147,11 +148,12 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TitleWithExplaination(
-                        title: "Image du produit",
-                        explaination:
-                            "Importer un image qui represente votre produit",
-                      ),
+                      if (widget.productToEdit == null)
+                        TitleWithExplaination(
+                          title: "Image du produit",
+                          explaination:
+                              "Importer un image qui represente votre produit",
+                        ),
                       SizedBox(height: contentSpacer),
                       ImagePickerDisplay(
                         onPickImage: () async {

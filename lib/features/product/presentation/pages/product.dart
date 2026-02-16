@@ -6,7 +6,7 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
-import 'package:e_tantana/features/product/presentation/widgets/create_pack.dart';
+import 'package:e_tantana/features/product/presentation/pages/create_pack.dart';
 import 'package:e_tantana/features/product/presentation/widgets/create_pack_summary_floating.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
 import 'package:e_tantana/features/product/presentation/widgets/order_summary_floating_bar.dart';

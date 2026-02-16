@@ -6,6 +6,7 @@ import 'package:e_tantana/features/delivring/domain/mapper/order_to_delivering_m
 import 'package:e_tantana/features/delivring/domain/repository/delivering_repository.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/repository/order_repository.dart';
+import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/domain/repository/product_repository.dart';
 
 class OrderUsecases {
@@ -21,6 +22,7 @@ class OrderUsecases {
   ResultFuture<OrderEntities> getOrderById(String orderId) =>
       _orderRepository.getOrderById(orderId);
 
+  // xxxxx piramide de la mort, à refaire avec un rpc postgress xxxx --------------
   ResultFuture<OrderEntities> processOrderFlow(OrderEntities entity) async {
     try {
       final orderRes = await _orderRepository.insertOrder(entity);
@@ -32,22 +34,47 @@ class OrderUsecases {
         final deliveryRes = await _deliveringRepository.insertDelivering(
           deliveringData,
         );
-        return deliveryRes.fold((failure) => Left(failure), (
-          deliveringData,
+
+        return await deliveryRes.fold((failure) async => Left(failure), (
+          delivering,
         ) async {
-          for (var order in entity.productsAndQuantities!) {
+          for (var item in entity.productsAndQuantities!) {
+            final String productId = item["id"];
+            final int qtyOrdered =
+                int.tryParse(item["quantity"].toString()) ?? 0;
+
             final productRes = await _productRepository.getProductById(
-              order["id"],
+              productId,
             );
+
             await productRes.fold((error) async => Left(error), (
               product,
             ) async {
-              final quantity = product.quantity;
-              final update = product.copyWith(
-                quantity:
-                    quantity! - int.tryParse(order["quantity"].toString())!,
-              );
-              await _productRepository.updateProduct(update);
+              await _updateStock(product, qtyOrdered);
+
+              if (product.isPack == true && product.packComposition != null) {
+                final List<dynamic> components =
+                    product.packComposition as List<dynamic>;
+
+                for (var component in components) {
+                  final String compId = component["id"];
+
+                  const int qtyRequiredPerPack = 1;
+                  final int totalToSubtractFromComponent =
+                      qtyRequiredPerPack * qtyOrdered;
+
+                  final compRes = await _productRepository.getProductById(
+                    compId,
+                  );
+
+                  await compRes.fold((error) => null, (compProduct) async {
+                    await _updateStock(
+                      compProduct,
+                      totalToSubtractFromComponent,
+                    );
+                  });
+                }
+              }
             });
           }
           return Right(order);
@@ -56,6 +83,15 @@ class OrderUsecases {
     } catch (e) {
       return Left(UnexceptedFailure(e.toString(), "500"));
     }
+  }
+
+  Future<void> _updateStock(
+    ProductEntities product,
+    int quantityToSubtract,
+  ) async {
+    final newQuantity = (product.quantity ?? 0) - quantityToSubtract;
+    final update = product.copyWith(quantity: newQuantity);
+    await _productRepository.updateProduct(update);
   }
 
   ResultVoid deleteOrderById(String orderId) async {

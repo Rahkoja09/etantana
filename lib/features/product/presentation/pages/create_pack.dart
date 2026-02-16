@@ -41,7 +41,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
   @override
   Widget build(BuildContext context) {
     final productAction = ref.read(productControllerProvider.notifier);
-    final productStates = ref.read(productControllerProvider);
+    final productStates = ref.watch(productControllerProvider);
     return Stack(
       children: [
         Scaffold(
