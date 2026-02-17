@@ -125,4 +125,27 @@ class OrderDataSourceImpl implements OrderDataSource {
       throw UnexceptedException(message: "$e");
     }
   }
+
+  @override
+  Future<OrderModel> placeCompleteOrder(OrderEntities entity) async {
+    try {
+      final res = await _client.rpc(
+        'place_complete_order',
+        params: {
+          'p_client_name': entity.clientName,
+          'p_client_tel': entity.clientTel,
+          'p_client_adrs': entity.clientAdrs,
+          'p_products_json': entity.productsAndQuantities,
+          'p_delivery_costs': entity.deliveryCosts ?? "0",
+          'p_details': entity.details ?? "",
+          'p_delivery_date': entity.deliveryDate?.toIso8601String(),
+        },
+      );
+      return OrderModel.fromMap(res);
+    } on PostgrestException catch (e) {
+      throw ApiException(message: e.message, code: e.code ?? "000");
+    } catch (e) {
+      throw UnexceptedException(message: "$e");
+    }
+  }
 }
