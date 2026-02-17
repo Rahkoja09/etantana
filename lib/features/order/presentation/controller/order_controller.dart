@@ -2,6 +2,7 @@ import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/usecases/order_usecases.dart';
+import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -69,18 +70,29 @@ class OrderController extends StateNotifier<OrderStates> {
   }
 
   //  INSERTION ---è--------
-  Future<void> processOrderFlow(OrderEntities entity) async {
+  Future<void> AddOrder(OrderEntities entity) async {
     _setLoadingState();
-    final res = await _orderUsecases.processOrderFlow(entity);
+    final res = await _orderUsecases.addOrder(entity);
     res.fold((error) => _setError(error), (success) {
       state = state.copyWith(
         isLoading: false,
         isClearError: true,
         errorMessage: null,
-        order: [
-          success,
-          ...?state.order,
-        ], // Nouvelle commande en haut -----------------
+        order: [success, ...?state.order],
+      );
+    });
+  }
+
+  //##### palce a complet order in flow(add order, add delivery, decrease product qty) : rpc -----------
+  Future<void> placeCompleteOrder(OrderEntities entity) async {
+    _setLoadingState();
+    final res = await _orderUsecases.placeCompleteOrder(entity);
+    res.fold((error) => _setError(error), (success) {
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        errorMessage: null,
+        order: [success, ...?state.order],
       );
     });
   }

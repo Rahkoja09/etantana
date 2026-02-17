@@ -21,77 +21,11 @@ class OrderUsecases {
   ResultFuture<OrderEntities> getOrderById(String orderId) =>
       _orderRepository.getOrderById(orderId);
 
-  // xxxxx piramide de la mort, à refaire avec un rpc postgress xxxx --------------
-  ResultFuture<OrderEntities> processOrderFlow(OrderEntities entity) async {
-    try {
-      final orderRes = await _orderRepository.insertOrder(entity);
+  ResultFuture<OrderEntities> addOrder(OrderEntities entity) async =>
+      await _orderRepository.insertOrder(entity);
 
-      return await orderRes.fold((failure) async => Left(failure), (
-        order,
-      ) async {
-        final deliveringData = order.toDelivering();
-        final deliveryRes = await _deliveringRepository.insertDelivering(
-          deliveringData,
-        );
-
-        return await deliveryRes.fold((failure) async => Left(failure), (
-          delivering,
-        ) async {
-          for (var item in entity.productsAndQuantities!) {
-            final String productId = item["id"];
-            final int qtyOrdered =
-                int.tryParse(item["quantity"].toString()) ?? 0;
-
-            final productRes = await _productRepository.getProductById(
-              productId,
-            );
-
-            await productRes.fold((error) async => Left(error), (
-              product,
-            ) async {
-              await _updateStock(product, qtyOrdered);
-
-              if (product.isPack == true && product.packComposition != null) {
-                final List<dynamic> components =
-                    product.packComposition as List<dynamic>;
-
-                for (var component in components) {
-                  final String compId = component["id"];
-
-                  const int qtyRequiredPerPack = 1;
-                  final int totalToSubtractFromComponent =
-                      qtyRequiredPerPack * qtyOrdered;
-
-                  final compRes = await _productRepository.getProductById(
-                    compId,
-                  );
-
-                  await compRes.fold((error) => null, (compProduct) async {
-                    await _updateStock(
-                      compProduct,
-                      totalToSubtractFromComponent,
-                    );
-                  });
-                }
-              }
-            });
-          }
-          return Right(order);
-        });
-      });
-    } catch (e) {
-      return Left(UnexceptedFailure(e.toString(), "500"));
-    }
-  }
-
-  Future<void> _updateStock(
-    ProductEntities product,
-    int quantityToSubtract,
-  ) async {
-    final newQuantity = (product.quantity ?? 0) - quantityToSubtract;
-    final update = product.copyWith(quantity: newQuantity);
-    await _productRepository.updateProduct(update);
-  }
+  ResultFuture<OrderEntities> placeCompleteOrder(OrderEntities entity) async =>
+      await _orderRepository.placeCompleteOrder(entity);
 
   ResultVoid deleteOrderById(String orderId) async {
     try {

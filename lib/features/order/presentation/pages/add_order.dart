@@ -145,6 +145,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
     final orderState = ref.watch(orderControllerProvider);
     final orderAction = ref.read(orderControllerProvider.notifier);
     final productAction = ref.read(productControllerProvider.notifier);
+    final deliveryAction = ref.read(deliveringControllerProvider.notifier);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -495,7 +496,9 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               deliveryDate: deliveryDate,
             );
 
-            await orderAction.processOrderFlow(orderData);
+            await orderAction.placeCompleteOrder(orderData);
+            await productAction.researchProduct(null);
+            await deliveryAction.searchDelivering(null);
 
             // réinitialiser les inputs -------------
             qteProduit = 0;

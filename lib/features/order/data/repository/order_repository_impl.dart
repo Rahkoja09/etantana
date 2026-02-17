@@ -45,6 +45,13 @@ class OrderRepositoryImpl implements OrderRepository {
     return await _executeAction(() => _orderDataSource.updateOrder(entity));
   }
 
+  @override
+  ResultFuture<OrderEntities> placeCompleteOrder(OrderEntities entity) async {
+    return await _executeAction(
+      () => _orderDataSource.placeCompleteOrder(entity),
+    );
+  }
+
   ResultFuture<T> _executeAction<T>(Future<T> Function() action) async {
     if (await _networkInfo.isConnected) {
       try {
