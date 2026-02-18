@@ -64,10 +64,10 @@ class ProductController extends StateNotifier<ProductState> {
     });
   }
 
-  Future<void> restoreProductQtyByStatus(List<MapData> orderList) async {
+  Future<void> cancelAndRestock(String orderId) async {
     final action = productAction.restoreProductQtyByStatus;
     _setLoadingState(action: action);
-    final res = await _productUsecases.restoreProductQtyByStatus(orderList);
+    final res = await _productUsecases.cancelAndRestock(orderId);
 
     res.fold((error) => _setError(error: error, action: action), (
       success,

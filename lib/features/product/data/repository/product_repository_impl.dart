@@ -52,6 +52,13 @@ class ProductRepositoryImpl implements ProductRepository {
     );
   }
 
+  @override
+  ResultVoid cancelAndRestock(String orderId) async {
+    return await _executeAction(
+      () => _productDataSource.cancelAndRestock(orderId),
+    );
+  }
+
   Future<Either<Failure, T>> _executeAction<T>(
     Future<T> Function() action,
   ) async {

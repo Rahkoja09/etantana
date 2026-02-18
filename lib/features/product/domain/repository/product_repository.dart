@@ -6,6 +6,7 @@ abstract class ProductRepository {
   ResultFuture<ProductEntities> updateProduct(ProductEntities entities);
   ResultVoid deleteProductById(String productId);
   ResultFuture<ProductEntities> getProductById(String productId);
+  ResultVoid cancelAndRestock(String orderId);
   ResultFuture<List<ProductEntities>> researchProduct(
     ProductEntities? criterial, {
     int start = 0,

@@ -41,59 +41,8 @@ class ProductUsecases {
   ResultFuture<ProductEntities> updateProduct(ProductEntities entities) =>
       _productRepository.updateProduct(entities);
 
-  // xxxxx piramide de la mort, à refaire avec un rpc postgress xxxx --------------
-  ResultVoid restoreProductQtyByStatus(List<MapData> orderList) async {
-    try {
-      for (var orderItem in orderList) {
-        final String productId = orderItem["id"];
-        final int qtyToRestore =
-            int.tryParse(orderItem["quantity"].toString()) ?? 0;
-
-        final productRes = await _productRepository.getProductById(productId);
-
-        await productRes.fold((failure) async => Left(failure), (
-          product,
-        ) async {
-          await _updateStockRestore(product, qtyToRestore);
-
-          if (product.isPack == true && product.packComposition != null) {
-            final List<dynamic> components =
-                product.packComposition as List<dynamic>;
-
-            for (var component in components) {
-              final String compId = component["id"];
-
-              const int qtyToRestorePerPack = 1;
-              final int totalToRestoreForComponent =
-                  qtyToRestorePerPack * qtyToRestore;
-
-              final compRes = await _productRepository.getProductById(compId);
-
-              await compRes.fold((error) => null, (compProduct) async {
-                await _updateStockRestore(
-                  compProduct,
-                  totalToRestoreForComponent,
-                );
-              });
-            }
-          }
-        });
-      }
-      return const Right(null);
-    } catch (e) {
-      return Left(UnexceptedFailure(e.toString(), "500"));
-    }
-  }
-
-  Future<void> _updateStockRestore(
-    ProductEntities product,
-    int quantityToAdd,
-  ) async {
-    final currentQty = product.quantity ?? 0;
-    final newQuantity = currentQty + quantityToAdd;
-    final update = product.copyWith(quantity: newQuantity);
-    await _productRepository.updateProduct(update);
-  }
+  ResultVoid cancelAndRestock(String orderId) async =>
+      await _productRepository.cancelAndRestock(orderId);
 
   ResultVoid deleteProductById(String productId) =>
       _productRepository.deleteProductById(productId);

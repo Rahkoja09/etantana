@@ -345,8 +345,8 @@ class _OrderState extends ConsumerState<Order> {
                                                                       .cancelled
                                                                       .name) {
                                                                 await productAction
-                                                                    .restoreProductQtyByStatus(
-                                                                      item.productsAndQuantities!,
+                                                                    .cancelAndRestock(
+                                                                      item.id!,
                                                                     );
                                                               }
 
