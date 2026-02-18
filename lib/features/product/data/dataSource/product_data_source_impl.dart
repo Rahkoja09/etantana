@@ -1,4 +1,5 @@
 import 'package:e_tantana/core/error/exceptions.dart';
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/product/data/dataSource/product_data_source.dart';
 import 'package:e_tantana/features/product/data/model/product_model.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
@@ -138,5 +139,15 @@ class ProductDataSourceImpl implements ProductDataSource {
     } catch (e) {
       throw UnexceptedException(message: "$e");
     }
+  }
+
+  @override
+  Future<MapData> cancelAndRestock(String orderId) async {
+    final response = await _client.rpc(
+      'cancel_order_and_restock',
+      params: {'p_order_id': orderId},
+    );
+
+    return response as Map<String, dynamic>;
   }
 }
