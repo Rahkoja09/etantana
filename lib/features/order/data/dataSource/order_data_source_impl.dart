@@ -136,9 +136,10 @@ class OrderDataSourceImpl implements OrderDataSource {
           'p_client_tel': entity.clientTel,
           'p_client_adrs': entity.clientAdrs,
           'p_products_json': entity.productsAndQuantities,
-          'p_delivery_costs': entity.deliveryCosts ?? "0",
+          'p_delivery_costs': entity.deliveryCosts ?? 0.0,
           'p_details': entity.details ?? "",
           'p_delivery_date': entity.deliveryDate?.toIso8601String(),
+          'p_quantity': entity.quantity,
         },
       );
       return OrderModel.fromMap(res);

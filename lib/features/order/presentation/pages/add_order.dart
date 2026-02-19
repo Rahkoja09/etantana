@@ -484,11 +484,19 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               return;
             }
 
+            if (widget.orderListToOrderWithQuantity != null &&
+                widget.orderListToOrderWithQuantity!.length > 1) {
+              qteProduit = 0;
+              for (var order in widget.orderListToOrderWithQuantity!) {
+                qteProduit += int.parse(order["quantity"]);
+              }
+            }
+
             final orderData = OrderEntities(
               clientAdrs: "${deliveryCity.trim()} - ${clientAdrs.text.trim()}",
               clientName: clientName.text.trim(),
               clientTel: clientTel.text.trim(),
-              deliveryCosts: fraisDeLiv.text.trim(),
+              deliveryCosts: double.tryParse(fraisDeLiv.text.trim()),
               details: variantsForServer,
               productsAndQuantities: widget.orderListToOrderWithQuantity,
               quantity: qteProduit,

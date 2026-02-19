@@ -19,7 +19,7 @@ class InteractionInvoiceDataProvider
       final qty = (item["quantity"] as num?)?.toInt() ?? 1;
       totalProducts += price * qty;
     }
-    final delivery = double.tryParse(order.deliveryCosts ?? "0") ?? 0.0;
+    final delivery = order.deliveryCosts ?? 0.0;
 
     state = state.copyWith(
       order: order,

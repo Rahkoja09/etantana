@@ -52,7 +52,7 @@ class OrderModel extends OrderEntities {
       clientTel: data['client_tel'],
       clientAdrs: data['client_adrs'],
       details: data['details'],
-      deliveryCosts: data['delivery_costs'],
+      deliveryCosts: data['delivery_costs'].toDouble(),
       deliveryDate:
           data["delivery_date"] != null
               ? DateTime.parse(data["delivery_date"])
@@ -97,7 +97,7 @@ class OrderModel extends OrderEntities {
     String? clientName,
     String? clientTel,
     String? clientAdrs,
-    String? deliveryCosts,
+    double? deliveryCosts,
     DateTime? deliveryDate,
   }) {
     return OrderModel(

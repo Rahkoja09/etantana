@@ -13,7 +13,7 @@ class OrderEntities extends Equatable {
   final String? clientName;
   final String? clientTel;
   final String? clientAdrs;
-  final String? deliveryCosts;
+  final double? deliveryCosts;
   final DateTime? deliveryDate;
 
   const OrderEntities({
@@ -42,7 +42,7 @@ class OrderEntities extends Equatable {
     String? clientName,
     String? clientTel,
     String? clientAdrs,
-    String? deliveryCosts,
+    double? deliveryCosts,
     DateTime? deliveryDate,
   }) {
     return OrderEntities(

@@ -8,7 +8,7 @@ extension OrderToDeliveringMapper on OrderEntities {
       orderId: id,
       dateOfDelivering: deliveryDate,
       deliveringAdresse: clientAdrs,
-      deliveringPrice: double.tryParse(deliveryCosts ?? "0"),
+      deliveringPrice: deliveryCosts ?? 0.0,
       deliveringState: [
         {"status": status?.name, "reason": ""},
       ],

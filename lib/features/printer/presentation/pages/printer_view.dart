@@ -35,7 +35,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
   @override
   void initState() {
     super.initState();
-    _deliveryCosts = double.tryParse(widget.order.deliveryCosts ?? '0') ?? 0.0;
+    _deliveryCosts = widget.order.deliveryCosts ?? 0.0;
   }
 
   @override
@@ -106,7 +106,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildToolbarButton(Icons.edit, "Modifier", () {
-              _showEditPricesDialog(widget.order.deliveryCosts!);
+              _showEditPricesDialog(widget.order.deliveryCosts!.toString());
             }),
             VerticalCustomDivider(
               height: 20,

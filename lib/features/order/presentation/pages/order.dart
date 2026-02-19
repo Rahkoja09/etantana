@@ -1,6 +1,7 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/enums/order_status.dart';
+import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
@@ -95,6 +96,7 @@ class _OrderState extends ConsumerState<Order> {
     final orderState = ref.watch(orderControllerProvider);
     final productState = ref.watch(productControllerProvider);
     final orderAction = ref.read(orderControllerProvider.notifier);
+    final deilveryAction = ref.read(deliveringControllerProvider.notifier);
     final productAction = ref.read(productControllerProvider.notifier);
 
     ref.listen<OrderStates>(orderControllerProvider, (prev, next) {
@@ -118,7 +120,7 @@ class _OrderState extends ConsumerState<Order> {
         clientName: "Chargement...",
         quantity: 1,
         createdAt: DateTime.now(),
-        deliveryCosts: "1000",
+        deliveryCosts: 1000.0,
         status: DeliveryStatus.pending,
       ),
     );
@@ -351,6 +353,10 @@ class _OrderState extends ConsumerState<Order> {
                                                               }
 
                                                               await _getOrder();
+                                                              await deilveryAction
+                                                                  .searchDelivering(
+                                                                    null,
+                                                                  );
                                                               navigator.pop();
                                                             },
 
