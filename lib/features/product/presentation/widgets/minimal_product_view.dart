@@ -73,7 +73,6 @@ class _MinimalProductViewState extends State<MinimalProductView> {
           clipBehavior: Clip.none,
           children: [
             Container(
-              height: 80.h,
               padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
@@ -83,131 +82,148 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                   width: 0.2,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.3),
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
                 color:
                     outOfStock
-                        ? Theme.of(context).colorScheme.error.withOpacity(0.15)
+                        ? Theme.of(
+                          context,
+                        ).colorScheme.error.withValues(alpha: 0.15)
                         : isPackProduct
-                        ? Colors.blue.withOpacity(
-                          0.1,
-                        ) // Fond bleuté léger pour les packs
-                        : Theme.of(context).colorScheme.surfaceContainerLowest,
+                        ? Colors.blue.withValues(alpha: 0.1)
+                        : Theme.of(context).colorScheme.surfaceContainerLowest
+                            .withValues(alpha: 0.4),
               ),
-              child: Row(
+              child: Column(
                 children: [
-                  Stack(
+                  Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: SizedBox(
-                          width: 58.w,
-                          height: 58.h,
-                          child: ImageViewer(
-                            imageFileOrLink:
-                                isPackProduct
-                                    ? "assets/medias/logos/pack_default_image.jpg"
-                                    : widget.product.images ??
-                                        AppConst.defaultImage,
-                          ),
-                        ),
-                      ),
-                      if (isPackProduct)
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(
-                                StylesConstants.borderRadius,
+                      Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: SizedBox(
+                              width: 58.w,
+                              height: 58.h,
+                              child: ImageViewer(
+                                imageFileOrLink:
+                                    isPackProduct
+                                        ? "assets/medias/logos/pack_default_image.jpg"
+                                        : widget.product.images ??
+                                            AppConst.defaultImage,
                               ),
                             ),
-                            child: Center(
-                              child: Text(
-                                "+${widget.product.packComposition?.length ?? 0}",
-                                style: TextStyles.bodyText(
-                                  context: context,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                          ),
+                          if (isPackProduct)
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.5),
+                                  borderRadius: BorderRadius.circular(
+                                    StylesConstants.borderRadius,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "+${widget.product.packComposition?.length ?? 0}",
+                                    style: TextStyles.bodyText(
+                                      context: context,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  SizedBox(width: 16.w),
+                        ],
+                      ),
+                      SizedBox(width: 16.w),
 
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
+                      Expanded(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              NameMoreShort().shortenName(
-                                    widget.product.name!,
-                                    30,
-                                  ) ??
-                                  "Sans nom",
-                              maxLines: 1,
-                              style: TextStyles.bodyText(
-                                context: context,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 3.h),
-                            Text(
-                              outOfStock
-                                  ? "Rupture de Stock"
-                                  : "Stock . ${widget.product.quantity}",
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                color:
-                                    outOfStock
-                                        ? Colors.red.shade400
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.4),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "Ar ${widget.product.sellingPrice ?? 0}",
-                              style: TextStyles.bodySmall(
-                                context: context,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20.h,
-                              child: NumberInput(
-                                value: 0,
-                                onValueChanged: (value) {
-                                  setState(
-                                    () => widget.selectedQuantity(value),
-                                  );
-                                },
-                                noBorder: true,
-                                minValue: 0,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  NameMoreShort().shortenName(
+                                        widget.product.name!,
+                                        30,
+                                      ) ??
+                                      "Sans nom",
+                                  maxLines: 1,
+                                  style: TextStyles.bodyText(
+                                    context: context,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 3.h),
+                                Text(
+                                  "Ref:${widget.product.eId?.toUpperCase()}",
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    color:
+                                        outOfStock
+                                            ? Colors.red.shade400
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.4),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                SizedBox(height: 3.h),
+                                Text(
+                                  outOfStock
+                                      ? "Rupture de Stock"
+                                      : "Stock . ${widget.product.quantity}",
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    color:
+                                        outOfStock
+                                            ? Colors.red.shade400
+                                            : Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Ar ${widget.product.sellingPrice ?? 0}",
+                        style: TextStyles.bodyMedium(
+                          context: context,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                        child: NumberInput(
+                          value: 0,
+                          onValueChanged: (value) {
+                            setState(() => widget.selectedQuantity(value));
+                          },
+                          noBorder: true,
+                          minValue: 0,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

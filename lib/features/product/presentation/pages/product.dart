@@ -120,7 +120,7 @@ class _ProductState extends ConsumerState<Product> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -430,7 +430,7 @@ class _ProductState extends ConsumerState<Product> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 5),
+                                      SizedBox(height: 15),
                                     ],
                                   );
                                 },

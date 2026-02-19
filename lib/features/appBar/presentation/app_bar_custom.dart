@@ -27,28 +27,28 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
 
   @override
   Widget build(BuildContext context) {
-    Color iconColor = Colors.black;
+    Color iconColor = Theme.of(context).colorScheme.onSurface;
     double iconSize = 25;
     final theme = ref.watch(themeProvider);
     return AppBar(
       actions: <Widget>[Container()],
       automaticallyImplyLeading: false,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
             bottom: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.surfaceBright,
               width: 2,
             ),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              spreadRadius: 2,
-              blurRadius: 3,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.1),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: const Offset(0, 1),
             ),
           ],
         ),
@@ -73,7 +73,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   fontSize: 18,
                   context: context,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: iconColor,
                 ),
               ),
             ],
@@ -92,7 +92,10 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   theme == darkTheme
                       ? Icons.dark_mode_rounded
                       : Icons.light_mode_rounded,
-                  color: theme == lightTheme ? Colors.white60 : Colors.black54,
+                  color:
+                      theme == lightTheme
+                          ? iconColor.withValues(alpha: 0.7)
+                          : iconColor.withValues(alpha: 0.7),
                   size: iconSize,
                 ),
               ),
