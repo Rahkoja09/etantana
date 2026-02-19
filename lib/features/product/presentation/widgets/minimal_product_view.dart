@@ -103,8 +103,8 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(2),
                             child: SizedBox(
-                              width: 58.w,
-                              height: 58.h,
+                              width: 50.w,
+                              height: 50.h,
                               child: ImageViewer(
                                 imageFileOrLink:
                                     isPackProduct
@@ -200,7 +200,7 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

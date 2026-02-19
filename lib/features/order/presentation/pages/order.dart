@@ -48,10 +48,10 @@ class _OrderState extends ConsumerState<Order> {
   // status update -------------
   String newStatus = "validated";
   List<String> statusList = [
-    DeliveryStatus.validated.name,
-    DeliveryStatus.delivered.name,
-    DeliveryStatus.pending.name,
-    DeliveryStatus.cancelled.name,
+    DeliveryStatus.validated.label,
+    DeliveryStatus.delivered.label,
+    DeliveryStatus.pending.label,
+    DeliveryStatus.cancelled.label,
   ];
 
   @override
@@ -351,7 +351,6 @@ class _OrderState extends ConsumerState<Order> {
                                                                       item.id!,
                                                                     );
                                                               }
-
                                                               await _getOrder();
                                                               await deilveryAction
                                                                   .searchDelivering(
@@ -359,7 +358,6 @@ class _OrderState extends ConsumerState<Order> {
                                                                   );
                                                               navigator.pop();
                                                             },
-
                                                             btnColor:
                                                                 Theme.of(
                                                                       context,

@@ -166,16 +166,7 @@ class _ProductState extends ConsumerState<Product> {
                 if (!orderList.isNotEmpty)
                   Container(
                     padding: EdgeInsets.all(StylesConstants.spacerContent),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.3),
-                        ),
-                      ),
-                    ),
+
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

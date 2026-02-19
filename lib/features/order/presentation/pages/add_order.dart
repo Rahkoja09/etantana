@@ -89,8 +89,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
 
       errorProdName =
           selectedProductEntity == null ? "Veuillez choisir un produit" : null;
-      errorProdQty =
-          qteProduit <= 0 ? "La quantité doit être supérieure à 0" : null;
+
       errorStatus = selectedStatus == null ? "Le status est obligatoire" : null;
 
       // Validation Client --------------
@@ -477,6 +476,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
         },
         onValidate: () async {
           if (_validateFields()) {
+            print("entré ici");
             final firstProduct = selectedProductEntity?.firstOrNull;
 
             if (firstProduct == null) {
@@ -488,7 +488,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                 widget.orderListToOrderWithQuantity!.length > 1) {
               qteProduit = 0;
               for (var order in widget.orderListToOrderWithQuantity!) {
-                qteProduit += int.parse(order["quantity"]);
+                qteProduit += (order["quantity"] as num).toInt();
               }
             }
 

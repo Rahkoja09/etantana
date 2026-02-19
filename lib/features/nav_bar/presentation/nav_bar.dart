@@ -114,7 +114,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           extendBody: true,
-          appBar: _bottomNavIndex == 3 ? null : const AppBarCustom(),
+          appBar: const AppBarCustom(),
           //endDrawer: const SideBar(),
 
           // IndexedStack save state of pages eto ooo ----------

@@ -27,7 +27,9 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
 
   @override
   Widget build(BuildContext context) {
-    Color iconColor = Theme.of(context).colorScheme.onSurface;
+    Color iconColor = Theme.of(
+      context,
+    ).colorScheme.onSurface.withValues(alpha: 0.7);
     double iconSize = 25;
     final theme = ref.watch(themeProvider);
     return AppBar(
@@ -92,10 +94,7 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   theme == darkTheme
                       ? Icons.dark_mode_rounded
                       : Icons.light_mode_rounded,
-                  color:
-                      theme == lightTheme
-                          ? iconColor.withValues(alpha: 0.7)
-                          : iconColor.withValues(alpha: 0.7),
+                  color: theme == darkTheme ? Colors.blue : Colors.amberAccent,
                   size: iconSize,
                 ),
               ),
