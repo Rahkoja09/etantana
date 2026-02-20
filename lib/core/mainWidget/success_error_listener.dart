@@ -1,13 +1,12 @@
 import 'package:e_tantana/core/error/error_manager.dart';
 import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/core/mainWidget/last_network_time_provider.dart';
-import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
-import 'package:e_tantana/features/delivring/presentation/states/delivering_states.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
+import 'package:e_tantana/shared/widget/popup/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,6 +24,8 @@ class SuccessErrorListener extends ConsumerWidget {
     }
 
     void _showFilteredError({
+      required BuildContext context,
+      required WidgetRef ref,
       required Failure failure,
       required dynamic action,
       required String title,
@@ -44,14 +45,13 @@ class SuccessErrorListener extends ConsumerWidget {
             failure,
             action,
           );
-          showToast(
+          Snackbar.show(
             context,
-            description: msg,
+            message: msg,
             isError: true,
-            title: "Problème Connexion",
+            isPersistent: true,
           );
         }
-        // Sinon, on ignore silencieusement car le toast est déjà à l'écran --------
       } else {
         // Pour les erreurs hors réseau (ex: métier), on affiche toujours ------------
         final msg = SuccesErrorManager.getFriendlyErrorMessage(failure, action);
@@ -62,6 +62,8 @@ class SuccessErrorListener extends ConsumerWidget {
     ref.listen<ProductState>(productControllerProvider, (prev, next) {
       if (next.error != null && next.error != prev?.error) {
         _showFilteredError(
+          context: context,
+          ref: ref,
           failure: next.error!,
           action: next.action,
           title: "Erreur produit",
@@ -85,6 +87,8 @@ class SuccessErrorListener extends ConsumerWidget {
     ref.listen<ProductState>(productControllerProvider, (prev, next) {
       if (next.error != null && next.error != prev?.error) {
         _showFilteredError(
+          context: context,
+          ref: ref,
           failure: next.error!,
           action: next.action,
           title: "Erreur produit",
@@ -108,6 +112,8 @@ class SuccessErrorListener extends ConsumerWidget {
     ref.listen<OrderStates>(orderControllerProvider, (prev, next) {
       if (next.error != null && next.error != prev?.error) {
         _showFilteredError(
+          context: context,
+          ref: ref,
           failure: next.error!,
           action: next.action,
           title: "Erreur commande",
