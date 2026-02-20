@@ -2,6 +2,7 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
+import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
@@ -98,21 +99,10 @@ class _OrderState extends ConsumerState<Order> {
     final orderAction = ref.read(orderControllerProvider.notifier);
     final deilveryAction = ref.read(deliveringControllerProvider.notifier);
     final productAction = ref.read(productControllerProvider.notifier);
+    final dashBoardAction = ref.read(dashboardStatsControllerProvider.notifier);
 
-    ref.listen<OrderStates>(orderControllerProvider, (prev, next) {
-      if (next.errorMessage != null &&
-          next.errorMessage != prev?.errorMessage) {
-        showToast(
-          context,
-          title: 'Erreur de récuperation commmande(s).',
-          isError: true,
-          description: next.errorMessage!,
-        );
-      }
-      if (next.order != null) {
-        allOrder = next.order!;
-      }
-    });
+    // list des produits principales -------
+    allOrder = orderState.order ?? [];
 
     final skeletonData = List.generate(
       5,
@@ -356,6 +346,8 @@ class _OrderState extends ConsumerState<Order> {
                                                                   .searchDelivering(
                                                                     null,
                                                                   );
+                                                              await dashBoardAction
+                                                                  .getDashboardStats();
                                                               navigator.pop();
                                                             },
                                                             btnColor:

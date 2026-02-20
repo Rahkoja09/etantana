@@ -37,10 +37,9 @@ class AppRefreshIndicator extends StatelessWidget {
                       width: 30,
                       padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
                         borderRadius: BorderRadius.circular(60),
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.9),
+                        color: Colors.black.withValues(alpha: 0.9),
                       ),
                       child: LoadingAnimation.jsonPersonnalisedLoading(null),
                     ),

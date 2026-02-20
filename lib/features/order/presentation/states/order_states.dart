@@ -1,35 +1,59 @@
+import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:equatable/equatable.dart';
 
+enum orderAction {
+  getOrder,
+  placeCompleteOrder,
+  deleteOrder,
+  updateOrder,
+  loadNextPage,
+  searchOrder,
+}
+
 class OrderStates<T> extends Equatable {
   final bool isLoading;
-  final String? errorMessage;
+  final Failure? error;
   final List<OrderEntities>? order;
   final OrderEntities? currentCriteria;
+  final orderAction? action;
+  final String? errorCode;
 
   const OrderStates({
     this.isLoading = false,
-    this.errorMessage,
+    this.error,
     this.order,
     this.currentCriteria,
+    this.action,
+    this.errorCode,
   });
 
   OrderStates copyWith({
     bool? isLoading,
-    String? errorMessage,
     List<OrderEntities>? order,
     bool? isClearError = false,
     OrderEntities? currentCriteria,
+    orderAction? action,
+    String? errorCode,
+    Failure? error,
   }) {
     return OrderStates(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage:
-          isClearError == true ? null : (errorMessage ?? this.errorMessage),
+      error: isClearError == true ? null : (error ?? this.error),
       order: order ?? this.order,
       currentCriteria: currentCriteria ?? this.currentCriteria,
+      action: action ?? this.action,
+      errorCode: errorCode ?? this.errorCode,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, errorMessage, order, currentCriteria];
+  List<Object?> get props => [
+    isLoading,
+    error,
+    order,
+    currentCriteria,
+    action,
+    errorCode,
+  ];
 }
