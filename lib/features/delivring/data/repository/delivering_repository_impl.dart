@@ -34,6 +34,7 @@ class DeliveringRepositoryImpl implements DeliveringRepository {
   }) async {
     return await _executeAction(
       () => _remoteSource.searchDelivering(criteriales, start: start, end: end),
+      isCritical: false,
     );
   }
 
@@ -51,8 +52,16 @@ class DeliveringRepositoryImpl implements DeliveringRepository {
     );
   }
 
-  ResultFuture<T> _executeAction<T>(Future<T> Function() action) async {
-    if (await _networkInfo.isConnected) {
+  ResultFuture<T> _executeAction<T>(
+    Future<T> Function() action, {
+    bool isCritical = true,
+  }) async {
+    final bool connected =
+        isCritical
+            ? await _networkInfo.isConnected
+            : await _networkInfo.hasConnection;
+
+    if (connected) {
       try {
         final res = await action();
         return Right(res);

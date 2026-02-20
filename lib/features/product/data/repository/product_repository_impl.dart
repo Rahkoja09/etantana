@@ -42,6 +42,7 @@ class ProductRepositoryImpl implements ProductRepository {
     return await _executeAction<List<ProductEntities>>(
       () =>
           _productDataSource.researchProduct(criterial, start: start, end: end),
+      isCritical: false,
     );
   }
 
@@ -59,18 +60,19 @@ class ProductRepositoryImpl implements ProductRepository {
     );
   }
 
-  Future<Either<Failure, T>> _executeAction<T>(
-    Future<T> Function() action,
-  ) async {
-    if (await _networkInfo.isConnected) {
+  ResultFuture<T> _executeAction<T>(
+    Future<T> Function() action, {
+    bool isCritical = true,
+  }) async {
+    final bool connected =
+        isCritical
+            ? await _networkInfo.isConnected
+            : await _networkInfo.hasConnection;
+
+    if (connected) {
       try {
         final res = await action();
         return Right(res);
-      } on ServerException catch (e) {
-        if (e.code.startsWith('5')) {
-          return Left(ServerFailure.fromException(e));
-        }
-        return Left(ServerFailure.fromException(e));
       } on ApiException catch (e) {
         return Left(ApiFailure.fromException(e));
       } on AuthUserException catch (e) {
