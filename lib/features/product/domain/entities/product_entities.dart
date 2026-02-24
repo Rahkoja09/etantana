@@ -81,6 +81,17 @@ class ProductEntities extends Equatable {
     };
   }
 
+  MapData toPackCompositionFormat({required ProductEntities entity}) {
+    return {
+      'id': entity.id,
+      'quantity': entity.quantity,
+      'purchase_price': entity.purchasePrice,
+      'selling_price': entity.sellingPrice,
+      'image': entity.images,
+      'name': entity.name,
+    };
+  }
+
   @override
   List<Object?> get props => [
     id,

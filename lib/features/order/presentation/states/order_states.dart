@@ -1,22 +1,14 @@
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/features/order/domain/actions/order_actions.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:equatable/equatable.dart';
-
-enum orderAction {
-  getOrder,
-  placeCompleteOrder,
-  deleteOrder,
-  updateOrder,
-  loadNextPage,
-  searchOrder,
-}
 
 class OrderStates<T> extends Equatable {
   final bool isLoading;
   final Failure? error;
   final List<OrderEntities>? order;
   final OrderEntities? currentCriteria;
-  final orderAction? action;
+  final OrderActions? action;
   final String? errorCode;
 
   const OrderStates({
@@ -33,7 +25,7 @@ class OrderStates<T> extends Equatable {
     List<OrderEntities>? order,
     bool? isClearError = false,
     OrderEntities? currentCriteria,
-    orderAction? action,
+    OrderActions? action,
     String? errorCode,
     Failure? error,
   }) {

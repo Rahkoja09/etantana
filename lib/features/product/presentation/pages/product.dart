@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
-import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
@@ -17,14 +17,11 @@ import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/others/empty_content_view.dart';
-import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
-import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
 import 'package:e_tantana/shared/widget/selectableOption/flat_chip_selector.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -41,25 +38,16 @@ class _ProductState extends ConsumerState<Product> {
   Timer? _debounce;
   bool isFetching = false;
 
-  // create pack ----------
-  bool productIsSelected = false;
-  List<MapData> packComposition = [];
-  int packLenght = 0;
-
   // les input ---------
   final TextEditingController _searchController = TextEditingController();
 
   List<ProductEntities> myProducts = [];
 
-  bool showPopUp = false;
   String currentFilter = "Tous";
 
   // list des critères ---------
   List<String> criterialListSort = ["Tous", "Futurs produits", "Stock zéro"];
 
-  // criterial variable -----------
-  String? productNameCriterial;
-  ProductEntities? criteriales;
   int _currentPage = 0;
 
   @override
@@ -120,6 +108,7 @@ class _ProductState extends ConsumerState<Product> {
     );
     final isInitialLoading = productState.isLoading && actualProducts.isEmpty;
     final displayList = isInitialLoading ? skeletonData : actualProducts;
+
     return Stack(
       children: [
         Scaffold(
@@ -128,26 +117,30 @@ class _ProductState extends ConsumerState<Product> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (productIsSelected)
+                if (ProductListPageState.packComposition != null &&
+                    ProductListPageState.packComposition!.length > 0)
                   CreatePackSummaryFloating(
                     onCancel: () {
                       setState(() {
-                        productIsSelected = false;
+                        ProductListPageAction.toggleCheckBox();
+                        ProductListPageAction.empltyPackComposition();
                       });
                     },
                     onValidate: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder:
-                              (_) =>
-                                  CreatePack(packComposition: packComposition),
+                              (_) => CreatePack(
+                                packComposition:
+                                    ProductListPageState.packComposition!,
+                              ),
                         ),
                       );
                     },
-                    packCompositionLenght: packLenght,
+                    packCompositionLenght:
+                        ProductListPageState.packComposition?.length ?? 0,
                   ),
-                if (ProductListPageState.productDataListToOrder != null &&
-                    ProductListPageState.productDataListToOrder!.isNotEmpty)
+                if (ProductListPageState.isOrdering)
                   OrderSummaryFloatingBar(
                     itemCount:
                         ProductListPageState.productDataListToOrder!.length,
@@ -175,8 +168,7 @@ class _ProductState extends ConsumerState<Product> {
                       ProductListPageState.productDataListToOrder!,
                     ),
                   ),
-                if (ProductListPageState.productDataListToOrder != null ||
-                    !ProductListPageState.productDataListToOrder!.isNotEmpty)
+                if (!ProductListPageState.isOrdering)
                   Container(
                     padding: EdgeInsets.all(StylesConstants.spacerContent),
 
@@ -212,6 +204,7 @@ class _ProductState extends ConsumerState<Product> {
                             );
                           },
                         ),
+
                         SizedBox(height: StylesConstants.spacerContent),
                         FlatChipSelector(
                           options: criterialListSort,
@@ -254,6 +247,39 @@ class _ProductState extends ConsumerState<Product> {
                     ),
                   ),
 
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: StylesConstants.spacerContent,
+                    vertical: 5,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Listes de produits",
+                        style: TextStyles.titleSmall(
+                          context: context,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ProductListPageAction.toggleCheckBox();
+                        },
+                        child: Icon(
+                          HugeIcons.strokeRoundedCheckList,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.9),
+                          size: 25,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: AppRefreshIndicator(
                     onRefresh: getProduct,
@@ -310,61 +336,40 @@ class _ProductState extends ConsumerState<Product> {
                                   }
 
                                   final item = displayList[index];
-                                  final bool isThisProductSelected =
-                                      packComposition.any(
+                                  // il faut assi séparer ca(checkbox et ses enfant) avec les autres (atomic) ------
+                                  bool isThisProductSelected =
+                                      ProductListPageState.packComposition !=
+                                          null &&
+                                      ProductListPageState.packComposition!.any(
                                         (element) => element['id'] == item.id,
                                       );
+
                                   return Column(
                                     children: [
                                       Row(
                                         children: [
-                                          if (productIsSelected)
+                                          if (ProductListPageState
+                                              .checkboxInList) ...[
                                             SizedBox(
                                               height: 30,
                                               width: 30,
                                               child: Checkbox(
                                                 value: isThisProductSelected,
                                                 onChanged: (value) {
-                                                  setState(() {
-                                                    if (value == true) {
-                                                      packComposition.add({
-                                                        'id': item.id,
-                                                        'quantity':
-                                                            item.quantity,
-                                                        'purchase_price':
-                                                            item.purchasePrice,
-                                                        'selling_price':
-                                                            item.sellingPrice,
-                                                        'image': item.images,
-                                                        'name': item.name,
-                                                      });
-                                                      packLenght =
-                                                          packComposition
-                                                              .length;
-                                                    } else {
-                                                      packComposition
-                                                          .removeWhere(
-                                                            (element) =>
-                                                                element['id'] ==
-                                                                item.id,
-                                                          );
-                                                      packLenght =
-                                                          packComposition
-                                                              .length;
-                                                    }
-                                                  });
+                                                  ProductListPageAction.toggleProductInPack(
+                                                    item,
+                                                    value!,
+                                                  );
                                                 },
                                               ),
                                             ),
-                                          SizedBox(width: 5),
+                                            SizedBox(width: 5),
+                                          ],
+
                                           Expanded(
                                             child: MinimalProductView(
-                                              onLongPress: () {
-                                                setState(() {
-                                                  productIsSelected =
-                                                      !productIsSelected;
-                                                });
-                                              },
+                                              onLongPress: () {},
+
                                               selectedQuantity: (quantity) {
                                                 ProductListPageAction.updateProductOrder(
                                                   item,

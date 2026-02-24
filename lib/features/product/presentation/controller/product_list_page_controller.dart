@@ -1,15 +1,31 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/states/product_list_state.dart';
 
 class ProductListPageController extends StateNotifier<ProductListState> {
   ProductListPageController() : super(ProductListState());
 
+  void isOrdering() {
+    state = state.copyWith(
+      isOrdering:
+          (state.productDataListToOrder != null &&
+              state.productDataListToOrder!.isNotEmpty &&
+              state.productEntititesToOrder != null &&
+              state.productEntititesToOrder!.isNotEmpty),
+    );
+  }
+
+  void toggleCheckBox() {
+    state = state.copyWith(checkboxInList: !state.checkboxInList);
+  }
+
   void emptyProductDataToOrder() {
     state = state.copyWith(productDataListToOrder: []);
     state = state.copyWith(productEntititesToOrder: []);
+  }
+
+  void empltyPackComposition() {
+    state = state.copyWith(packComposition: []);
   }
 
   void togglePackSelection() {
@@ -24,8 +40,24 @@ class ProductListPageController extends StateNotifier<ProductListState> {
     state = state.copyWith(productNameToSearch: productName);
   }
 
-  void setPackComposition(List<MapData> packComposition) {
-    state = state.copyWith(packComposition: packComposition);
+  void toggleProductInPack(ProductEntities entity, bool value) {
+    final currentPack = state.packComposition ?? [];
+
+    if (value == true) {
+      final isAlreadyInPack = currentPack.any(
+        (item) => item['id'] == entity.id,
+      );
+
+      if (!isAlreadyInPack) {
+        final newItem = entity.toPackCompositionFormat(entity: entity);
+        state = state.copyWith(packComposition: [...currentPack, newItem]);
+      }
+    } else {
+      state = state.copyWith(
+        packComposition:
+            currentPack.where((item) => item['id'] != entity.id).toList(),
+      );
+    }
   }
 
   void updateProductOrder(ProductEntities item, int quantity) {

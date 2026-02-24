@@ -1,5 +1,6 @@
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/features/order/domain/actions/order_actions.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/usecases/order_usecases.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
@@ -16,7 +17,8 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- RÉCUPÉRATION / RECHERCHE ---
   Future<void> researchOrder(OrderEntities? criteria) async {
-    final action = orderAction.searchOrder;
+    // Utilisation de SearchOrderAction
+    final action = SearchOrderAction(criteria?.clientName ?? "toutes");
     _currentPage = 0;
     _isLastPage = false;
 
@@ -48,14 +50,14 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- LAZY LOADING ---
   Future<void> loadNextPage() async {
-    final action = orderAction.loadNextPage;
+    // On utilise GetOrdersAction pour le chargement de fond
+    final action = GetOrdersAction();
     if (state.isLoading || _isLastPage) return;
 
     _currentPage++;
     final int start = _currentPage * _pageSize;
     final int end = start + _pageSize - 1;
 
-    // Pas de setLoadingState ici pour ne pas bloquer l'UI (spinner discret possible via state) --------
     final res = await _orderUsecases.researchOrder(
       state.currentCriteria,
       start: start,
@@ -78,7 +80,8 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- INSERTION (RPC COMPLETE ORDER) ---
   Future<void> placeCompleteOrder(OrderEntities entity) async {
-    final action = orderAction.placeCompleteOrder;
+    // Utilisation de CreateOrderAction avec le nom du client
+    final action = CreateOrderAction(entity.clientName ?? "Inconnu");
     _setLoadingState(action: action);
 
     final res = await _orderUsecases.placeCompleteOrder(entity);
@@ -95,7 +98,8 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- MISE À JOUR ---
   Future<void> updateOrderFlow(OrderEntities entity) async {
-    final action = orderAction.updateOrder;
+    // Utilisation de UpdateOrderAction
+    final action = UpdateOrderAction(entity.id ?? "");
     _setLoadingState(action: action);
 
     final res = await _orderUsecases.updateOrderFlow(entity);
@@ -119,7 +123,8 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- SUPPRESSION ---
   Future<void> deleteOrderById(String orderId) async {
-    final action = orderAction.deleteOrder;
+    // Utilisation de DeleteOrderAction
+    final action = DeleteOrderAction(orderId);
     _setLoadingState(action: action);
 
     final res = await _orderUsecases.deleteOrderById(orderId);
@@ -137,7 +142,8 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- RÉCUPÉRATION PAR ID ---
   Future<void> getOrderById(String orderId) async {
-    final action = orderAction.getOrder;
+    // On utilise GetOrdersAction ou SearchOrderAction
+    final action = GetOrdersAction();
     _setLoadingState(action: action);
 
     final res = await _orderUsecases.getOrderById(orderId);
@@ -159,11 +165,11 @@ class OrderController extends StateNotifier<OrderStates> {
     state = state.copyWith(currentCriteria: criteria);
   }
 
-  void _setLoadingState({required dynamic action}) {
+  void _setLoadingState({required OrderActions action}) {
     state = state.copyWith(isLoading: true, action: action);
   }
 
-  void _setError({required Failure error, required dynamic action}) {
+  void _setError({required Failure error, required OrderActions action}) {
     state = state.copyWith(
       isLoading: false,
       isClearError: false,
@@ -172,10 +178,6 @@ class OrderController extends StateNotifier<OrderStates> {
       action: action,
     );
   }
-
-  // Getters
-  int get currentPage => _currentPage;
-  bool get isLastPage => _isLastPage;
 }
 
 final orderControllerProvider =

@@ -3,6 +3,8 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:equatable/equatable.dart';
 
 class ProductListState extends Equatable {
+  final bool checkboxInList;
+  final bool isOrdering;
   final List<MapData>? productDataListToOrder;
   final List<ProductEntities>? productEntititesToOrder;
   final List<MapData>? packComposition;
@@ -11,21 +13,25 @@ class ProductListState extends Equatable {
   final bool isSelectePackProducts;
 
   ProductListState({
+    this.checkboxInList = false,
+    this.isOrdering = false,
     this.isSelectePackProducts = false,
     this.packComposition,
-    this.productDataListToOrder,
-    this.productEntititesToOrder,
+    this.productDataListToOrder = const [],
+    this.productEntititesToOrder = const [],
     this.productNameToSearch,
     this.selectedProduct,
   });
 
   ProductListState copyWith({
+    bool? checkboxInList,
     List<MapData>? productDataListToOrder,
     List<ProductEntities>? productEntititesToOrder,
     List<MapData>? packComposition,
     String? productNameToSearch,
     ProductEntities? selectedProduct,
     bool? isSelectePackProducts,
+    bool? isOrdering,
   }) {
     return ProductListState(
       isSelectePackProducts:
@@ -37,6 +43,8 @@ class ProductListState extends Equatable {
           productEntititesToOrder ?? this.productEntititesToOrder,
       productNameToSearch: productNameToSearch ?? this.productNameToSearch,
       selectedProduct: selectedProduct ?? this.selectedProduct,
+      isOrdering: isOrdering ?? this.isOrdering,
+      checkboxInList: checkboxInList ?? this.checkboxInList,
     );
   }
 
@@ -48,5 +56,7 @@ class ProductListState extends Equatable {
     productEntititesToOrder,
     productNameToSearch,
     selectedProduct,
+    isOrdering,
+    checkboxInList,
   ];
 }
