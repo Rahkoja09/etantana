@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
@@ -5,7 +7,6 @@ import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
-import 'package:e_tantana/features/product/presentation/states/product_state.dart';
 import 'package:e_tantana/features/product/presentation/pages/create_pack.dart';
 import 'package:e_tantana/features/product/presentation/widgets/create_pack_summary_floating.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
@@ -14,7 +15,6 @@ import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
-import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
 import 'package:e_tantana/shared/widget/selectableOption/flat_chip_selector.dart';
 import 'package:flutter/gestures.dart';
@@ -34,6 +34,7 @@ class Product extends ConsumerStatefulWidget {
 class _ProductState extends ConsumerState<Product> {
   final ScrollController _scrollController = ScrollController();
   int listVersion = 0;
+  Timer? _debounce;
   bool isFetching = false;
 
   // create pack ----------
@@ -175,9 +176,28 @@ class _ProductState extends ConsumerState<Product> {
                           onSortTap: () {},
                           hintText: "Rechercher un produit (par son nom)",
                           onChanged: (val) {
-                            ref
-                                .read(productControllerProvider.notifier)
-                                .researchProduct(ProductEntities(name: val));
+                            // On annule le lancement précédent si l'utilisateur tape une autre lettre
+                            if (_debounce?.isActive ?? false)
+                              _debounce!.cancel();
+
+                            // On attend 500ms de silence avant de lancer la recherche
+                            _debounce = Timer(
+                              const Duration(milliseconds: 500),
+                              () {
+                                if (val.isNotEmpty) {
+                                  ref
+                                      .read(productControllerProvider.notifier)
+                                      .researchProduct(
+                                        ProductEntities(name: val),
+                                      );
+                                } else {
+                                  // Si on efface tout, on recharge la liste de base (criterial = null)
+                                  ref
+                                      .read(productControllerProvider.notifier)
+                                      .researchProduct(null);
+                                }
+                              },
+                            );
                           },
                         ),
                         SizedBox(height: StylesConstants.spacerContent),
@@ -452,7 +472,10 @@ class _ProductState extends ConsumerState<Product> {
               onTapRightBtn: () async {
                 await ref
                     .read(productControllerProvider.notifier)
-                    .deleteProductById(selectionForActionProduct!.id!);
+                    .deleteProductById(
+                      selectionForActionProduct!.id!,
+                      productName: selectionForActionProduct!.name!,
+                    );
                 setState(() {
                   showPopUp = false;
                 });

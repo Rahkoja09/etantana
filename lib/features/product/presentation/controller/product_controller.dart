@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/utils/typedef/typedefs.dart';
+import 'package:e_tantana/features/product/domain/action/product_actions.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/domain/usecases/product_usecases.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
@@ -17,7 +17,7 @@ class ProductController extends StateNotifier<ProductState> {
   ProductController(this._productUsecases) : super(ProductState());
 
   Future<void> addProduct(ProductEntities entities, File? productImage) async {
-    final action = productAction.insertProduct;
+    final action = InsertProductAction(entities.name!);
     _setLoadingState(action: action);
     final res = await _productUsecases.insertProduct(entities, productImage);
     res.fold((error) => _setError(error: error, action: action), (success) {
@@ -30,7 +30,7 @@ class ProductController extends StateNotifier<ProductState> {
   }
 
   Future<void> updateProduct(ProductEntities entities) async {
-    final action = productAction.updateProduct;
+    final action = UpdatedProductAction(entities.name!);
     _setLoadingState(action: action);
     final res = await _productUsecases.updateProduct(entities);
     res.fold((error) => _setError(error: error, action: action), (
@@ -49,8 +49,11 @@ class ProductController extends StateNotifier<ProductState> {
     });
   }
 
-  Future<void> deleteProductById(String productId) async {
-    final action = productAction.deleteProduct;
+  Future<void> deleteProductById(
+    String productId, {
+    required String productName,
+  }) async {
+    final action = deleteProductAction(productName);
     _setLoadingState(action: action);
     final res = await _productUsecases.deleteProductById(productId);
     res.fold((error) => _setError(error: error, action: action), (success) {
@@ -64,8 +67,11 @@ class ProductController extends StateNotifier<ProductState> {
     });
   }
 
-  Future<void> cancelAndRestock(String orderId) async {
-    final action = productAction.restoreProductQtyByStatus;
+  Future<void> cancelAndRestock(
+    String orderId, {
+    required String clientName,
+  }) async {
+    final action = cancelAndRestoreProductAction(clientName);
     _setLoadingState(action: action);
     final res = await _productUsecases.cancelAndRestock(orderId);
 
@@ -77,7 +83,7 @@ class ProductController extends StateNotifier<ProductState> {
   }
 
   Future<void> getProductById(String productId) async {
-    final action = productAction.getProduct;
+    final action = getProductAction(productId);
     _setLoadingState(action: action);
     final res = await _productUsecases.getProductById(productId);
 
@@ -93,7 +99,7 @@ class ProductController extends StateNotifier<ProductState> {
   }
 
   Future<void> researchProduct(ProductEntities? criterial) async {
-    final action = productAction.searchProduct;
+    final action = searchProductAction(criterial?.name ?? "");
     _currentPage = 0;
     _isLastPage = false;
 
@@ -114,6 +120,7 @@ class ProductController extends StateNotifier<ProductState> {
 
     res.fold((error) => _setError(error: error, action: action), (success) {
       if (success.length < _pageSize) _isLastPage = true;
+      print("products result : $success");
       state = state.copyWith(
         isLoading: false,
         isClearError: true,
@@ -125,7 +132,7 @@ class ProductController extends StateNotifier<ProductState> {
 
   // page suivante du lazy loading ------
   Future<void> loadNextPage(ProductEntities? criterial) async {
-    final action = productAction.loadNextPage;
+    final action = searchProductAction(criterial?.name ?? "");
     if (state.isLoading || _isLastPage) return;
 
     _currentPage++;
@@ -158,11 +165,11 @@ class ProductController extends StateNotifier<ProductState> {
   }
 
   // set loading state ----------
-  void _setLoadingState({required productAction action}) {
+  void _setLoadingState({required ProductActions action}) {
     state = state.copyWith(isLoading: true, action: action);
   }
 
-  void _setError({required Failure error, required productAction action}) {
+  void _setError({required Failure error, required ProductActions action}) {
     state = state.copyWith(
       isLoading: false,
       isClearError: false,

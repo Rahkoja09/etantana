@@ -339,6 +339,8 @@ class _OrderState extends ConsumerState<Order> {
                                                                 await productAction
                                                                     .cancelAndRestock(
                                                                       item.id!,
+                                                                      clientName:
+                                                                          item.clientName!,
                                                                     );
                                                               }
                                                               await _getOrder();

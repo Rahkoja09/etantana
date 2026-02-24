@@ -72,13 +72,16 @@ class SuccessErrorListener extends ConsumerWidget {
       if (prev?.isLoading == true &&
           next.isLoading == false &&
           next.error == null) {
-        if (_isWriteAction(next.action)) {
-          final msg = SuccesErrorManager.getFriendlySuccessMessage(next.action);
+        if (prev!.isLoading == true &&
+            next.isLoading == false &&
+            next.action?.isWriteAction == true &&
+            next.error == null &&
+            next.action != null) {
           showToast(
             context,
-            description: msg,
+            description: next.action!.successMessage,
             isError: false,
-            title: "Succès produit",
+            title: "Succès",
           );
         }
       }

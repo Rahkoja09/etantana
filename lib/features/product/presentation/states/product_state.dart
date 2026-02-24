@@ -1,22 +1,12 @@
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/features/product/domain/action/product_actions.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:equatable/equatable.dart';
-
-enum productAction {
-  insertProduct,
-  getProduct,
-  searchProduct,
-  updateProduct,
-  deleteProduct,
-  sortProduct,
-  loadNextPage,
-  restoreProductQtyByStatus,
-}
 
 class ProductState<T> extends Equatable {
   final bool isLoading;
   final Failure? error;
-  final productAction? action;
+  final ProductActions? action;
   final String? errorCode;
   final List<ProductEntities>? product;
   final ProductEntities? currentCriteria;
@@ -35,7 +25,7 @@ class ProductState<T> extends Equatable {
     Failure? error,
     List<ProductEntities>? product,
     String? errorCode,
-    productAction? action,
+    ProductActions? action,
     bool isClearError = false,
     final ProductEntities? currentCriteria,
   }) {
