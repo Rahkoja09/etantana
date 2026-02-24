@@ -54,15 +54,15 @@ class _HomeState extends ConsumerState<Home> {
                           _triggerBoom();
                         },
                       ),
-                      SizedBox(height: 30.h),
+                      SizedBox(height: 20.h),
 
                       // Section Stats ----------
                       const StatsSection(),
-                      SizedBox(height: 32.h),
+                      SizedBox(height: 20.h),
 
                       // Section Actions principales- ----------------
                       const MainActionsSection(),
-                      SizedBox(height: 32.h),
+                      SizedBox(height: 20.h),
                     ],
                   ),
                 ),

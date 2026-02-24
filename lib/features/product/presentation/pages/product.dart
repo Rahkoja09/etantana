@@ -6,15 +6,19 @@ import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
+import 'package:e_tantana/features/product/presentation/controller/product_list_page_controller.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/create_pack.dart';
 import 'package:e_tantana/features/product/presentation/widgets/create_pack_summary_floating.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
 import 'package:e_tantana/features/product/presentation/widgets/order_summary_floating_bar.dart';
+import 'package:e_tantana/shared/widget/dialogue/dialogue_delete_action.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/others/empty_content_view.dart';
 import 'package:e_tantana/shared/widget/popup/confirmation_dialogue.dart';
+import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
 import 'package:e_tantana/shared/widget/selectableOption/flat_chip_selector.dart';
 import 'package:flutter/gestures.dart';
@@ -48,12 +52,7 @@ class _ProductState extends ConsumerState<Product> {
   List<ProductEntities> myProducts = [];
 
   bool showPopUp = false;
-  ProductEntities? selectionForActionProduct;
   String currentFilter = "Tous";
-
-  // list des commandes - cmd multiple ---------
-  List<MapData> orderList = [];
-  List<ProductEntities> productsToOrde = [];
 
   // list des critères ---------
   List<String> criterialListSort = ["Tous", "Futurs produits", "Stock zéro"];
@@ -73,12 +72,11 @@ class _ProductState extends ConsumerState<Product> {
   }
 
   // multiple order actions --------
-  void handleRestore() {
-    setState(() {
-      orderList.clear();
-      productsToOrde.clear();
-      listVersion++;
-    });
+  void restoreOrderDataProducList() {
+    listVersion++;
+    ref
+        .read(productListPageControllerProvider.notifier)
+        .emptyProductDataToOrder();
   }
 
   void _onScroll() {
@@ -105,6 +103,10 @@ class _ProductState extends ConsumerState<Product> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
+    final ProductListPageState = ref.watch(productListPageControllerProvider);
+    final ProductListPageAction = ref.read(
+      productListPageControllerProvider.notifier,
+    );
     // la list des produit principale --------------------
     final actualProducts = productState.product ?? [];
 
@@ -144,11 +146,13 @@ class _ProductState extends ConsumerState<Product> {
                     },
                     packCompositionLenght: packLenght,
                   ),
-                if (orderList.isNotEmpty)
+                if (ProductListPageState.productDataListToOrder != null &&
+                    ProductListPageState.productDataListToOrder!.isNotEmpty)
                   OrderSummaryFloatingBar(
-                    itemCount: orderList.length,
+                    itemCount:
+                        ProductListPageState.productDataListToOrder!.length,
                     onCancel: () {
-                      handleRestore();
+                      restoreOrderDataProducList();
                     },
                     onRestore: () {},
                     onValidate: () {
@@ -156,15 +160,23 @@ class _ProductState extends ConsumerState<Product> {
                         MaterialPageRoute(
                           builder:
                               (_) => AddOrder(
-                                productToOrder: productsToOrde,
-                                orderListToOrderWithQuantity: orderList,
+                                productToOrder:
+                                    ProductListPageState
+                                        .productEntititesToOrder,
+                                orderListToOrderWithQuantity:
+                                    ProductListPageState
+                                        .productDataListToOrder!,
                               ),
                         ),
                       );
                     },
-                    totalAmount: calculateTotal(actualProducts, orderList),
+                    totalAmount: calculateTotal(
+                      actualProducts,
+                      ProductListPageState.productDataListToOrder!,
+                    ),
                   ),
-                if (!orderList.isNotEmpty)
+                if (ProductListPageState.productDataListToOrder != null ||
+                    !ProductListPageState.productDataListToOrder!.isNotEmpty)
                   Container(
                     padding: EdgeInsets.all(StylesConstants.spacerContent),
 
@@ -247,7 +259,10 @@ class _ProductState extends ConsumerState<Product> {
                     onRefresh: getProduct,
                     child:
                         (displayList.isEmpty && !productState.isLoading)
-                            ? _buildEmptyState()
+                            ? EmptyContentView(
+                              icon: Icons.inventory_2_outlined,
+                              text: "Aucun produit trouvé",
+                            )
                             : Skeletonizer(
                               enabled: productState.isLoading,
                               effect: LoadingEffect.getCommonEffect(context),
@@ -351,53 +366,60 @@ class _ProductState extends ConsumerState<Product> {
                                                 });
                                               },
                                               selectedQuantity: (quantity) {
-                                                final index = orderList
-                                                    .indexWhere(
-                                                      (element) =>
-                                                          element["id"] ==
-                                                          item.id,
-                                                    );
-
-                                                if (quantity > 0) {
-                                                  if (index != -1) {
-                                                    orderList[index]["quantity"] =
-                                                        quantity;
-                                                  } else {
-                                                    orderList.add({
-                                                      "id": item.id,
-                                                      "quantity": quantity,
-                                                      "unit_price":
-                                                          item.sellingPrice,
-                                                      "product_name": item.name,
-                                                      "purchase_price":
-                                                          item.purchasePrice,
-                                                    });
-                                                    productsToOrde.add(item);
-                                                  }
-                                                } else {
-                                                  if (index != -1) {
-                                                    orderList.removeAt(index);
-                                                  }
-                                                }
-
-                                                setState(() {});
+                                                ProductListPageAction.updateProductOrder(
+                                                  item,
+                                                  quantity,
+                                                );
                                               },
                                               index: index + 1,
                                               onDelete: () {
-                                                setState(() {
+                                                ProductListPageAction.selectedProduct(
+                                                  item,
+                                                );
+                                                showCustomPopup(
+                                                  context: context,
+                                                  title: "Supprimer Produit",
+                                                  isError: true,
+                                                  dismissible: true,
+                                                  isActionDangerous: true,
+                                                  leftButtonTitle: "annuler",
+
+                                                  onTapRightBtn: () async {
+                                                    await ref
+                                                        .read(
+                                                          productControllerProvider
+                                                              .notifier,
+                                                        )
+                                                        .deleteProductById(
+                                                          ProductListPageState
+                                                              .selectedProduct!
+                                                              .id!,
+                                                          productName:
+                                                              ProductListPageState
+                                                                  .selectedProduct!
+                                                                  .name!,
+                                                        );
+                                                  },
+                                                  child: DialogueDeleteAction(
+                                                    nameOrID: "${item.name}",
+                                                  ),
+
+                                                  rightButtonTitle:
+                                                      "supprimier",
+                                                  description:
+                                                      'Le produit sera définitivement supprimé.',
+                                                );
+
+                                                /*setState(() {
                                                   showPopUp = true;
                                                 });
-                                                setState(() {
-                                                  selectionForActionProduct =
-                                                      item;
-                                                });
+                                                */
                                               },
                                               product: item,
                                               onEdit: () {
-                                                setState(() {
-                                                  selectionForActionProduct =
-                                                      item;
-                                                });
+                                                ProductListPageAction.selectedProduct(
+                                                  item,
+                                                );
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                     builder:
@@ -405,33 +427,30 @@ class _ProductState extends ConsumerState<Product> {
                                                           isFutureProduct:
                                                               false,
                                                           productToEdit:
-                                                              selectionForActionProduct,
+                                                              ProductListPageState
+                                                                  .selectedProduct,
                                                         ),
                                                   ),
                                                 );
                                               },
                                               onOrder: () {
-                                                setState(() {
-                                                  selectionForActionProduct =
-                                                      item;
-                                                  orderList.add({
-                                                    "id": item.id,
-                                                    "quantity": 1,
-                                                    "unit_price":
-                                                        item.sellingPrice,
-                                                    "product_name": item.name,
-                                                    "purchase_price":
-                                                        item.purchasePrice,
-                                                  });
-                                                });
+                                                ProductListPageAction.selectedProduct(
+                                                  item,
+                                                );
+                                                ProductListPageAction.selectedProduct(
+                                                  item,
+                                                );
+
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                     builder:
                                                         (_) => AddOrder(
                                                           orderListToOrderWithQuantity:
-                                                              orderList,
+                                                              ProductListPageState
+                                                                  .productDataListToOrder,
                                                           productToOrder: [
-                                                            selectionForActionProduct,
+                                                            ProductListPageState
+                                                                .selectedProduct,
                                                           ],
                                                         ),
                                                   ),
@@ -453,52 +472,7 @@ class _ProductState extends ConsumerState<Product> {
             ),
           ),
         ),
-
-        if (showPopUp)
-          TransparentBackgroundPopUp(
-            widget: ConfirmationDialogue(
-              backGroundColor: Theme.of(context).colorScheme.surface,
-              btnColor: null,
-              isActionDangerous: true,
-              title: "Vouler vous vraiment supprimer ce produit :",
-              value: "${selectionForActionProduct!.name}",
-              icon: HugeIcons.strokeRoundedDelete03,
-              isloading: productState.isLoading,
-              onTapLeftBtn: () {
-                setState(() {
-                  showPopUp = false;
-                });
-              },
-              onTapRightBtn: () async {
-                await ref
-                    .read(productControllerProvider.notifier)
-                    .deleteProductById(
-                      selectionForActionProduct!.id!,
-                      productName: selectionForActionProduct!.name!,
-                    );
-                setState(() {
-                  showPopUp = false;
-                });
-              },
-            ),
-          ),
       ],
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inventory_2_outlined, size: 60.sp, color: Colors.grey),
-            SizedBox(height: 16.h),
-            const Text("Aucun produit en stock"),
-          ],
-        ),
-      ),
     );
   }
 }

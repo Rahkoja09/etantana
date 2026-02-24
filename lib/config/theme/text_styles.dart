@@ -1,3 +1,4 @@
+import 'package:e_tantana/config/theme/theme_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -12,7 +13,7 @@ class TextStyles {
     color: color ?? Theme.of(context).colorScheme.onSurface,
     fontSize: (fontSize ?? 22.0).sp,
     fontWeight: fontWeight ?? FontWeight.w900,
-    fontFamily: 'Nonito',
+    fontFamily: ThemeConst.currentFontFamily,
   );
 
   static TextStyle titleMedium({
@@ -24,7 +25,7 @@ class TextStyles {
     color: color ?? Theme.of(context).colorScheme.onSurface,
     fontSize: (fontSize ?? 18.0).sp,
     fontWeight: FontWeight.w600,
-    fontFamily: 'Nonito',
+    fontFamily: ThemeConst.currentFontFamily,
   );
 
   static TextStyle titleSmall({
@@ -37,7 +38,7 @@ class TextStyles {
     color: color ?? Theme.of(context).colorScheme.onSurface,
     fontSize: (fontSize ?? 16.0).sp,
     fontWeight: fontWeight ?? FontWeight.w500,
-    fontFamily: 'Nonito',
+    fontFamily: ThemeConst.currentFontFamily,
   );
 
   static TextStyle bodyText({
@@ -50,7 +51,7 @@ class TextStyles {
     color: (color ?? Theme.of(context).colorScheme.onSurface),
     fontSize: (fontSize ?? 14.0).sp,
     fontWeight: fontWeight ?? FontWeight.normal,
-    fontFamily: 'Nonito',
+    fontFamily: ThemeConst.currentFontFamily,
   );
 
   static TextStyle bodyMedium({
@@ -63,7 +64,7 @@ class TextStyles {
     color: (color ?? Theme.of(context).colorScheme.onSurface),
     fontSize: (fontSize ?? 12.0).sp,
     fontWeight: fontWeight ?? FontWeight.w600,
-    fontFamily: 'Nonito',
+    fontFamily: ThemeConst.currentFontFamily,
   );
 
   static TextStyle bodySmall({
@@ -78,7 +79,7 @@ class TextStyles {
     ),
     fontSize: (fontSize ?? 10.0).sp,
     fontWeight: fontWeight ?? FontWeight.w400,
-    fontFamily: 'Nonito',
+    fontFamily: ThemeConst.currentFontFamily,
   );
 
   static TextStyle buttonText({
@@ -90,6 +91,6 @@ class TextStyles {
     color: color ?? Theme.of(context).colorScheme.onSurface,
     fontSize: (fontSize ?? 12.0).sp,
     fontWeight: FontWeight.w700,
-    fontFamily: 'Nonito',
+    fontFamily: ThemeConst.currentFontFamily,
   );
 }

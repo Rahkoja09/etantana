@@ -113,6 +113,9 @@ flutter:
     - family: BrunoAceSC
       fonts:
         - asset: assets/fonts/brunoAceSC/BrunoAceSC-Regular.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/MontSerrat/Montserrat-Regular.ttf
     
 flutter_launcher_icons:
   image_path: "assets/medias/icons/app_icon.png"

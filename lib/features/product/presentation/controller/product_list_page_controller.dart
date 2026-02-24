@@ -1,10 +1,16 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/states/product_list_state.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductListPageController extends StateNotifier<ProductListState> {
   ProductListPageController() : super(ProductListState());
+
+  void emptyProductDataToOrder() {
+    state = state.copyWith(productDataListToOrder: []);
+    state = state.copyWith(productEntititesToOrder: []);
+  }
 
   void togglePackSelection() {
     state = state.copyWith(isSelectePackProducts: !state.isSelectePackProducts);
@@ -22,14 +28,39 @@ class ProductListPageController extends StateNotifier<ProductListState> {
     state = state.copyWith(packComposition: packComposition);
   }
 
-  void setProductEntitiesToOrder(
-    List<ProductEntities> productEntititesToOrder,
-  ) {
-    state = state.copyWith(productEntititesToOrder: productEntititesToOrder);
-  }
+  void updateProductOrder(ProductEntities item, int quantity) {
+    final currentOrderList = state.productDataListToOrder ?? [];
+    final currentEntities = state.productEntititesToOrder ?? [];
+    if (quantity <= 0) {
+      state = state.copyWith(
+        productDataListToOrder:
+            currentOrderList.where((e) => e['id'] != item.id).toList(),
+        productEntititesToOrder:
+            currentEntities.where((e) => e.id != item.id).toList(),
+      );
+      return;
+    }
+    final index = currentOrderList.indexWhere((e) => e['id'] == item.id);
 
-  void setProductDataToOrder(List<MapData> productDataListToOrder) {
-    state = state.copyWith(productDataListToOrder: productDataListToOrder);
+    if (index != -1) {
+      final updatedList =
+          currentOrderList.map((e) {
+            if (e['id'] == item.id) {
+              return item.toOrderDataFormat(entity: item, quantities: quantity);
+            }
+            return e;
+          }).toList();
+      state = state.copyWith(productDataListToOrder: updatedList);
+    } else {
+      final newItemData = item.toOrderDataFormat(
+        entity: item,
+        quantities: quantity,
+      );
+      state = state.copyWith(
+        productDataListToOrder: [...currentOrderList, newItemData],
+        productEntititesToOrder: [...currentEntities, item],
+      );
+    }
   }
 }
 

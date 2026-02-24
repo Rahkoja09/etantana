@@ -82,7 +82,7 @@ class searchProductAction extends ProductActions {
   String get errorMessage => "Impossible de rechercher le produit $productName";
 
   @override
-  bool get isWriteAction => true;
+  bool get isWriteAction => false;
 
   @override
   String get successMessage =>

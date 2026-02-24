@@ -68,6 +68,19 @@ class ProductEntities extends Equatable {
     );
   }
 
+  MapData toOrderDataFormat({
+    required ProductEntities entity,
+    int? quantities,
+  }) {
+    return {
+      "id": entity.id,
+      "quantity": quantities ?? 1,
+      "unit_price": entity.sellingPrice,
+      "product_name": entity.name,
+      "purchase_price": entity.purchasePrice,
+    };
+  }
+
   @override
   List<Object?> get props => [
     id,
