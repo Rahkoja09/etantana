@@ -74,11 +74,12 @@ class _NumberInputState extends State<NumberInput> {
 
         Container(
           height: widget.height ?? 35.h,
+          padding: EdgeInsets.all(3),
           decoration: BoxDecoration(
             color:
                 widget.backgroundColor ??
-                Theme.of(context).colorScheme.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(10.r),
+                Theme.of(context).colorScheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(5),
             border: Border.all(
               color:
                   widget.noBorder!
@@ -132,13 +133,16 @@ class _NumberInputState extends State<NumberInput> {
       child: Container(
         width: 30.w,
         height: double.infinity,
-        decoration: BoxDecoration(color: Colors.transparent),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(5),
+        ),
         child: Icon(
           icon,
           size: 16.sp,
           color:
               enabled
-                  ? Theme.of(context).colorScheme.primary
+                  ? Colors.white
                   : Theme.of(
                     context,
                   ).colorScheme.onSurface.withValues(alpha: 0.3),

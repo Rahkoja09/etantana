@@ -31,20 +31,15 @@ class PriceViewer extends StatelessWidget {
             title: title!,
             degree: degree,
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 0),
         ],
 
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-            border: Border.all(
-              color: Theme.of(
-                context,
-              ).colorScheme.outline.withValues(alpha: 0.1),
-            ),
           ),
           child: Center(
             child: Text(

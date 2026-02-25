@@ -65,13 +65,7 @@ class _MinimalOrderDisplayState extends State<MinimalOrderDisplay> {
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
             borderRadius: borderRadius,
-            border: Border.all(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.2),
-              width: 0.2,
-            ),
-            color: Theme.of(context).colorScheme.surfaceContainerLowest,
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,13 +188,9 @@ class _MinimalOrderDisplayState extends State<MinimalOrderDisplay> {
                       child: Container(
                         padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.surfaceBright,
                           borderRadius: BorderRadius.circular(
                             StylesConstants.borderRadius,
-                          ),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            width: 0.7,
                           ),
                         ),
                         child: Text(

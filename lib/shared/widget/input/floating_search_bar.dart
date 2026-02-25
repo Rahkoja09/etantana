@@ -24,7 +24,7 @@ class FloatingSearchBar extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       height: 40.h,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerLowest,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
         boxShadow: [
           BoxShadow(
@@ -33,10 +33,6 @@ class FloatingSearchBar extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-          width: 1,
-        ),
       ),
       child: Row(
         children: [
@@ -58,7 +54,7 @@ class FloatingSearchBar extends StatelessWidget {
 
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+                fillColor: Theme.of(context).colorScheme.surfaceContainer,
                 hintText: hintText,
                 hintStyle: TextStyles.bodyMedium(
                   context: context,

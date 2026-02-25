@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 
 class ImageViewer extends StatelessWidget {
   final dynamic imageFileOrLink;
-  const ImageViewer({super.key, required this.imageFileOrLink});
+  final double? borderRadius;
+  const ImageViewer({
+    super.key,
+    required this.imageFileOrLink,
+    this.borderRadius,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +18,7 @@ class ImageViewer extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(11),
+        borderRadius: BorderRadius.circular(borderRadius ?? 11),
         child:
             isUrl(imageFileOrLink)
                 ? CachedNetworkImage(

@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 
 class ProductListState extends Equatable {
   final bool checkboxInList;
-  final bool isOrdering;
   final List<MapData>? productDataListToOrder;
   final List<ProductEntities>? productEntititesToOrder;
   final List<MapData>? packComposition;
@@ -12,9 +11,11 @@ class ProductListState extends Equatable {
   final ProductEntities? selectedProduct;
   final bool isSelectePackProducts;
 
-  ProductListState({
+  bool get isOrdering =>
+      productDataListToOrder != null && productDataListToOrder!.isNotEmpty;
+
+  const ProductListState({
     this.checkboxInList = false,
-    this.isOrdering = false,
     this.isSelectePackProducts = false,
     this.packComposition,
     this.productDataListToOrder = const [],
@@ -31,7 +32,6 @@ class ProductListState extends Equatable {
     String? productNameToSearch,
     ProductEntities? selectedProduct,
     bool? isSelectePackProducts,
-    bool? isOrdering,
   }) {
     return ProductListState(
       isSelectePackProducts:
@@ -43,7 +43,6 @@ class ProductListState extends Equatable {
           productEntititesToOrder ?? this.productEntititesToOrder,
       productNameToSearch: productNameToSearch ?? this.productNameToSearch,
       selectedProduct: selectedProduct ?? this.selectedProduct,
-      isOrdering: isOrdering ?? this.isOrdering,
       checkboxInList: checkboxInList ?? this.checkboxInList,
     );
   }
@@ -56,7 +55,6 @@ class ProductListState extends Equatable {
     productEntititesToOrder,
     productNameToSearch,
     selectedProduct,
-    isOrdering,
     checkboxInList,
   ];
 }

@@ -19,11 +19,7 @@ class StatNumberView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(StylesConstants.spacerContent),
       decoration: BoxDecoration(
-        border: Border.all(
-          width: 0.2,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-        ),
-        color: Theme.of(context).colorScheme.surfaceContainerLowest,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
       ),
       child: Center(
@@ -51,7 +47,7 @@ class StatNumberView extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyles.bodyMedium(
+                  style: TextStyles.bodySmall(
                     context: context,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(

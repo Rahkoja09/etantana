@@ -17,7 +17,6 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- RÉCUPÉRATION / RECHERCHE ---
   Future<void> researchOrder(OrderEntities? criteria) async {
-    // Utilisation de SearchOrderAction
     final action = SearchOrderAction(criteria?.clientName ?? "toutes");
     _currentPage = 0;
     _isLastPage = false;
@@ -50,7 +49,6 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- LAZY LOADING ---
   Future<void> loadNextPage() async {
-    // On utilise GetOrdersAction pour le chargement de fond
     final action = GetOrdersAction();
     if (state.isLoading || _isLastPage) return;
 
@@ -80,7 +78,6 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- INSERTION (RPC COMPLETE ORDER) ---
   Future<void> placeCompleteOrder(OrderEntities entity) async {
-    // Utilisation de CreateOrderAction avec le nom du client
     final action = CreateOrderAction(entity.clientName ?? "Inconnu");
     _setLoadingState(action: action);
 
@@ -98,7 +95,6 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- MISE À JOUR ---
   Future<void> updateOrderFlow(OrderEntities entity) async {
-    // Utilisation de UpdateOrderAction
     final action = UpdateOrderAction(entity.id ?? "");
     _setLoadingState(action: action);
 
@@ -123,7 +119,6 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- SUPPRESSION ---
   Future<void> deleteOrderById(String orderId) async {
-    // Utilisation de DeleteOrderAction
     final action = DeleteOrderAction(orderId);
     _setLoadingState(action: action);
 
@@ -142,7 +137,6 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- RÉCUPÉRATION PAR ID ---
   Future<void> getOrderById(String orderId) async {
-    // On utilise GetOrdersAction ou SearchOrderAction
     final action = GetOrdersAction();
     _setLoadingState(action: action);
 

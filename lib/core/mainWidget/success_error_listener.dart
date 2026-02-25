@@ -16,13 +16,6 @@ class SuccessErrorListener extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool _isWriteAction(dynamic action) {
-      final str = action.toString().toLowerCase();
-      return str.contains('insert') ||
-          str.contains('delete') ||
-          str.contains('update');
-    }
-
     void _showFilteredError({
       required BuildContext context,
       required WidgetRef ref,
@@ -35,7 +28,6 @@ class SuccessErrorListener extends ConsumerWidget {
       final isNetworkError =
           failure is NetworkFailure || failure.code == 'Network_01';
 
-      // Si c'est une erreur réseau, on vérifie le délai de 3 secondes -------
       if (isNetworkError) {
         if (lastErrorTime == null ||
             now.difference(lastErrorTime).inSeconds > 3) {
@@ -53,8 +45,7 @@ class SuccessErrorListener extends ConsumerWidget {
           );
         }
       } else {
-        // Pour les erreurs hors réseau (ex: métier), on affiche toujours ------------
-        final msg = SuccesErrorManager.getFriendlyErrorMessage(failure, action);
+        final String msg = action?.errorMessage ?? failure.message;
         showToast(context, description: msg, isError: true, title: title);
       }
     }
@@ -69,44 +60,16 @@ class SuccessErrorListener extends ConsumerWidget {
           title: "Erreur produit",
         );
       }
+
       if (prev?.isLoading == true &&
           next.isLoading == false &&
           next.error == null) {
-        if (prev!.isLoading == true &&
-            next.isLoading == false &&
-            next.action?.isWriteAction == true &&
-            next.error == null &&
-            next.action != null) {
+        if (next.action?.isWriteAction == true) {
           showToast(
             context,
             description: next.action!.successMessage,
             isError: false,
             title: "Succès",
-          );
-        }
-      }
-    });
-
-    ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.error != null && next.error != prev?.error) {
-        _showFilteredError(
-          context: context,
-          ref: ref,
-          failure: next.error!,
-          action: next.action,
-          title: "Erreur produit",
-        );
-      }
-      if (prev?.isLoading == true &&
-          next.isLoading == false &&
-          next.error == null) {
-        if (_isWriteAction(next.action)) {
-          final msg = SuccesErrorManager.getFriendlySuccessMessage(next.action);
-          showToast(
-            context,
-            description: msg,
-            isError: false,
-            title: "Succès produit",
           );
         }
       }
@@ -122,14 +85,14 @@ class SuccessErrorListener extends ConsumerWidget {
           title: "Erreur commande",
         );
       }
+
       if (prev?.isLoading == true &&
           next.isLoading == false &&
           next.error == null) {
-        if (_isWriteAction(next.action)) {
-          final msg = SuccesErrorManager.getFriendlySuccessMessage(next.action);
+        if (next.action?.isWriteAction == true) {
           showToast(
             context,
-            description: msg,
+            description: next.action!.successMessage,
             isError: false,
             title: "Succès commande",
           );

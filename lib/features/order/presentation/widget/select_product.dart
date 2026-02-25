@@ -27,6 +27,7 @@ class SelectProduct extends ConsumerStatefulWidget {
 
 class _SelectProductState extends ConsumerState<SelectProduct> {
   String? selectedProductId;
+
   @override
   void initState() {
     super.initState();
@@ -39,153 +40,70 @@ class _SelectProductState extends ConsumerState<SelectProduct> {
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
     final bool isNotSelected = selectedProductId == null;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    final List<String> productIds = [];
-    final List<ProductEntities> currentProducts =
-        productState.product != null
-            ? List<ProductEntities>.from(productState.product!)
-            : [];
-
-    for (var p in currentProducts) {
-      if (p.id != null && p.quantity! > 0) {
-        productIds.add(p.id!);
-      }
-    }
-
-    ref.listen<ProductState>(productControllerProvider, (prev, next) {
-      if (next.error != null && next.error!.message.isNotEmpty) {
-        showDialog(
-          context: context,
-          builder:
-              (context) => ErrorDialog(
-                title: "Erreur de récupération produit.",
-                message: next.error!.message,
-              ),
-        );
-      }
-    });
+    final List<ProductEntities> currentProducts = productState.product ?? [];
+    final List<String> productIds =
+        currentProducts
+            .where((p) => p.id != null && (p.quantity ?? 0) > 0)
+            .map((p) => p.id!)
+            .toList();
 
     return Skeletonizer(
       effect: LoadingEffect.getCommonEffect(context),
       enabled: productState.isLoading,
-      child: Container(
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color:
-              isNotSelected
-                  ? Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.05)
-                  : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-          border: Border.all(
-            color:
-                isNotSelected
-                    ? Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.3)
-                    : Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.3),
-            width: isNotSelected ? 1.5 : 1,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MediumTitleWithDegree(
+            title: "Produit à commander",
+            showDegree: true,
+            degree: 1,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //  HEADER ---
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    MediumTitleWithDegree(
-                      title: "PRODUIT(S) COMMANDÉ",
-                      showDegree: false,
-                    ),
-                    SizedBox(width: 8.w),
-                    if (isNotSelected)
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-                        child: Text(
-                          "REQUIS",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                Icon(
-                  isNotSelected
-                      ? Icons.error_outline
-                      : Icons.check_circle_outline,
-                  size: 18.sp,
-                  color:
-                      isNotSelected
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.green,
-                ),
-              ],
+
+          Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceVariant.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color:
+                    isNotSelected
+                        ? colorScheme.primary.withOpacity(0.2)
+                        : colorScheme.outline.withOpacity(0.1),
+                width: 1,
+              ),
             ),
-
-            SizedBox(height: 10.h),
-
-            //  DROPDOWN ---
-            CustomDropdown(
-              iconData: HugeIcons.strokeRoundedPackage,
+            child: CustomDropdown(
+              iconData: HugeIcons.strokeRoundedPackage02,
               items: productIds,
               itemLabelBuilder: (id) {
-                try {
-                  final p = currentProducts.firstWhere((e) => e.id == id);
-                  return "${p.name} . Qté dispo : ${p.quantity}";
-                } catch (e) {
-                  return "Produit introuvable";
-                }
+                final p = currentProducts.firstWhere((e) => e.id == id);
+                return "${p.name} (${p.quantity} dispo)";
               },
               onChanged: (id) {
-                setState(() {
-                  selectedProductId = id;
-                });
+                setState(() => selectedProductId = id);
                 if (id != null) {
-                  try {
-                    final selectedEntity = currentProducts.firstWhere(
-                      (p) => p.id == id,
-                    );
-                    widget.onChanged(selectedEntity);
-                  } catch (_) {
-                    widget.onChanged(null);
-                  }
+                  final selectedEntity = currentProducts.firstWhere(
+                    (p) => p.id == id,
+                  );
+                  widget.onChanged(selectedEntity);
                 }
               },
-              textHint: "CLIQUEZ POUR CHOISIR UN PRODUIT".toLowerCase(),
+              textHint: "Sélectionner un produit",
               value: selectedProductId,
             ),
-
-            // MESSAGE D'ERREUR -------
-            if (isNotSelected)
-              Padding(
-                padding: EdgeInsets.only(top: 8.h, left: 4.w),
-                child: Text(
-                  "Veuillez sélectionner le produit",
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: Theme.of(context).colorScheme.primary,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+          ),
+          SizedBox(height: 5),
+          if (isNotSelected)
+            Text(
+              "Le choix d'un produit est nécessaire",
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: colorScheme.primary.withOpacity(0.8),
+                fontWeight: FontWeight.w400,
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

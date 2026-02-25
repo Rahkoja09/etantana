@@ -1,10 +1,11 @@
 import 'package:e_tantana/core/enums/order_status.dart';
-import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
 import 'package:e_tantana/shared/widget/input/swith_selector.dart';
+import 'package:e_tantana/shared/widget/others/mini_text_card.dart';
 import 'package:e_tantana/shared/widget/others/price_viewer.dart';
+import 'package:e_tantana/shared/widget/others/separator_background.dart';
 import 'package:e_tantana/shared/widget/title/title_with_icon.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,6 @@ import 'package:e_tantana/features/home/presentation/controller/dashboard_contro
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
-import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/order/presentation/widget/multiple_product_view_order.dart';
 import 'package:e_tantana/features/order/presentation/widget/select_product.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
@@ -27,13 +27,8 @@ import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
 import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
 import 'package:e_tantana/shared/widget/input/item_manager_section.dart';
-import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/loading/loading.dart';
-import 'package:e_tantana/shared/widget/others/mini_text_card.dart';
-import 'package:e_tantana/shared/widget/popup/custom_dialog.dart';
-import 'package:e_tantana/shared/widget/popup/show_toast.dart';
-import 'package:e_tantana/shared/widget/text/horizontal_divider.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 
@@ -166,22 +161,25 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                 children: [
                   if (selectedProductEntity == null ||
                       selectedProductEntity!.length == 1)
-                    SelectProduct(
-                      selectedProduct: selectedProductEntity?[0],
-                      onChanged: (selectionProduct) {
-                        setState(() {
-                          selectedProductEntity = [selectionProduct];
-                          widget.orderListToOrderWithQuantity = [
-                            {
-                              "id": selectionProduct!.id,
-                              "quantity": qteProduit,
-                              "unit_price": selectionProduct.sellingPrice,
-                              "product_name": selectionProduct.name,
-                              "purchase_price": selectionProduct.purchasePrice,
-                            },
-                          ];
-                        });
-                      },
+                    SeparatorBackground(
+                      child: SelectProduct(
+                        selectedProduct: selectedProductEntity?[0],
+                        onChanged: (selectionProduct) {
+                          setState(() {
+                            selectedProductEntity = [selectionProduct];
+                            widget.orderListToOrderWithQuantity = [
+                              {
+                                "id": selectionProduct!.id,
+                                "quantity": qteProduit,
+                                "unit_price": selectionProduct.sellingPrice,
+                                "product_name": selectionProduct.name,
+                                "purchase_price":
+                                    selectionProduct.purchasePrice,
+                              },
+                            ];
+                          });
+                        },
+                      ),
                     ),
                   if (selectedProductEntity != null &&
                       selectedProductEntity!.length > 1) ...[
@@ -251,214 +249,237 @@ class _AddOrderState extends ConsumerState<AddOrder> {
 
                   ShowInputError(message: errorProdName),
 
-                  SizedBox(height: 40.h),
+                  SizedBox(height: 10.h),
 
-                  TitleWithIcon(
-                    boldTitle: true,
-                    icon: Icons.shopping_bag,
-                    title: "Détails de la commande",
-                    themeColor: Theme.of(context).colorScheme.primary,
-                  ),
-                  SizedBox(height: 20.h),
-
-                  if (widget.productToOrder == null ||
-                      widget.productToOrder!.length == 1)
-                    Row(
+                  SeparatorBackground(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: InputNumberOnlyMinus(
-                            minimumValue: 0,
-                            onValueChanged: (newValue) {
-                              setState(() {
-                                qteProduit = newValue;
-                                widget.orderListToOrderWithQuantity = [
-                                  {
-                                    "id": selectedProductEntity?[0]?.id,
-                                    "quantity": newValue,
-                                    "unit_price":
-                                        selectedProductEntity?[0]?.sellingPrice,
-                                    "product_name":
-                                        selectedProductEntity?[0]?.name,
-                                    "purchase_price":
-                                        selectedProductEntity?[0]
-                                            ?.purchasePrice,
+                        TitleWithIcon(
+                          boldTitle: true,
+                          icon: Icons.shopping_bag,
+                          title: "Détails de la commande",
+                          themeColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        SizedBox(height: 20.h),
+
+                        if (widget.productToOrder == null ||
+                            widget.productToOrder!.length == 1)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: InputNumberOnlyMinus(
+                                  minimumValue: 0,
+                                  onValueChanged: (newValue) {
+                                    setState(() {
+                                      qteProduit = newValue;
+                                      widget.orderListToOrderWithQuantity = [
+                                        {
+                                          "id": selectedProductEntity?[0]?.id,
+                                          "quantity": newValue,
+                                          "unit_price":
+                                              selectedProductEntity?[0]
+                                                  ?.sellingPrice,
+                                          "product_name":
+                                              selectedProductEntity?[0]?.name,
+                                          "purchase_price":
+                                              selectedProductEntity?[0]
+                                                  ?.purchasePrice,
+                                        },
+                                      ];
+                                    });
                                   },
-                                ];
-                              });
-                            },
-                            title: "Quantité(s)",
-                            showDegree: false,
-                            showTitle: true,
-                            initialValue: qteProduit.toInt(),
+                                  title: "Quantité(s)",
+                                  showDegree: false,
+                                  showTitle: true,
+                                  initialValue: qteProduit.toInt(),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: PriceViewer(
+                                  showTitle: true,
+                                  title: "Prix unitaire",
+                                  showDegree: false,
+                                  moneySign: "Ar",
+                                  price:
+                                      selectedProductEntity?[0]?.sellingPrice ??
+                                      0.0,
+                                ),
+                              ),
+                            ],
                           ),
+
+                        ShowInputError(message: errorProdQty),
+
+                        SizedBox(height: 20.h),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 2,
+                          title: "Status de la commande",
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: PriceViewer(
-                            showTitle: true,
-                            title: "Prix unitaire",
-                            showDegree: false,
-                            moneySign: "Ar",
-                            price:
-                                selectedProductEntity?[0]?.sellingPrice ?? 0.0,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  ShowInputError(message: errorProdQty),
-
-                  SizedBox(height: 20.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 2,
-                    title: "Status de la commande",
-                  ),
-                  SwithSelector(
-                    themeColor: Theme.of(context).colorScheme.primary,
-                    options: DeliveryStatus.values,
-                    initialValue: DeliveryStatus.pending,
-                    labelBuilder: (status) => status.label,
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectedStatus = newValue;
-                      });
-                    },
-                  ),
-
-                  ShowInputError(message: errorStatus),
-
-                  SizedBox(height: 20.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 2,
-                    title: "Détails",
-                  ),
-                  ItemManagerSection(
-                    onChanged: (variante) {
-                      setState(() {
-                        variantsForServer = variante;
-                      });
-                    },
-                  ),
-
-                  SizedBox(height: 40.h),
-
-                  TitleWithIcon(
-                    boldTitle: true,
-                    icon: Icons.person,
-                    title: "Informations client",
-                    themeColor: Theme.of(context).colorScheme.primary,
-                  ),
-                  SizedBox(height: 20.h),
-
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Nom Client",
-                  ),
-                  SimpleInput(
-                    textHint: "ex: Rakoto",
-                    iconData: HugeIcons.strokeRoundedId,
-                    textEditControlleur: clientName,
-                    maxLines: 1,
-                  ),
-
-                  SizedBox(height: 20.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "N. Téléphone Client",
-                  ),
-                  SimpleInput(
-                    textHint: "ex: 0343032386",
-                    iconData: HugeIcons.strokeRoundedCall02,
-                    textEditControlleur: clientTel,
-                    maxLines: 1,
-                  ),
-                  ShowInputError(message: errorClientTel),
-
-                  SizedBox(height: 20.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Adresse de Livraison",
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: CustomDropdown(
-                          value: deliveryCity,
-                          textHint: "ville",
-                          iconData: HugeIcons.strokeRoundedMaps,
-                          items: [
-                            "Antananarivo",
-                            "Fianarantsoa",
-                            "Toamasina",
-                            "Antsirabe",
-                            'Diego',
-                            "Mahajanga",
-                          ],
-                          onChanged: (selectedCity) {
+                        SwithSelector(
+                          themeColor: Theme.of(context).colorScheme.primary,
+                          options: DeliveryStatus.values,
+                          initialValue: DeliveryStatus.pending,
+                          labelBuilder: (status) => status.label,
+                          onChanged: (newValue) {
                             setState(() {
-                              deliveryCity = selectedCity!;
+                              selectedStatus = newValue;
                             });
                           },
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        flex: 1,
-                        child: SimpleInput(
-                          textHint: "ex: Analakely",
-                          iconData: HugeIcons.strokeRoundedMapsLocation01,
-                          textEditControlleur: clientAdrs,
+
+                        ShowInputError(message: errorStatus),
+
+                        SizedBox(height: 20.h),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 2,
+                          title: "Détails",
+                        ),
+                        ItemManagerSection(
+                          onChanged: (variante) {
+                            setState(() {
+                              variantsForServer = variante;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 10.h),
+
+                  SeparatorBackground(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TitleWithIcon(
+                          boldTitle: true,
+                          icon: Icons.person,
+                          title: "Informations client",
+                          themeColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        SizedBox(height: 20.h),
+
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 1,
+                          title: "Nom Client",
+                        ),
+                        SimpleInput(
+                          textHint: "ex: Rakoto",
+                          iconData: HugeIcons.strokeRoundedId,
+                          textEditControlleur: clientName,
                           maxLines: 1,
                         ),
-                      ),
-                    ],
-                  ),
-                  ShowInputError(message: errorAdrsClient),
 
-                  SizedBox(height: 40.h),
+                        SizedBox(height: 20.h),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 1,
+                          title: "N. Téléphone Client",
+                        ),
+                        SimpleInput(
+                          textHint: "ex: 0343032386",
+                          iconData: HugeIcons.strokeRoundedCall02,
+                          textEditControlleur: clientTel,
+                          maxLines: 1,
+                        ),
+                        ShowInputError(message: errorClientTel),
 
-                  TitleWithIcon(
-                    boldTitle: true,
-                    icon: Icons.delivery_dining_sharp,
-                    title: "Logistiques",
-                    themeColor: Theme.of(context).colorScheme.primary,
+                        SizedBox(height: 20.h),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 1,
+                          title: "Adresse de Livraison",
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: CustomDropdown(
+                                value: deliveryCity,
+                                textHint: "ville",
+                                iconData: HugeIcons.strokeRoundedMaps,
+                                items: [
+                                  "Antananarivo",
+                                  "Fianarantsoa",
+                                  "Toamasina",
+                                  "Antsirabe",
+                                  'Diego',
+                                  "Mahajanga",
+                                ],
+                                onChanged: (selectedCity) {
+                                  setState(() {
+                                    deliveryCity = selectedCity!;
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              flex: 1,
+                              child: SimpleInput(
+                                textHint: "ex: Analakely",
+                                iconData: HugeIcons.strokeRoundedMapsLocation01,
+                                textEditControlleur: clientAdrs,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        ShowInputError(message: errorAdrsClient),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 20.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Frais de Livraison",
+
+                  SizedBox(height: 10.h),
+
+                  SeparatorBackground(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TitleWithIcon(
+                          boldTitle: true,
+                          icon: Icons.delivery_dining_sharp,
+                          title: "Logistiques",
+                          themeColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        SizedBox(height: 20.h),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 1,
+                          title: "Frais de Livraison",
+                        ),
+                        SimpleInput(
+                          textHint: "ex: 4000",
+                          iconData: HugeIcons.strokeRoundedDeliveryTruck02,
+                          textEditControlleur: fraisDeLiv,
+                          maxLines: 1,
+                        ),
+                        ShowInputError(message: errorDeliveryCosts),
+                        SizedBox(height: 20.h),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 1,
+                          title: "Date de Livraison",
+                        ),
+                        DateInput(
+                          iconData: HugeIcons.strokeRoundedCalendarAdd01,
+                          textHint: "Date de livraison",
+                          isRange: false,
+                          onDateSelected: (selectedDate) {
+                            setState(() {
+                              deliveryDate = selectedDate;
+                            });
+                          },
+                        ),
+                        ShowInputError(message: errorDeliveryDate),
+                      ],
+                    ),
                   ),
-                  SimpleInput(
-                    textHint: "ex: 4000",
-                    iconData: HugeIcons.strokeRoundedDeliveryTruck02,
-                    textEditControlleur: fraisDeLiv,
-                    maxLines: 1,
-                  ),
-                  ShowInputError(message: errorDeliveryCosts),
-                  SizedBox(height: 20.h),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Date de Livraison",
-                  ),
-                  DateInput(
-                    iconData: HugeIcons.strokeRoundedCalendarAdd01,
-                    textHint: "Date de livraison",
-                    isRange: false,
-                    onDateSelected: (selectedDate) {
-                      setState(() {
-                        deliveryDate = selectedDate;
-                      });
-                    },
-                  ),
-                  ShowInputError(message: errorDeliveryDate),
                   SizedBox(height: 30.h),
                 ],
               ),
@@ -467,6 +488,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
           if (orderState.isLoading) Loading(),
         ],
       ),
+
       bottomNavigationBar: BottomContainerButton(
         nextBtnText: "Créer",
         onBack: () {

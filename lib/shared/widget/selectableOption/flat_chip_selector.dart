@@ -34,9 +34,7 @@ class FlatChipSelector extends StatelessWidget {
                   color:
                       isSelected
                           ? Theme.of(context).colorScheme.primary
-                          : Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerLowest,
+                          : Theme.of(context).colorScheme.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(
                     StylesConstants.borderRadius,
                   ),

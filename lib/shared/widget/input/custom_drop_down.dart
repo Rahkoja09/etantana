@@ -39,7 +39,7 @@ class CustomDropdown extends StatelessWidget {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
         prefixIcon: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: HugeIcon(
@@ -69,8 +69,8 @@ class CustomDropdown extends StatelessWidget {
           borderSide: BorderSide(
             color: Theme.of(
               context,
-            ).colorScheme.onSurface.withValues(alpha: 0.2),
-            width: 1,
+            ).colorScheme.onSurface.withValues(alpha: 0.0),
+            width: 0,
           ),
         ),
         focusedBorder: OutlineInputBorder(

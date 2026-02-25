@@ -16,7 +16,7 @@ class SelectedProductsPreview extends StatelessWidget {
       children: [
         const SizedBox(height: 10),
         SizedBox(
-          height: 160,
+          height: 140,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             clipBehavior: Clip.none,
@@ -24,7 +24,7 @@ class SelectedProductsPreview extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = packComposition[index];
               return Container(
-                width: 140,
+                width: 100,
                 margin: const EdgeInsets.only(right: 16),
                 child: Stack(
                   children: [

@@ -41,8 +41,6 @@ class _ProductState extends ConsumerState<Product> {
   // les input ---------
   final TextEditingController _searchController = TextEditingController();
 
-  List<ProductEntities> myProducts = [];
-
   String currentFilter = "Tous";
 
   // list des critères ---------
@@ -256,8 +254,8 @@ class _ProductState extends ConsumerState<Product> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Listes de produits",
-                        style: TextStyles.titleSmall(
+                        "Liste des produits",
+                        style: TextStyles.bodyMedium(
                           context: context,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(
@@ -270,11 +268,15 @@ class _ProductState extends ConsumerState<Product> {
                           ProductListPageAction.toggleCheckBox();
                         },
                         child: Icon(
-                          HugeIcons.strokeRoundedCheckList,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.9),
-                          size: 25,
+                          ProductListPageState.checkboxInList
+                              ? HugeIcons.strokeRoundedCheckmarkSquare01
+                              : HugeIcons.strokeRoundedCheckList,
+                          color:
+                              ProductListPageState.checkboxInList
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.9),
+                          size: 20,
                         ),
                       ),
                     ],
@@ -302,12 +304,7 @@ class _ProductState extends ConsumerState<Product> {
                                 padding: EdgeInsets.all(
                                   StylesConstants.spacerContent,
                                 ),
-                                itemCount:
-                                    displayList.length +
-                                    (productState.isLoading &&
-                                            myProducts.isNotEmpty
-                                        ? 1
-                                        : 0),
+                                itemCount: displayList.length,
                                 itemBuilder: (context, index) {
                                   if (index == displayList.length &&
                                       isFetching) {
@@ -324,7 +321,6 @@ class _ProductState extends ConsumerState<Product> {
                                             onDelete: () {},
                                             product: displayList[0],
                                             onEdit: () {},
-                                            onOrder: () {},
                                             onLongPress: () {},
                                           ),
                                         ],
@@ -354,6 +350,10 @@ class _ProductState extends ConsumerState<Product> {
                                               height: 30,
                                               width: 30,
                                               child: Checkbox(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
                                                 value: isThisProductSelected,
                                                 onChanged: (value) {
                                                   ProductListPageAction.toggleProductInPack(
@@ -414,11 +414,6 @@ class _ProductState extends ConsumerState<Product> {
                                                   description:
                                                       'Le produit sera définitivement supprimé.',
                                                 );
-
-                                                /*setState(() {
-                                                  showPopUp = true;
-                                                });
-                                                */
                                               },
                                               product: item,
                                               onEdit: () {
@@ -434,29 +429,6 @@ class _ProductState extends ConsumerState<Product> {
                                                           productToEdit:
                                                               ProductListPageState
                                                                   .selectedProduct,
-                                                        ),
-                                                  ),
-                                                );
-                                              },
-                                              onOrder: () {
-                                                ProductListPageAction.selectedProduct(
-                                                  item,
-                                                );
-                                                ProductListPageAction.selectedProduct(
-                                                  item,
-                                                );
-
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder:
-                                                        (_) => AddOrder(
-                                                          orderListToOrderWithQuantity:
-                                                              ProductListPageState
-                                                                  .productDataListToOrder,
-                                                          productToOrder: [
-                                                            ProductListPageState
-                                                                .selectedProduct,
-                                                          ],
                                                         ),
                                                   ),
                                                 );

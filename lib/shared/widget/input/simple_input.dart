@@ -29,9 +29,6 @@ class _SimpleInputState extends State<SimpleInput> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-        ),
       ),
       child: TextFormField(
         textAlignVertical: TextAlignVertical.center,
@@ -44,7 +41,7 @@ class _SimpleInputState extends State<SimpleInput> {
         maxLines: widget.maxLines,
         decoration: InputDecoration(
           filled: true,
-          fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+          fillColor: Theme.of(context).colorScheme.surfaceContainer,
           focusColor: Theme.of(context).colorScheme.onSurface,
           hoverColor: Theme.of(context).colorScheme.onSurface,
 

@@ -62,19 +62,14 @@ class _InputNumberOnlyMinusState extends State<InputNumberOnlyMinus> {
             title: widget.title,
             degree: widget.degree,
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: 0.h),
         ],
 
         Container(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerLowest,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-            border: Border.all(
-              color: Theme.of(
-                context,
-              ).colorScheme.outline.withValues(alpha: 0.3),
-            ),
           ),
           child: Row(
             children: [
@@ -112,7 +107,10 @@ class _InputNumberOnlyMinusState extends State<InputNumberOnlyMinus> {
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 8),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 10,
+                      ),
                     ),
                   ),
                 ),

@@ -56,7 +56,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                   MediumTitleWithDegree(
                     showDegree: false,
                     degree: 1,
-                    title: "Les produits dans le Pack".toUpperCase(),
+                    title: "Les composants du pack",
                   ),
 
                   SelectedProductsPreview(
@@ -66,7 +66,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 1,
-                    title: "Nom du Pack",
+                    title: "Nom du pack",
                   ),
                   SimpleInput(
                     textHint: 'ex : pack cheveux makoa',
@@ -75,63 +75,92 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                     maxLines: 1,
                   ),
                   SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InputNumberOnlyMinus(
-                          showTitle: true,
-                          showDegree: true,
-                          degree: 2,
-                          initialValue: 0,
-                          title: "Pourcentage de marge (%)",
-                          onValueChanged: (value) {
-                            setState(() {
-                              marginPercentage = value;
-                            });
-                          },
-                          minimumValue: -100,
-                        ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.2),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: Button(
-                      onTap: () {
-                        setState(() {
-                          calculeResult = calculateTotalIncomeAndPercentage(
-                            products: widget.packComposition,
-                            margin: marginPercentage,
-                            userDefinedPrice: double.tryParse(
-                              priceOfOnePackByUserController.text,
-                            ),
-                          );
-                          priceOfOnePackByUserController.text =
-                              "${calculeResult?["unit_price_pack"] ?? 0}";
-                          maxPacksCompletable =
-                              calculeResult?["max_packs_completable"].toInt();
-                          unitPurchaseCost =
-                              calculeResult?["unit_purchase_cost"];
-                        });
-                      },
-                      btnText: "Caluculer automatiquement",
-                      btnColor: Theme.of(context).colorScheme.primary,
-                      btnTextColor: Colors.white,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerLowest,
+                      borderRadius: BorderRadius.circular(
+                        StylesConstants.borderRadius,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 30),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Prix du Pack (priorité si non vide)",
-                  ),
-                  SimpleInput(
-                    textHint: 'ex : 50000',
-                    iconData: HugeIcons.strokeRoundedId,
-                    textEditControlleur: priceOfOnePackByUserController,
-                    maxLines: 1,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: InputNumberOnlyMinus(
+                                showTitle: true,
+                                showDegree: true,
+                                degree: 2,
+                                initialValue: 0,
+                                title: "Marge (%)",
+                                onValueChanged: (value) {
+                                  setState(() {
+                                    marginPercentage = value;
+                                  });
+                                },
+                                minimumValue: -1000,
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  MediumTitleWithDegree(
+                                    showDegree: true,
+                                    degree: 1,
+                                    title: "Prix (priorité)",
+                                  ),
+                                  SimpleInput(
+                                    textHint: 'ex : 50000',
+                                    iconData: HugeIcons.strokeRoundedId,
+                                    textEditControlleur:
+                                        priceOfOnePackByUserController,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: Button(
+                            onTap: () {
+                              setState(() {
+                                calculeResult =
+                                    calculateTotalIncomeAndPercentage(
+                                      products: widget.packComposition,
+                                      margin: marginPercentage,
+                                      userDefinedPrice: double.tryParse(
+                                        priceOfOnePackByUserController.text,
+                                      ),
+                                    );
+                                priceOfOnePackByUserController.text =
+                                    "${calculeResult?["unit_price_pack"] ?? 0}";
+                                maxPacksCompletable =
+                                    calculeResult?["max_packs_completable"]
+                                        .toInt();
+                                unitPurchaseCost =
+                                    calculeResult?["unit_purchase_cost"];
+                              });
+                            },
+                            btnText: "Caluculer automatiquement",
+                            btnColor: Theme.of(context).colorScheme.primary,
+                            btnTextColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
                   SizedBox(height: 40),
@@ -148,7 +177,8 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                     moneySign: "Ariary",
                     increasePercent: "",
                     value: "${calculeResult?["income_sans_pack"] ?? 0}",
-                    themeColor: Colors.grey,
+                    themeColor:
+                        Theme.of(context).colorScheme.surfaceContainerLow,
                   ),
                   SizedBox(height: StylesConstants.spacerContent),
                   Row(

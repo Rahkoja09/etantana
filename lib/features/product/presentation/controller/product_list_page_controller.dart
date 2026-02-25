@@ -4,17 +4,6 @@ import 'package:e_tantana/features/product/presentation/states/product_list_stat
 
 class ProductListPageController extends StateNotifier<ProductListState> {
   ProductListPageController() : super(ProductListState());
-
-  void isOrdering() {
-    state = state.copyWith(
-      isOrdering:
-          (state.productDataListToOrder != null &&
-              state.productDataListToOrder!.isNotEmpty &&
-              state.productEntititesToOrder != null &&
-              state.productEntititesToOrder!.isNotEmpty),
-    );
-  }
-
   void toggleCheckBox() {
     state = state.copyWith(checkboxInList: !state.checkboxInList);
   }

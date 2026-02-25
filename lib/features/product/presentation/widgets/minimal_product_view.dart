@@ -13,9 +13,8 @@ import 'package:hugeicons/hugeicons.dart';
 class MinimalProductView extends StatefulWidget {
   final int index;
   final ProductEntities product;
-  final VoidCallback onEdit;
   final VoidCallback onDelete;
-  final VoidCallback onOrder;
+  final VoidCallback onEdit;
   final VoidCallback onLongPress;
   final ValueChanged<int> selectedQuantity;
 
@@ -23,9 +22,8 @@ class MinimalProductView extends StatefulWidget {
     super.key,
     required this.index,
     required this.product,
-    required this.onEdit,
     required this.onDelete,
-    required this.onOrder,
+    required this.onEdit,
     required this.selectedQuantity,
     required this.onLongPress,
   });
@@ -35,6 +33,11 @@ class MinimalProductView extends StatefulWidget {
 }
 
 class _MinimalProductViewState extends State<MinimalProductView> {
+  int quantity = 0;
+  bool IsSelected(int value) {
+    return value > 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool outOfStock = (widget.product.quantity ?? 0) <= 0;
@@ -52,7 +55,7 @@ class _MinimalProductViewState extends State<MinimalProductView> {
           widget.onDelete();
           return false;
         } else {
-          widget.onOrder();
+          widget.onEdit();
           return false;
         }
       },
@@ -63,26 +66,52 @@ class _MinimalProductViewState extends State<MinimalProductView> {
       ),
       secondaryBackground: _buildSwipeAction(
         color: Colors.green.shade400,
-        icon: HugeIcons.strokeRoundedShoppingBasketCheckIn01,
+        icon: HugeIcons.strokeRoundedTaskEdit01,
         alignment: Alignment.centerRight,
       ),
       child: GestureDetector(
         onLongPress: widget.onLongPress,
-        onTap: widget.onEdit,
         child: Stack(
-          clipBehavior: Clip.none,
+          clipBehavior: Clip.hardEdge,
           children: [
+            if (isPackProduct)
+              Positioned(
+                bottom: -40,
+                right: -10,
+                child: Transform.rotate(
+                  angle: -0.60,
+                  child: Icon(
+                    Icons.inventory_2,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.1),
+                    size: 100.sp,
+                  ),
+                ),
+              ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                   StylesConstants.borderRadius,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        IsSelected(quantity)
+                            ? Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.1)
+                            : Colors.transparent,
+                    blurRadius: 2,
+                    offset: Offset(3, 3),
+                    spreadRadius: 0.2,
+                  ),
+                ],
                 border: Border.all(
                   width: 0.2,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.3),
+                  color:
+                      IsSelected(quantity) ? Colors.blue : Colors.transparent,
                 ),
                 color:
                     outOfStock
@@ -90,9 +119,8 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                           context,
                         ).colorScheme.error.withValues(alpha: 0.15)
                         : isPackProduct
-                        ? Colors.blue.withValues(alpha: 0.1)
-                        : Theme.of(context).colorScheme.surfaceContainerLowest
-                            .withValues(alpha: 0.4),
+                        ? Colors.blue.withValues(alpha: 0.06)
+                        : Theme.of(context).colorScheme.surfaceContainerLow,
               ),
               child: Column(
                 children: [
@@ -100,18 +128,16 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                     children: [
                       Stack(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(2),
-                            child: SizedBox(
-                              width: 50.w,
-                              height: 50.h,
-                              child: ImageViewer(
-                                imageFileOrLink:
-                                    isPackProduct
-                                        ? "assets/medias/logos/pack_default_image.jpg"
-                                        : widget.product.images ??
-                                            AppConst.defaultImage,
-                              ),
+                          SizedBox(
+                            width: 50.w,
+                            height: 50.h,
+                            child: ImageViewer(
+                              borderRadius: 8,
+                              imageFileOrLink:
+                                  isPackProduct
+                                      ? "assets/medias/logos/pack_default_image.jpg"
+                                      : widget.product.images ??
+                                          AppConst.defaultImage,
                             ),
                           ),
                           if (isPackProduct)
@@ -123,9 +149,7 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.black.withValues(alpha: 0.5),
-                                  borderRadius: BorderRadius.circular(
-                                    StylesConstants.borderRadius,
-                                  ),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -158,40 +182,69 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                                       ) ??
                                       "Sans nom",
                                   maxLines: 1,
-                                  style: TextStyles.bodyText(
+                                  style: TextStyles.bodyMedium(
                                     context: context,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 SizedBox(height: 3.h),
-                                Text(
-                                  "Ref:${widget.product.eId?.toUpperCase()}",
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    color:
-                                        outOfStock
-                                            ? Colors.red.shade400
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                                .withOpacity(0.4),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                SizedBox(height: 3.h),
-                                Text(
-                                  outOfStock
-                                      ? "Rupture de Stock"
-                                      : "Stock . ${widget.product.quantity}",
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    color:
-                                        outOfStock
-                                            ? Colors.red.shade400
-                                            : Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${widget.product.sellingPrice} Ar",
+                                          style: TextStyle(
+                                            fontSize: 11.sp,
+                                            color:
+                                                outOfStock
+                                                    ? Colors.red.shade400
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface
+                                                        .withOpacity(0.4),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 3.h),
+                                        Text(
+                                          outOfStock
+                                              ? "Rupture de Stock"
+                                              : "Stock . ${widget.product.quantity}",
+                                          style: TextStyle(
+                                            fontSize: 11.sp,
+                                            color:
+                                                outOfStock
+                                                    ? Colors.red.shade400
+                                                    : Colors.green,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 25.h,
+                                      child: NumberInput(
+                                        value: 0,
+                                        onValueChanged: (value) {
+                                          setState(() {
+                                            widget.selectedQuantity(value);
+                                            quantity = value;
+                                          });
+                                        },
+                                        backgroundColor:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.surfaceContainerHigh,
+                                        noBorder: true,
+                                        minValue: 0,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -200,82 +253,9 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Ar ${widget.product.sellingPrice ?? 0}",
-                        style: TextStyles.bodyMedium(
-                          context: context,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                        child: NumberInput(
-                          value: 0,
-                          onValueChanged: (value) {
-                            setState(() => widget.selectedQuantity(value));
-                          },
-                          noBorder: true,
-                          minValue: 0,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
-            if (isPackProduct)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Transform.rotate(
-                  angle: 0.00,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        topRight: Radius.circular(StylesConstants.borderRadius),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          HugeIcons.strokeRoundedPackage02,
-                          color: Colors.white,
-                          size: 14.sp,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          "PACK",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),

@@ -39,7 +39,7 @@ class _SwithSelectorState<T> extends State<SwithSelector<T>> {
       decoration: BoxDecoration(
         color: Theme.of(
           context,
-        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        ).colorScheme.surfaceContainerLowest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(4),

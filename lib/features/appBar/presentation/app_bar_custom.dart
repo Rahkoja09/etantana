@@ -33,27 +33,12 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
     double iconSize = 25;
     final theme = ref.watch(themeProvider);
     return AppBar(
+      toolbarHeight: 100,
       actions: <Widget>[Container()],
       automaticallyImplyLeading: false,
       backgroundColor: Theme.of(context).colorScheme.surface,
       flexibleSpace: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).colorScheme.surfaceBright,
-              width: 2,
-            ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              spreadRadius: 1,
-              blurRadius: 1,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
       ),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

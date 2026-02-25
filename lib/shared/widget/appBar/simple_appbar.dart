@@ -18,13 +18,12 @@ class SimpleAppbar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      elevation: 2,
-      shadowColor: Colors.grey,
 
       title: Text(
         title,
-        style: TextStyles.titleMedium(
+        style: TextStyles.titleSmall(
           context: context,
+          fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
@@ -36,7 +35,6 @@ class SimpleAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         onPressed: onBack,
       ),
-      actions: const [SizedBox(width: 48)],
     );
   }
 }

@@ -92,6 +92,16 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
               ],
             ),
             SizedBox(height: 10.h),
+            BigStatView(
+              icon: HugeIcons.strokeRoundedMoneyBag01,
+              title: "Chiffres d'affaire",
+              cycle: "${dashboard.period}",
+              moneySign: "Ariary",
+              increasePercent: "${dashboard.revenueIncrease}",
+              value: "${dashboard.revenue}",
+              themeColor: Theme.of(context).colorScheme.surfaceContainer,
+            ),
+            SizedBox(height: StylesConstants.spacerContent),
             Row(
               children: [
                 Expanded(
@@ -110,15 +120,6 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
                   ),
                 ),
               ],
-            ),
-            SizedBox(height: StylesConstants.spacerContent),
-            BigStatView(
-              icon: HugeIcons.strokeRoundedMoneyBag01,
-              title: "Chiffres d'affaire",
-              cycle: "${dashboard.period}",
-              moneySign: "Ariary",
-              increasePercent: "${dashboard.revenueIncrease}",
-              value: "${dashboard.revenue}",
             ),
           ],
         ),
