@@ -133,9 +133,6 @@ class _AddOrderState extends ConsumerState<AddOrder> {
 
   @override
   Widget build(BuildContext context) {
-    final width =
-        MediaQuery.of(context).size.width - (StylesConstants.spacerContent * 2);
-
     final orderState = ref.watch(orderControllerProvider);
     final orderAction = ref.read(orderControllerProvider.notifier);
     final productAction = ref.read(productControllerProvider.notifier);

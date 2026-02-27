@@ -63,15 +63,8 @@ class _SelectProductState extends ConsumerState<SelectProduct> {
 
           Container(
             decoration: BoxDecoration(
-              color: colorScheme.surfaceVariant.withOpacity(0.2),
+              color: colorScheme.surfaceBright.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color:
-                    isNotSelected
-                        ? colorScheme.primary.withOpacity(0.2)
-                        : colorScheme.outline.withOpacity(0.1),
-                width: 1,
-              ),
             ),
             child: CustomDropdown(
               iconData: HugeIcons.strokeRoundedPackage02,
