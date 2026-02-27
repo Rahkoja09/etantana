@@ -10,11 +10,17 @@ class StockPredictionUsecases {
   final ProductRepository _productRepository;
   final OrderRepository _orderRepository;
 
+  static const int _criticalWeeks = 1;
+  static const int _warningWeeks = 4;
+  static const int _safeWeeks = 8;
+
+  static const int _criticalDays = _criticalWeeks * 7;
+  static const int _warningDays = _warningWeeks * 7;
+  static const int _safeDays = _safeWeeks * 7;
+
   StockPredictionUsecases(this._productRepository, this._orderRepository);
 
-  /// Récupère les prédictions pour tous les produits disponibles
   ResultFuture<List<StockPredictionEntity>> getStockPrediction() async {
-    // 1. Récupérer tous les produits (on peut ajuster start/end si besoin)
     final productsResult = await _productRepository.researchProduct(
       const ProductEntities(),
       start: 0,
@@ -22,33 +28,31 @@ class StockPredictionUsecases {
     );
 
     return productsResult.fold((failure) => Left(failure), (products) async {
-      // 2. Récupérer les commandes des 30 derniers jours
-      // On initialise un critère vide pour tout récupérer
       final ordersResult = await _orderRepository.researchOrder(
         const OrderEntities(),
         start: 0,
-        end: 1000, // On prend un large spectre de commandes récentes
+        end: 1000,
       );
 
       return ordersResult.fold((failure) => Left(failure), (orders) {
         final List<StockPredictionEntity> predictions = [];
-        final now = DateTime.now();
-        final thirtyDaysAgo = now.subtract(const Duration(days: 30));
 
-        // Filtrer uniquement les commandes des 30 derniers jours
+        final now = DateTime.now();
+        const windowDays = 7;
+        final calculationLimit = now.subtract(const Duration(days: windowDays));
+
         final recentOrders =
             orders
                 .where(
                   (o) =>
                       o.createdAt != null &&
-                      o.createdAt!.isAfter(thirtyDaysAgo),
+                      o.createdAt!.isAfter(calculationLimit),
                 )
                 .toList();
 
         for (var product in products) {
           if (product.id == null) continue;
 
-          // 3. Calculer le total vendu pour ce produit précis
           int totalSold = 0;
           for (var order in recentOrders) {
             final items = order.productsAndQuantities;
@@ -61,24 +65,19 @@ class StockPredictionUsecases {
             }
           }
 
-          // 4. Calculer les métriques
-          // Vitesse journalière
-          double dailyVelocity = totalSold / 30;
+          final double dailyVelocity = totalSold / windowDays;
+          final double salesPerWeek = dailyVelocity * 7;
+          final int currentStock = product.quantity ?? 0;
 
-          // Ventes par semaine (pour l'UI)
-          double salesPerWeek = dailyVelocity * 7;
+          int daysRemaining;
+          double stockPressure;
 
-          // Jours restants (si pas de vente, on met un chiffre élevé par défaut pour éviter l'infini)
-          int currentStock = product.quantity ?? 0;
-          int daysRemaining =
-              dailyVelocity > 0 ? (currentStock / dailyVelocity).floor() : 999;
-
-          // Calcul de la "Pression" (0.0 à 1.0)
-          // 1.0 = Rupture imminente (moins de 5 jours)
-          // 0.0 = Stock large (plus de 30 jours)
-          double stockPressure = 0.0;
-          if (daysRemaining <= 30) {
-            stockPressure = 1.0 - (daysRemaining / 30);
+          if (dailyVelocity > 0) {
+            daysRemaining = (currentStock / dailyVelocity).floor();
+            stockPressure = _calculatePressure(daysRemaining);
+          } else {
+            daysRemaining = 999;
+            stockPressure = 0.0;
           }
 
           predictions.add(
@@ -95,5 +94,20 @@ class StockPredictionUsecases {
         return Right(predictions);
       });
     });
+  }
+
+  double _calculatePressure(int daysRemaining) {
+    if (daysRemaining <= _criticalDays) {
+      return 1.0;
+    } else if (daysRemaining <= _warningDays) {
+      final ratio =
+          (daysRemaining - _criticalDays) / (_warningDays - _criticalDays);
+      return 1.0 - (ratio * 0.6);
+    } else if (daysRemaining <= _safeDays) {
+      final ratio = (daysRemaining - _warningDays) / (_safeDays - _warningDays);
+      return 0.4 - (ratio * 0.4);
+    } else {
+      return 0.0;
+    }
   }
 }

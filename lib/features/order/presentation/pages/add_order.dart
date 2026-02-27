@@ -1,5 +1,6 @@
 import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
+import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
 import 'package:e_tantana/shared/widget/input/swith_selector.dart';
@@ -137,6 +138,9 @@ class _AddOrderState extends ConsumerState<AddOrder> {
     final orderAction = ref.read(orderControllerProvider.notifier);
     final productAction = ref.read(productControllerProvider.notifier);
     final deliveryAction = ref.read(deliveringControllerProvider.notifier);
+    final stockPredictionAction = ref.read(
+      stockPredictionControllerProvider.notifier,
+    );
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -526,6 +530,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
             await orderAction.placeCompleteOrder(orderData);
             await productAction.researchProduct(null);
             await deliveryAction.searchDelivering(null);
+            await stockPredictionAction.refresh();
 
             // réinitialiser les inputs -------------
             qteProduit = 0;

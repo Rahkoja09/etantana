@@ -1,3 +1,4 @@
+import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class PredictionHeader extends StatelessWidget {
@@ -20,13 +21,16 @@ class PredictionHeader extends StatelessWidget {
         Expanded(
           child: Text(
             name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyles.bodyMedium(
+              context: context,
+              fontWeight: FontWeight.bold,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           decoration: BoxDecoration(
             color:
                 isUrgent
@@ -36,10 +40,10 @@ class PredictionHeader extends StatelessWidget {
           ),
           child: Text(
             daysLeft > 90 ? "+90j" : "${daysLeft}j restants",
-            style: TextStyle(
+            style: TextStyles.bodySmall(
+              context: context,
               color: isUrgent ? Colors.red : Colors.blue,
               fontWeight: FontWeight.bold,
-              fontSize: 12,
             ),
           ),
         ),

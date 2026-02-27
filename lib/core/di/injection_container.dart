@@ -22,6 +22,7 @@ import 'package:e_tantana/features/product/data/dataSource/product_data_source_i
 import 'package:e_tantana/features/product/data/repository/product_repository_impl.dart';
 import 'package:e_tantana/features/product/domain/repository/product_repository.dart';
 import 'package:e_tantana/features/product/domain/usecases/product_usecases.dart';
+import 'package:e_tantana/features/stockPrediction/domain/usecases/stock_prediction_usecases.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/media/media_services_impl.dart';
 import 'package:e_tantana/features/map/presentation/services/mapbox_geoservice.dart';
@@ -44,6 +45,7 @@ Future<void> init() async {
   _initOrder();
   _initMediaService();
   _initDashboard();
+  _initFutureStockPrediction();
 
   _initMap();
 }
@@ -105,6 +107,10 @@ Future<void> _initDelivering() async {
     () => DeliveringRepositoryImpl(sl(), sl()),
   );
   sl.registerLazySingleton(() => DeliveringUsecases(sl()));
+}
+
+Future<void> _initFutureStockPrediction() async {
+  sl.registerLazySingleton(() => StockPredictionUsecases(sl(), sl()));
 }
 
 // map feature- ------------

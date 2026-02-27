@@ -1,5 +1,6 @@
 import 'package:e_tantana/features/stockPrediction/presentation/widgets/prediction_header.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/widgets/prediction_progress_bar.dart';
+import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/material.dart';
 
 class StockPredictionCard extends StatelessWidget {
@@ -24,24 +25,21 @@ class StockPredictionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
-        ),
       ),
       child: Row(
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              shape: BoxShape.circle,
+
               color: Colors.grey[100],
             ),
-            child: const Icon(Icons.inventory_2_outlined, color: Colors.grey),
+            child: ImageViewer(imageFileOrLink: imagePath, borderRadius: 10),
           ),
           const SizedBox(width: 12),
 
@@ -50,15 +48,15 @@ class StockPredictionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PredictionHeader(name: productName, daysLeft: daysRemaining),
-                const SizedBox(height: 8),
+                const SizedBox(height: 1),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildSmallStat(
-                      "Ventes/sem",
-                      "${salesPerWeek.toStringAsFixed(1)}u",
+                      "${salesPerWeek.toStringAsFixed(1)}u/sem",
+                      "",
                     ),
-                    _buildSmallStat("En stock", "${currentStock}u"),
+                    _buildSmallStat("${currentStock}u en stock", ""),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -72,15 +70,9 @@ class StockPredictionCard extends StatelessWidget {
   }
 
   Widget _buildSmallStat(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-        ),
-      ],
+    return Text(
+      label,
+      style: const TextStyle(fontSize: 10, color: Colors.grey),
     );
   }
 }

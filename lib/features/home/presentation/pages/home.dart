@@ -3,7 +3,9 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/home/presentation/widgets/main_action_section.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stats_section.dart';
+import 'package:e_tantana/features/home/presentation/widgets/stock_prediction.dart';
 import 'package:e_tantana/features/home/presentation/widgets/welcome_header.dart';
+import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,16 +29,16 @@ class _HomeState extends ConsumerState<Home> {
     });
   }
 
-  Future<void> getDashboard() async {
-    await ref
-        .read(dashboardStatsControllerProvider.notifier)
-        .getDashboardStats();
+  Future<void> refreshHomePage() async {
+    ref.read(dashboardStatsControllerProvider.notifier).getDashboardStats();
+    ref.read(stockPredictionControllerProvider.notifier).refresh();
   }
 
   @override
   Widget build(BuildContext context) {
+    final double spacerSection = 25.h;
     return AppRefreshIndicator(
-      onRefresh: getDashboard,
+      onRefresh: refreshHomePage,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         body: SafeArea(
@@ -54,15 +56,19 @@ class _HomeState extends ConsumerState<Home> {
                           _triggerBoom();
                         },
                       ),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: spacerSection),
 
                       // Section Stats ----------
                       const StatsSection(),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: spacerSection),
+
+                      // stock prediction list -------
+                      StockPrediction(),
+                      SizedBox(height: spacerSection),
 
                       // Section Actions principales- ----------------
                       const MainActionsSection(),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: spacerSection),
                     ],
                   ),
                 ),
