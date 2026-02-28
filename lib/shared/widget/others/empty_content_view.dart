@@ -19,7 +19,13 @@ class EmptyContentView extends StatelessWidget {
             SizedBox(height: 16.h),
             Text(
               text,
-              style: TextStyles.bodyText(context: context, color: Colors.grey),
+              style: TextStyle(
+                fontFamily: "Nonito",
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

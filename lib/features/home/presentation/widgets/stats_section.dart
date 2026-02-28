@@ -91,7 +91,7 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
                 ),
               ],
             ),
-            SizedBox(height: 10.h),
+
             BigStatView(
               icon: HugeIcons.strokeRoundedMoneyBag01,
               title: "Chiffres d'affaire",

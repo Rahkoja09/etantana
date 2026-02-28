@@ -12,6 +12,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 import 'package:e_tantana/core/error/exceptions.dart';
 import 'package:e_tantana/core/network/network_info.dart';
@@ -269,6 +271,26 @@ class MediaServiceImpl implements MediaServices {
   }
 
   @override
+  Future<File> takeScreenshot(
+    BuildContext context,
+    String id,
+    ScreenshotController screenshotController,
+    Widget widget,
+  ) async {
+    final Uint8List imageBytes = await screenshotController.captureFromWidget(
+      widget,
+      context: context,
+      delay: const Duration(milliseconds: 100),
+    );
+
+    final directory = await getTemporaryDirectory();
+    final String fileName = 'facture_$id.png';
+    final File imageFile = File('${directory.path}/$fileName');
+    await imageFile.writeAsBytes(imageBytes);
+    return imageFile;
+  }
+
+  @override
   Future<void> screenshotAndShareMedia(
     BuildContext context,
     String id,
@@ -277,22 +299,46 @@ class MediaServiceImpl implements MediaServices {
     Widget widget,
   ) async {
     try {
-      final Uint8List imageBytes = await screenshotController.captureFromWidget(
+      File imagePath = await takeScreenshot(
+        context,
+        id,
+        screenshotController,
         widget,
-        context: context,
-        delay: const Duration(milliseconds: 100),
       );
 
-      final directory = await getTemporaryDirectory();
-      final String fileName = 'facture_$id.png';
-      final File imageFile = File('${directory.path}/$fileName');
-      await imageFile.writeAsBytes(imageBytes);
-
       await Share.shareXFiles([
-        XFile(imageFile.path),
+        XFile(imagePath.path),
       ], text: 'Voici la facture de $ownerName');
     } catch (e) {
       debugPrint("Erreur lors de l'exportation : $e");
+    }
+  }
+
+  @override
+  Future<void> sendInvoiceWhatsApp({
+    required String message,
+    required String phoneNumber,
+  }) async {
+    final cleanNumber = phoneNumber
+        .replaceAll(RegExp(r'\s+'), '')
+        .replaceAll('+', '')
+        .replaceAll('-', '');
+    final encodedMessage = Uri.encodeComponent(message);
+    final whatsappUrl = Uri.parse(
+      "https://wa.me/$cleanNumber?text=$encodedMessage",
+    );
+
+    try {
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      await _fallbackSMS(cleanNumber, message);
+    }
+  }
+
+  Future<void> _fallbackSMS(String phone, String message) async {
+    final smsUrl = Uri.parse("sms:$phone?body=${Uri.encodeComponent(message)}");
+    if (await canLaunchUrl(smsUrl)) {
+      await launchUrl(smsUrl);
     }
   }
 }

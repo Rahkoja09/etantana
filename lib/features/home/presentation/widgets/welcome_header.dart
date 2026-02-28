@@ -33,7 +33,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
             valueOfCardIcon: HugeIcons.strokeRoundedTimeHalfPass,
             image3DStyleAssetsOrLink: "assets/medias/logos/package_3D.png",
           ),
-          SizedBox(width: StylesConstants.spacerContent),
+          SizedBox(width: 10),
           PresentationCard(
             onTap: widget.onTap,
             icon: HugeIcons.strokeRoundedChartLineData01,

@@ -10,7 +10,7 @@ class SeparatorBackground extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(StylesConstants.spacerContent),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
       ),
       child: child,

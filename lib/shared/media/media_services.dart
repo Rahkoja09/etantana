@@ -44,6 +44,17 @@ abstract class MediaServices {
     Widget widget,
   );
 
+  Future<void> sendInvoiceWhatsApp({
+    required String message,
+    required String phoneNumber,
+  });
+  Future<File> takeScreenshot(
+    BuildContext context,
+    String id,
+    ScreenshotController screenshotController,
+    Widget widget,
+  );
+
   // --- UTILS ---
   String getPublicUrl(String filePath, String bucketName);
   Future<void> deleteFile(String filePath, String bucketName);

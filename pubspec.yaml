@@ -1,7 +1,7 @@
 name: e_tantana
 description: "A new Flutter project."
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -94,7 +94,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.4.8
-  
+
 flutter:
   uses-material-design: true
 
@@ -116,7 +116,7 @@ flutter:
     - family: Montserrat
       fonts:
         - asset: assets/fonts/MontSerrat/Montserrat-Regular.ttf
-    
+
 flutter_launcher_icons:
   image_path: "assets/medias/icons/app_icon.png"
   android:
@@ -125,7 +125,7 @@ flutter_launcher_icons:
     adaptive_icon_foreground: "assets/medias/icons/app_icon.png"
   ios:
     image_path: "assets/medias/icons/app_icon.png"
-  
+
   web:
     image_path: "assets/medias/icons/app_icon.png"
     background_color: "#ffffff"

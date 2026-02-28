@@ -3,12 +3,16 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
+import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
+import 'package:e_tantana/features/printer/presentation/models/message_template.dart';
 import 'package:e_tantana/features/printer/presentation/providers/interaction_invoice_data_provider.dart';
 import 'package:e_tantana/features/printer/presentation/providers/invoice_model_list_provider.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
+import 'package:e_tantana/shared/widget/loading/loading.dart';
+import 'package:e_tantana/shared/widget/others/separator_background.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/vertical_custom_divider.dart';
@@ -29,7 +33,6 @@ class PrinterView extends ConsumerStatefulWidget {
 class _PrinterViewState extends ConsumerState<PrinterView> {
   final ScreenshotController _screenshotController = ScreenshotController();
   final medias = sl<MediaServices>();
-
   double _deliveryCosts = 0;
 
   @override
@@ -41,6 +44,8 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
   @override
   Widget build(BuildContext context) {
     final allInvoiceModelsState = ref.watch(allInvoiceModelsProvider);
+    final orderState = ref.watch(orderControllerProvider);
+
     return Scaffold(
       appBar: SimpleAppbar(
         title: "Facturation commande",
@@ -76,6 +81,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
               widget.order,
             ),
           ),
+          if (orderState.isLoading) Loading(),
         ],
       ),
     );
@@ -91,23 +97,27 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
   }
 
   Widget _buildToolbar(Widget invoiceModel, OrderEntities order) {
+    final orderAction = ref.read(orderControllerProvider.notifier);
+
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
-        ),
       ),
       child: Padding(
         padding: EdgeInsets.all(StylesConstants.spacerContent - 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildToolbarButton(Icons.edit, "Modifier", () {
-              _showEditPricesDialog(widget.order.deliveryCosts!.toString());
-            }),
+            _buildToolbarButton(
+              HugeIcons.strokeRoundedEdit01,
+              "Modifier",
+              iconColor: Colors.amber,
+              () {
+                _showEditPricesDialog(widget.order.deliveryCosts!.toString());
+              },
+            ),
             VerticalCustomDivider(
               height: 20,
               width: 1,
@@ -115,47 +125,77 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.4),
             ),
-            _buildToolbarButton(Icons.save_alt, "Exporter", () {
-              medias.screenshotAndShareMedia(
-                context,
-                order.id!,
-                order.clientName!,
-                _screenshotController,
-                invoiceModel,
-              );
-            }),
-            VerticalCustomDivider(
-              height: 20,
-              width: 1,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.4),
+            if (widget.order.invoiceLink == null) ...[
+              _buildToolbarButton(
+                HugeIcons.strokeRoundedUpload01,
+                "Sauvegarder",
+                iconColor: Colors.cyan,
+                () async {
+                  if (order.invoiceLink == null) {
+                    final invoiceFile = await medias.takeScreenshot(
+                      context,
+                      order.id!,
+                      _screenshotController,
+                      invoiceModel,
+                    );
+                    final invoiceLink = await medias.uploadMedia(
+                      file: invoiceFile,
+                      uid: widget.order.id!,
+                      type: AppMediaType.invoice,
+                      bucketName: "invoice",
+                    );
+                    final orderUpdated = widget.order.copyWith(
+                      invoiceLink: invoiceLink,
+                    );
+                    await orderAction.updateOrderFlow(orderUpdated);
+                    await orderAction.researchOrder(null);
+                  }
+                },
+              ),
+              VerticalCustomDivider(
+                height: 20,
+                width: 1,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
+            ],
+
+            _buildToolbarButton(
+              HugeIcons.strokeRoundedPrinter,
+              "Imprimer",
+              iconColor: Colors.blue,
+              () {
+                medias.screenshotAndShareMedia(
+                  context,
+                  order.id!,
+                  order.clientName!,
+                  _screenshotController,
+                  invoiceModel,
+                );
+              },
             ),
-            _buildToolbarButton(Icons.print, "Imprimer", () {
-              medias.screenshotAndShareMedia(
-                context,
-                order.id!,
-                order.clientName!,
-                _screenshotController,
-                invoiceModel,
-              );
-            }),
-            VerticalCustomDivider(
-              height: 20,
-              width: 1,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.4),
-            ),
-            _buildToolbarButton(Icons.open_in_new, "Ouvrir avec", () {
-              medias.screenshotAndShareMedia(
-                context,
-                order.id!,
-                order.clientName!,
-                _screenshotController,
-                invoiceModel,
-              );
-            }),
+
+            if (widget.order.invoiceLink != null) ...[
+              VerticalCustomDivider(
+                height: 20,
+                width: 1,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
+              _buildToolbarButton(
+                HugeIcons.strokeRoundedWhatsapp,
+                "Envoyer",
+                iconColor: Colors.green,
+                () {
+                  medias.sendInvoiceWhatsApp(
+                    phoneNumber: order.clientTel!,
+                    message: MessageTemplate.generateOrderConfirmation(order),
+                  );
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -164,16 +204,22 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
 
   Widget _buildToolbarButton(
     IconData icon,
+
     String label,
-    VoidCallback onPressed,
-  ) {
+    VoidCallback onPressed, {
+    Color? iconColor,
+  }) {
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 24),
+          Icon(
+            icon,
+            size: 24,
+            color: iconColor ?? Theme.of(context).colorScheme.onSurface,
+          ),
           SizedBox(height: 4),
           Text(
             label,

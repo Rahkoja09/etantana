@@ -4,6 +4,9 @@ import 'package:e_tantana/features/order/domain/actions/order_actions.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/usecases/order_usecases.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
+import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OrderController extends StateNotifier<OrderStates> {

@@ -1,5 +1,6 @@
 import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
+import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
@@ -53,6 +54,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   TextEditingController clientTel = TextEditingController();
   TextEditingController clientAdrs = TextEditingController();
   TextEditingController fraisDeLiv = TextEditingController();
+  String countryCallCode = "+261";
 
   @override
   void initState() {
@@ -60,6 +62,11 @@ class _AddOrderState extends ConsumerState<AddOrder> {
     if (widget.productToOrder != null) {
       setState(() {
         selectedProductEntity = widget.productToOrder;
+      });
+    }
+    if (widget.productToOrder?.length == 1) {
+      setState(() {
+        qteProduit = widget.orderListToOrderWithQuantity?[0]["quantity"] ?? 1;
       });
     }
   }
@@ -382,11 +389,32 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                           degree: 1,
                           title: "N. Téléphone Client",
                         ),
-                        SimpleInput(
-                          textHint: "ex: 0343032386",
-                          iconData: HugeIcons.strokeRoundedCall02,
-                          textEditControlleur: clientTel,
-                          maxLines: 1,
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: CustomDropdown(
+                                textHint: "+261",
+                                iconData: HugeIcons.strokeRoundedContactBook,
+                                items: ["+261", "..."],
+                                onChanged: (contryCallCode) {
+                                  setState(() {
+                                    countryCallCode = countryCallCode;
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              flex: 5,
+                              child: SimpleInput(
+                                textHint: "ex: 343032386 (sans 0)",
+                                iconData: HugeIcons.strokeRoundedCall02,
+                                textEditControlleur: clientTel,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
                         ),
                         ShowInputError(message: errorClientTel),
 
@@ -518,7 +546,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
             final orderData = OrderEntities(
               clientAdrs: "${deliveryCity.trim()} - ${clientAdrs.text.trim()}",
               clientName: clientName.text.trim(),
-              clientTel: clientTel.text.trim(),
+              clientTel: " ${countryCallCode.trim()}${clientTel.text.trim()}",
               deliveryCosts: double.tryParse(fraisDeLiv.text.trim()),
               details: variantsForServer,
               productsAndQuantities: widget.orderListToOrderWithQuantity,

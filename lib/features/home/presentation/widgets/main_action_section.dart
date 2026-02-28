@@ -32,7 +32,6 @@ class MainActionsSection extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 10.h),
         Row(
           children: [
             Expanded(
