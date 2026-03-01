@@ -36,14 +36,9 @@ class StockPredictionList extends ConsumerWidget {
     return Container(
       child:
           !isLoading && predictionsToShow.isEmpty
-              ? Center(
-                child: SeparatorBackground(
-                  child: EmptyContentView(
-                    icon: HugeIcons.strokeRoundedChartBubble01,
-                    text:
-                        "Aucune donnée de prédiction disponible.\nEssayé de réactualiser.\nou\nAjoutez des commandes",
-                  ),
-                ),
+              ? EmptyContentView(
+                icon: HugeIcons.strokeRoundedChartBubble01,
+                text: "Aucune donnée de prédiction disponible.",
               )
               : ListView.builder(
                 shrinkWrap: true,

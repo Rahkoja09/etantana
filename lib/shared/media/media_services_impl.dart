@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
@@ -318,12 +319,21 @@ class MediaServiceImpl implements MediaServices {
   Future<void> sendInvoiceWhatsApp({
     required String message,
     required String phoneNumber,
+    String? originalUrl,
   }) async {
+    String finalMessage = message;
+
+    if (originalUrl != null && originalUrl.isNotEmpty) {
+      final shortUrl = await shortenUrl(originalUrl);
+      finalMessage = message.replaceAll(originalUrl, shortUrl);
+    }
+
     final cleanNumber = phoneNumber
         .replaceAll(RegExp(r'\s+'), '')
         .replaceAll('+', '')
         .replaceAll('-', '');
-    final encodedMessage = Uri.encodeComponent(message);
+
+    final encodedMessage = Uri.encodeComponent(finalMessage);
     final whatsappUrl = Uri.parse(
       "https://wa.me/$cleanNumber?text=$encodedMessage",
     );
@@ -333,6 +343,23 @@ class MediaServiceImpl implements MediaServices {
     } catch (e) {
       await _fallbackSMS(cleanNumber, message);
     }
+  }
+
+  Future<String> shortenUrl(String longUrl) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'https://tinyurl.com/api-create.php?url=${Uri.encodeComponent(longUrl)}',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      }
+    } catch (e) {
+      debugPrint("Erreur raccourcissement lien: $e");
+    }
+    return longUrl;
   }
 
   Future<void> _fallbackSMS(String phone, String message) async {

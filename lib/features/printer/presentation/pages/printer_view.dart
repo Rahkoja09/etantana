@@ -192,6 +192,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                   medias.sendInvoiceWhatsApp(
                     phoneNumber: order.clientTel!,
                     message: MessageTemplate.generateOrderConfirmation(order),
+                    originalUrl: order.invoiceLink,
                   );
                 },
               ),

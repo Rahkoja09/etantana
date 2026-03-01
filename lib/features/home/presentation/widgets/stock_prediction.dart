@@ -1,11 +1,10 @@
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_list.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
-import 'package:e_tantana/shared/widget/others/separator_background.dart';
+import 'package:e_tantana/shared/widget/others/gradient_separator_background.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class StockPrediction extends ConsumerWidget {
@@ -47,7 +46,7 @@ class StockPrediction extends ConsumerWidget {
               ),
             ],
           ),
-          SeparatorBackground(child: StockPredictionList()),
+          GradientSeparatorBackground(child: StockPredictionList()),
         ],
       ),
     );

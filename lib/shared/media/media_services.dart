@@ -47,6 +47,7 @@ abstract class MediaServices {
   Future<void> sendInvoiceWhatsApp({
     required String message,
     required String phoneNumber,
+    String? originalUrl,
   });
   Future<File> takeScreenshot(
     BuildContext context,

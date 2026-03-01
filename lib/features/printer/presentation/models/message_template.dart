@@ -33,7 +33,7 @@ voici les détails:
 📄 *Facture (lien sécurisé) :*
 ${order.invoiceLink ?? 'Lien disponible prochainement'}
 
-- Merci d'être joignable le jours de votre livraison -
+- Merci d'être joignable le jours de livraison -
 
 📞 *Besoin d'aide ? Contactez-nous :*
 +261 38 05 166 86

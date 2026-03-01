@@ -5,6 +5,7 @@ import 'package:e_tantana/features/home/presentation/widgets/main_action_section
 import 'package:e_tantana/features/home/presentation/widgets/stats_section.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stock_prediction.dart';
 import 'package:e_tantana/features/home/presentation/widgets/welcome_header.dart';
+import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class _HomeState extends ConsumerState<Home> {
   Future<void> refreshHomePage() async {
     ref.read(dashboardStatsControllerProvider.notifier).getDashboardStats();
     ref.read(stockPredictionControllerProvider.notifier).refresh();
+    ref.read(productControllerProvider.notifier).researchProduct(null);
   }
 
   @override

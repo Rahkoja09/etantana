@@ -33,6 +33,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -46,6 +47,7 @@ Future<void> init() async {
   _initMediaService();
   _initDashboard();
   _initFutureStockPrediction();
+  // [INIT_ANCHOR]
 
   _initMap();
 }
