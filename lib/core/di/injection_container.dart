@@ -33,6 +33,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:e_tantana/features/user/data/repository/user_repository_impl.dart';
+import 'package:e_tantana/features/user/data/source/user_remote_source.dart';
+import 'package:e_tantana/features/user/domain/repository/user_repository.dart';
+import 'package:e_tantana/features/user/domain/usecases/user_usecases.dart';
+
+import 'package:e_tantana/features/auth/data/repository/auth_repository_impl.dart';
+import 'package:e_tantana/features/auth/data/source/auth_remote_source.dart';
+import 'package:e_tantana/features/auth/data/source/auth_remote_source_impl.dart';
+import 'package:e_tantana/features/auth/domain/repository/auth_repository.dart';
+import 'package:e_tantana/features/auth/domain/usecases/auth_usecases.dart';
+import 'package:e_tantana/features/auth/data/source/email_auth_service.dart';
+import 'package:e_tantana/features/auth/data/source/social_auth_service.dart';
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -47,6 +59,8 @@ Future<void> init() async {
   _initMediaService();
   _initDashboard();
   _initFutureStockPrediction();
+  _initUser();
+    _initAuth();
   // [INIT_ANCHOR]
 
   _initMap();
@@ -128,4 +142,26 @@ Future<void> _initMap() async {
     ),
   );
   sl.registerLazySingleton(() => MapUsecases(sl<MapRepository>()));
+}
+
+Future<void> _initUser() async {
+  sl.registerLazySingleton<UserRemoteSource>(() => UserRemoteSourceImpl(sl()));
+  sl.registerLazySingleton<UserRepository>(
+    () => UserRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton(() => UserUsecases(sl()));
+}
+Future<void> _initAuth() async {
+  sl.registerLazySingleton(() => SocialAuthService(sl()));
+  sl.registerLazySingleton(() => EmailAuthService(sl()));
+
+  sl.registerLazySingleton<AuthRemoteSource>(
+    () => AuthRemoteSourceImpl(sl(), sl(), sl()),
+  );
+
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl(), sl()),
+  );
+
+  sl.registerLazySingleton(() => AuthUsecases(sl()));
 }

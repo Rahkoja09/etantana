@@ -1,7 +1,7 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/mainWidget/success_error_listener.dart';
+import 'package:e_tantana/core/mainErrorListener/success_error_listener.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/delivring/presentation/pages/delivery.dart';
 import 'package:e_tantana/features/home/presentation/pages/home.dart';

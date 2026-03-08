@@ -148,13 +148,20 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (widget.productToEdit == null)
-                        TitleWithExplaination(
-                          title: "Image du produit",
-                          explaination:
-                              "Importer un image qui represente votre produit",
+                      if (widget.productToEdit == null) ...[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TitleWithExplaination(
+                              title: "Image du produit",
+                              explaination:
+                                  "Importer un image qui represente votre produit",
+                            ),
+                            SizedBox(height: contentSpacer),
+                          ],
                         ),
-                      SizedBox(height: contentSpacer),
+                      ],
+
                       ImagePickerDisplay(
                         onPickImage: () async {
                           final image = await _mediaService.pickImage(
@@ -173,135 +180,157 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       ),
                     ],
                   ),
-                  SizedBox(height: sectionSpacer),
+                  SizedBox(height: 10.h),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TitleWithExplaination(
-                        title: "Informations du produit",
-                        explaination:
-                            "Données les informations precise du produit",
-                      ),
+                      SeparatorBackground(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TitleWithExplaination(
+                              title: "Informations du produit",
+                              explaination:
+                                  "Données les informations precise du produit",
+                            ),
 
-                      SizedBox(height: contentSpacer),
-                      MediumTitleWithDegree(
-                        showDegree: true,
-                        degree: 1,
-                        title: "Nom Produit",
-                      ),
-                      SimpleInput(
-                        textHint: "ex: pince flexible",
-                        iconData: HugeIcons.strokeRoundedId,
-                        textEditControlleur: nomProduitInput,
-                        maxLines: 1,
-                      ),
-                      ShowInputError(message: errorName),
-                      SizedBox(height: contentSpacer),
-                      MediumTitleWithDegree(
-                        showDegree: true,
-                        degree: 2,
-                        title: "Code produit",
-                      ),
-                      SimpleInput(
-                        textHint: "ex: pinceF02i",
-                        iconData: HugeIcons.strokeRoundedBarCode01,
-                        textEditControlleur: codeProduitInput,
-                        maxLines: 1,
-                      ),
+                            SizedBox(height: contentSpacer),
+                            MediumTitleWithDegree(
+                              showDegree: true,
+                              degree: 1,
+                              title: "Nom Produit",
+                            ),
+                            SimpleInput(
+                              textHint: "ex: pince flexible",
+                              iconData: HugeIcons.strokeRoundedId,
+                              textEditControlleur: nomProduitInput,
+                              maxLines: 1,
+                            ),
+                            ShowInputError(message: errorName),
+                            SizedBox(height: contentSpacer),
+                            MediumTitleWithDegree(
+                              showDegree: true,
+                              degree: 2,
+                              title: "Code produit",
+                            ),
+                            SimpleInput(
+                              textHint: "ex: pinceF02i",
+                              iconData: HugeIcons.strokeRoundedBarCode01,
+                              textEditControlleur: codeProduitInput,
+                              maxLines: 1,
+                            ),
 
-                      SizedBox(height: contentSpacer),
-                      NumberInput(
-                        value: qteProduit,
-                        title: "Quantité(s) produit *",
-                        onValueChanged: (qte) {
-                          setState(() {
-                            qteProduit = qte;
-                          });
-                        },
+                            SizedBox(height: contentSpacer),
+                            NumberInput(
+                              value: qteProduit,
+                              title: "Quantité(s) produit *",
+                              onValueChanged: (qte) {
+                                setState(() {
+                                  qteProduit = qte;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
 
-                  SizedBox(height: sectionSpacer),
+                  SizedBox(height: 10.h),
 
-                  TitleWithExplaination(
-                    title: "Détails sur les prix",
-                    explaination:
-                        "Informer le system des détails sur le prix produit",
-                  ),
-                  SizedBox(height: contentSpacer),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Prix d'achat unitaire (Ar)",
-                  ),
-                  SimpleInput(
-                    textHint: "ex: 3000",
-                    iconData: HugeIcons.strokeRoundedMoney01,
-                    textEditControlleur: purchasePriceInput,
-                    maxLines: 1,
-                  ),
-                  SizedBox(height: contentSpacer),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 1,
-                    title: "Prix de vente unitaire (Ar)",
-                  ),
-                  SimpleInput(
-                    textHint: "ex: 6000",
-                    iconData: HugeIcons.strokeRoundedMoneyBag01,
-                    textEditControlleur: sellingPriceInput,
-                    maxLines: 1,
+                  SeparatorBackground(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TitleWithExplaination(
+                          title: "Détails sur les prix",
+                          explaination:
+                              "Informer le system des détails sur le prix produit",
+                        ),
+                        SizedBox(height: contentSpacer),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 1,
+                          title: "Prix d'achat unitaire (Ar)",
+                        ),
+                        SimpleInput(
+                          textHint: "ex: 3000",
+                          iconData: HugeIcons.strokeRoundedMoney01,
+                          textEditControlleur: purchasePriceInput,
+                          maxLines: 1,
+                        ),
+                        SizedBox(height: contentSpacer),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 1,
+                          title: "Prix de vente unitaire (Ar)",
+                        ),
+                        SimpleInput(
+                          textHint: "ex: 6000",
+                          iconData: HugeIcons.strokeRoundedMoneyBag01,
+                          textEditControlleur: sellingPriceInput,
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
                   ),
 
-                  SizedBox(height: sectionSpacer),
-                  TitleWithExplaination(
-                    title: "Détails du produit",
-                    explaination:
-                        "Prenez le temps d'ajouter les détails du produit",
-                  ),
-                  SizedBox(height: contentSpacer),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    degree: 2,
-                    title: "Type de produit",
-                  ),
-                  CustomDropdown(
-                    iconData: HugeIcons.strokeRoundedCheckList,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedType = value;
-                      });
-                    },
-                    items: typeOfProductList,
-                    textHint: "Selectioner un type",
-                    value: selectedType,
-                  ),
-                  SizedBox(height: contentSpacer),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    title: "Variante(s)",
-                    degree: 2,
-                  ),
-                  ItemManagerSection(
-                    varianteInString: variantsForServer,
-                    onChanged: (variante) {
-                      setState(() {
-                        variantsForServer = variante;
-                      });
-                    },
-                  ),
-                  SizedBox(height: contentSpacer + 10),
-                  MediumTitleWithDegree(
-                    showDegree: true,
-                    title: "Déscription(s)",
-                    degree: 2,
-                  ),
-                  SimpleInput(
-                    textHint: "Décriver votre produit",
-                    iconData: HugeIcons.strokeRoundedMenu06,
-                    textEditControlleur: descProduitInput,
-                    maxLines: 6,
+                  SizedBox(height: 10.h),
+
+                  SeparatorBackground(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TitleWithExplaination(
+                          title: "Détails du produit",
+                          explaination:
+                              "Prenez le temps d'ajouter les détails du produit",
+                        ),
+                        SizedBox(height: contentSpacer),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          degree: 2,
+                          title: "Type de produit",
+                        ),
+                        CustomDropdown(
+                          iconData: HugeIcons.strokeRoundedCheckList,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedType = value;
+                            });
+                          },
+                          items: typeOfProductList,
+                          textHint: "Selectioner un type",
+                          value: selectedType,
+                        ),
+                        SizedBox(height: contentSpacer),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          title: "Variante(s)",
+                          degree: 2,
+                        ),
+                        ItemManagerSection(
+                          varianteInString: variantsForServer,
+                          onChanged: (variante) {
+                            setState(() {
+                              variantsForServer = variante;
+                            });
+                          },
+                        ),
+                        SizedBox(height: contentSpacer + 10),
+                        MediumTitleWithDegree(
+                          showDegree: true,
+                          title: "Déscription(s)",
+                          degree: 2,
+                        ),
+                        SimpleInput(
+                          textHint: "Décriver votre produit",
+                          iconData: HugeIcons.strokeRoundedMenu06,
+                          textEditControlleur: descProduitInput,
+                          maxLines: 6,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
