@@ -123,6 +123,7 @@ class AuthController extends StateNotifier<AuthStates> {
     _setLoadingState(action: action);
 
     final res = await _authUsecases.signInWithEmail(email, password);
+    await checkAuthStatus();
 
     res.fold(
       (error) => _setError(error: error, action: action),

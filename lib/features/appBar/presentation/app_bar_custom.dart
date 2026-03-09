@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
+import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,17 +70,19 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
             children: [
               IconButton(
                 onPressed: () {
-                  setState(() {
-                    ref.read(themeProvider.notifier).state =
-                        theme == darkTheme ? lightTheme : darkTheme;
-                  });
+                  final currentTheme = ref.read(themeProvider);
+                  final newTheme =
+                      (currentTheme == darkTheme) ? lightTheme : darkTheme;
+                  final newThemeName =
+                      (newTheme == darkTheme) ? "darkTheme" : "lightTheme";
+                  ref.read(themeProvider.notifier).state = newTheme;
+                  ref.read(storageServiceProvider).setTheme(newThemeName);
                 },
                 icon: Icon(
                   theme == darkTheme
                       ? Icons.dark_mode_rounded
                       : Icons.light_mode_rounded,
                   color: theme == darkTheme ? Colors.blue : Colors.amberAccent,
-                  size: iconSize,
                 ),
               ),
               IconButton(

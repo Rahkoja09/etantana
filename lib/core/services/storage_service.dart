@@ -11,11 +11,21 @@ class StorageService {
   StorageService(this._prefs);
 
   static const String _onboardingKey = 'has_seen_onboarding';
+  static const String _uiThemeKey = "uiTheme";
   Future<void> setOnboardingSeen() async {
     await _prefs.setBool(_onboardingKey, true);
   }
 
   bool hasSeenOnboarding() {
     return _prefs.getBool(_onboardingKey) ?? false;
+  }
+
+  Future<void> setTheme(String themeName) async {
+    await _prefs.setString(_uiThemeKey, themeName);
+  }
+
+  bool isThemeDark() {
+    final theme = _prefs.getString(_uiThemeKey);
+    return theme == "darkTheme";
   }
 }
