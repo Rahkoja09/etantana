@@ -2,7 +2,6 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class FirstLabel extends StatelessWidget {
   final OrderEntities order;

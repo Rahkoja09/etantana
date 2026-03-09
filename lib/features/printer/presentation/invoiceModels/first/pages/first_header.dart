@@ -1,7 +1,5 @@
-import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
-import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

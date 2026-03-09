@@ -1,6 +1,5 @@
 import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
-import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
@@ -9,7 +8,6 @@ import 'package:e_tantana/shared/widget/others/mini_text_card.dart';
 import 'package:e_tantana/shared/widget/others/price_viewer.dart';
 import 'package:e_tantana/shared/widget/others/separator_background.dart';
 import 'package:e_tantana/shared/widget/title/title_with_icon.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

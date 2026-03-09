@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:device_preview/device_preview.dart';
 import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/constants/mapBox_const.dart';

@@ -5,7 +5,6 @@ import 'package:e_tantana/features/stockPrediction/domain/entity/stock_predictio
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/widgets/stock_prediction_card.dart';
 import 'package:e_tantana/shared/widget/others/empty_content_view.dart';
-import 'package:e_tantana/shared/widget/others/separator_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';

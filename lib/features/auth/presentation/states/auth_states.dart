@@ -9,9 +9,20 @@ class AuthStates extends Equatable {
   final AuthEntity? user;
   final AuthActions? action;
 
-  const AuthStates({this.isLoading = false, this.error, this.user, this.action});
+  const AuthStates({
+    this.isLoading = false,
+    this.error,
+    this.user,
+    this.action,
+  });
 
-  AuthStates copyWith({bool? isLoading, AuthEntity? user, AuthActions? action, Failure? error, bool isClearError = false}) {
+  AuthStates copyWith({
+    bool? isLoading,
+    AuthEntity? user,
+    AuthActions? action,
+    Failure? error,
+    bool isClearError = false,
+  }) {
     return AuthStates(
       isLoading: isLoading ?? this.isLoading,
       user: user ?? this.user,

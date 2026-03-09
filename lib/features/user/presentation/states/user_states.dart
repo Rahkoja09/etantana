@@ -41,11 +41,11 @@ class UserStates extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        error,
-        users,
-        currentCriteria,
-        action,
-        errorCode,
-      ];
+    isLoading,
+    error,
+    users,
+    currentCriteria,
+    action,
+    errorCode,
+  ];
 }

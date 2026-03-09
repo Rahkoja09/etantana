@@ -1,5 +1,4 @@
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';

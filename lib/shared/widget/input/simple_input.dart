@@ -49,9 +49,7 @@ class _SimpleInputState extends State<SimpleInput> {
 
           prefixIcon: HugeIcon(
             icon: widget.iconData,
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onSurface,
             size: 20.sp,
           ),
 

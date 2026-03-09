@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/map/data/model/map_model.dart';
 
 abstract class MapRemoteDataSource {

@@ -19,12 +19,13 @@ class SocialAuthService {
 
       // On force le sign-out local pour permettre de changer de compte ---------
       await googleSignIn.signOut();
-      
+
       final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) return null; // L'utilisateur a fermé la popup ------
+      if (googleUser == null)
+        return null; // L'utilisateur a fermé la popup ------
 
       final googleAuth = await googleUser.authentication;
-      
+
       if (googleAuth.idToken == null) {
         throw ApiException(message: "ID Token Google manquant");
       }
@@ -36,7 +37,9 @@ class SocialAuthService {
       );
 
       if (res.user == null) {
-        throw ApiException(message: "Erreur lors de la création de session Supabase");
+        throw ApiException(
+          message: "Erreur lors de la création de session Supabase",
+        );
       }
 
       return AuthModel.fromSupabase(res.user!);

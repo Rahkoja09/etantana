@@ -5,7 +5,7 @@ class UserModel extends UserEntity {
   UserModel({
     super.id,
     super.createdAt,
-        super.email,
+    super.email,
     super.password,
     super.firstName,
     super.lastName,
@@ -19,10 +19,11 @@ class UserModel extends UserEntity {
   factory UserModel.fromMap(MapData data) {
     return UserModel(
       id: data['id'] as String?,
-      createdAt: data['created_at'] != null 
-          ? DateTime.parse(data['created_at']) 
-          : null,
-            email: data['email'] as String?,
+      createdAt:
+          data['created_at'] != null
+              ? DateTime.parse(data['created_at'])
+              : null,
+      email: data['email'] as String?,
       password: data['password'] as String?,
       firstName: data['first_name'] as String?,
       lastName: data['last_name'] as String?,
@@ -38,7 +39,7 @@ class UserModel extends UserEntity {
     return {
       if (id != null) 'id': id,
       'created_at': (createdAt ?? DateTime.now()).toIso8601String(),
-            'email': email,
+      'email': email,
       'password': password,
       'first_name': firstName,
       'last_name': lastName,
@@ -54,7 +55,7 @@ class UserModel extends UserEntity {
     return UserModel(
       id: entity.id,
       createdAt: entity.createdAt,
-            email: entity.email,
+      email: entity.email,
       password: entity.password,
       firstName: entity.firstName,
       lastName: entity.lastName,

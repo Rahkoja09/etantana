@@ -15,7 +15,8 @@ class AuthModel extends AuthEntity {
       id: user.id,
       email: user.email,
       fullName: user.userMetadata?['full_name'] ?? user.userMetadata?['name'],
-      photoUrl: user.userMetadata?['avatar_url'] ?? user.userMetadata?['picture'],
+      photoUrl:
+          user.userMetadata?['avatar_url'] ?? user.userMetadata?['picture'],
       createdAt: DateTime.parse(user.createdAt),
     );
   }

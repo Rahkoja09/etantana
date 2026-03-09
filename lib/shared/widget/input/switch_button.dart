@@ -1,4 +1,3 @@
-import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

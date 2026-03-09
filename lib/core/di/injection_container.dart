@@ -45,6 +45,7 @@ import 'package:e_tantana/features/auth/domain/repository/auth_repository.dart';
 import 'package:e_tantana/features/auth/domain/usecases/auth_usecases.dart';
 import 'package:e_tantana/features/auth/data/source/email_auth_service.dart';
 import 'package:e_tantana/features/auth/data/source/social_auth_service.dart';
+
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -60,7 +61,7 @@ Future<void> init() async {
   _initDashboard();
   _initFutureStockPrediction();
   _initUser();
-    _initAuth();
+  _initAuth();
   // [INIT_ANCHOR]
 
   _initMap();
@@ -151,6 +152,7 @@ Future<void> _initUser() async {
   );
   sl.registerLazySingleton(() => UserUsecases(sl()));
 }
+
 Future<void> _initAuth() async {
   sl.registerLazySingleton(() => SocialAuthService(sl()));
   sl.registerLazySingleton(() => EmailAuthService(sl()));

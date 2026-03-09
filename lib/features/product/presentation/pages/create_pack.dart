@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';

@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class UserEntity extends Equatable {
   final String? id;
   final DateTime? createdAt;
-    final String? email;
+  final String? email;
   final String? password;
   final String? firstName;
   final String? lastName;
@@ -16,7 +16,7 @@ class UserEntity extends Equatable {
   const UserEntity({
     this.id,
     this.createdAt,
-        this.email,
+    this.email,
     this.password,
     this.firstName,
     this.lastName,
@@ -30,7 +30,7 @@ class UserEntity extends Equatable {
   UserEntity copyWith({
     String? id,
     DateTime? createdAt,
-        String? email,
+    String? email,
     String? password,
     String? firstName,
     String? lastName,
@@ -43,7 +43,7 @@ class UserEntity extends Equatable {
     return UserEntity(
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
-            email: email ?? this.email,
+      email: email ?? this.email,
       password: password ?? this.password,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
@@ -57,9 +57,9 @@ class UserEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, 
+    id,
     createdAt,
-        email,
+    email,
     password,
     firstName,
     lastName,

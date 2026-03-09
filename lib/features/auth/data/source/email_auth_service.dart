@@ -9,11 +9,9 @@ class EmailAuthService {
   // --- CRÉATION DE COMPTE ---
   Future<AuthModel> signUp(String email, String password) async {
     try {
-      final res = await _client.auth.signUp(
-        email: email,
-        password: password,
-      );
-      if (res.user == null) throw ApiException(message: "Erreur lors de l'inscription");
+      final res = await _client.auth.signUp(email: email, password: password);
+      if (res.user == null)
+        throw ApiException(message: "Erreur lors de l'inscription");
       return AuthModel.fromSupabase(res.user!);
     } on AuthException catch (e) {
       throw ApiException(message: e.message, code: e.statusCode);
@@ -29,7 +27,8 @@ class EmailAuthService {
         email: email,
         password: password,
       );
-      if (res.user == null) throw ApiException(message: "Utilisateur introuvable");
+      if (res.user == null)
+        throw ApiException(message: "Utilisateur introuvable");
       return AuthModel.fromSupabase(res.user!);
     } on AuthException catch (e) {
       throw ApiException(message: e.message, code: e.statusCode);
@@ -55,7 +54,7 @@ class EmailAuthService {
       final res = await _client.auth.verifyOTP(
         email: email,
         token: code,
-        type: type, // Utilise OtpType.signup ou OtpType.recovery
+        type: type,
       );
       if (res.user == null) throw ApiException(message: "Code invalide");
       return AuthModel.fromSupabase(res.user!);
@@ -69,9 +68,7 @@ class EmailAuthService {
   // --- SÉCURITÉ ---
   Future<void> updatePassword(String newPassword) async {
     try {
-      await _client.auth.updateUser(
-        UserAttributes(password: newPassword),
-      );
+      await _client.auth.updateUser(UserAttributes(password: newPassword));
     } on AuthException catch (e) {
       throw ApiException(message: e.message, code: e.statusCode);
     } catch (e) {
