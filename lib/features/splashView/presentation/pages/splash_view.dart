@@ -1,3 +1,4 @@
+import 'package:e_tantana/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,14 +18,14 @@ class _SplashViewState extends ConsumerState<SplashView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(Duration(seconds: 5, milliseconds: 10));
-      navigatedToNavBar();
+      navigate();
     });
   }
 
-  void navigatedToNavBar() {
+  void navigate() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const NavBar()),
+      MaterialPageRoute(builder: (_) => const OnboardingPage()),
     );
   }
 

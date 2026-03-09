@@ -7,6 +7,7 @@ class EmailAuthService {
   EmailAuthService(this._client);
 
   // --- CRÉATION DE COMPTE ---
+
   Future<AuthModel> signUp(String email, String password) async {
     try {
       final res = await _client.auth.signUp(email: email, password: password);
