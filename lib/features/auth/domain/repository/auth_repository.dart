@@ -17,6 +17,7 @@ abstract class AuthRepository {
   // --- SESSION MANAGEMENT (Base) ---
   ResultFuture<AuthEntity?> getCurrentUser();
   Stream<AuthEntity?> onAuthStateChanged();
+  ResultFuture<bool> isUserLoggedIn();
   ResultVoid signOut();
 
   // {{social_repo_methods_anchor}}

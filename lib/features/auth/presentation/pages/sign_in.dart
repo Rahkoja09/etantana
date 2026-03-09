@@ -3,6 +3,8 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/auth/presentation/pages/forgot_password.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_up.dart';
+import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
+import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/button/horizontal_social_button.dart';
 import 'package:e_tantana/shared/widget/input/Password_input.dart';
@@ -31,6 +33,15 @@ class _SignInState extends ConsumerState<SignIn> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final authAction = ref.read(authControllerProvider.notifier);
+
+    ref.listen<AuthStates>(authControllerProvider, (previous, next) {
+      if (next.status == AuthStatus.authenticated) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const NavBar()),
+        );
+      }
+    });
 
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(

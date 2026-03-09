@@ -42,6 +42,12 @@ class AuthRemoteSourceImpl implements AuthRemoteSource {
   // --- SESSION MANAGEMENT (Base) ---
 
   @override
+  bool hasActiveSession() {
+    final session = _client.auth.currentSession;
+    return session != null && session.user != null;
+  }
+
+  @override
   AuthModel? getCurrentUser() {
     final user = _client.auth.currentUser;
     return user != null ? AuthModel.fromSupabase(user) : null;

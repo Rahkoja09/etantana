@@ -5,6 +5,7 @@
 // souhaitez pouvoir ajouter des fonctionnalites via la commande "cscm auth".
 // -----------------------------------------------------------------------------
 
+import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // {{auth_controller_imports_anchor}}
 
@@ -19,12 +20,35 @@ import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
 
 class AuthController extends StateNotifier<AuthStates> {
   final AuthUsecases _authUsecases;
+  final StorageService _storageService;
 
-  AuthController(this._authUsecases) : super(const AuthStates()) {
+  AuthController(this._authUsecases, this._storageService)
+    : super(const AuthStates()) {
     checkCurrentUser();
   }
 
   // --- SESSION MANAGEMENT (Base) ---
+
+  Future<void> checkAuthStatus() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    final res = await _authUsecases.checkAuthStatus();
+
+    final bool hasSeenOnboarding = _storageService.hasSeenOnboarding();
+
+    res.fold(
+      (failure) => state = state.copyWith(status: AuthStatus.unauthenticated),
+      (isLoggedIn) {
+        if (isLoggedIn) {
+          state = state.copyWith(status: AuthStatus.authenticated);
+        } else if (!hasSeenOnboarding) {
+          state = state.copyWith(status: AuthStatus.onboarding);
+        } else {
+          state = state.copyWith(status: AuthStatus.unauthenticated);
+        }
+      },
+    );
+  }
 
   Future<void> checkCurrentUser() async {
     final res = await _authUsecases.getCurrentUser();
@@ -180,5 +204,5 @@ class AuthController extends StateNotifier<AuthStates> {
 // --- PROVIDER ---
 final authControllerProvider =
     StateNotifierProvider<AuthController, AuthStates>((ref) {
-      return AuthController(sl<AuthUsecases>());
+      return AuthController(sl<AuthUsecases>(), sl<StorageService>());
     });

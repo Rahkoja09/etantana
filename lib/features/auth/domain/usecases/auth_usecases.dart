@@ -19,6 +19,7 @@ class AuthUsecases {
   AuthUsecases(this._repo);
 
   // --- SESSION MANAGEMENT (Base) ---
+  ResultFuture<bool> checkAuthStatus() async => await _repo.isUserLoggedIn();
   ResultFuture<AuthEntity?> getCurrentUser() => _repo.getCurrentUser();
   Stream<AuthEntity?> onAuthStateChanged() => _repo.onAuthStateChanged();
   ResultVoid signOut() => _repo.signOut();

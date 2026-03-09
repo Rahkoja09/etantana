@@ -98,9 +98,9 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   ).push(MaterialPageRoute(builder: (_) => const SignUp()));
                 },
                 icon: Icon(
-                  Icons.settings_rounded,
+                  Icons.menu_rounded,
                   color: iconColor,
-                  size: iconSize,
+                  size: iconSize + 3,
                 ),
               ),
             ],

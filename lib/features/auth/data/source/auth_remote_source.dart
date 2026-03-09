@@ -12,6 +12,7 @@ abstract class AuthRemoteSource {
   // --- SESSION (Base) ---
   AuthModel? getCurrentUser();
   Stream<AuthModel?> onAuthStateChanged();
+  bool hasActiveSession();
   Future<void> signOut();
 
   // {{social_methods_anchor}}

@@ -1,4 +1,5 @@
 import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:e_tantana/features/delivring/data/repository/delivering_repository_impl.dart';
 import 'package:e_tantana/features/delivring/data/source/delivering_remote_source.dart';
 import 'package:e_tantana/features/delivring/domain/repository/delivering_repository.dart';
@@ -31,6 +32,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:e_tantana/features/user/data/repository/user_repository_impl.dart';
@@ -78,6 +80,9 @@ Future<void> _initCore() async {
   sl.registerLazySingleton(() => Supabase.instance.client);
   sl.registerLazySingleton(() => InternetConnection());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  sl.registerLazySingleton(() => StorageService(sl<SharedPreferences>()));
 }
 
 Future<void> _initProduct() async {

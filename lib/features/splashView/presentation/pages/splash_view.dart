@@ -1,5 +1,8 @@
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/auth/presentation/pages/onboarding_page.dart';
+import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
+import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,46 +20,51 @@ class _SplashViewState extends ConsumerState<SplashView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.delayed(Duration(seconds: 5, milliseconds: 10));
-      navigate();
+      await ref.read(authControllerProvider.notifier).checkAuthStatus();
     });
-  }
-
-  void navigate() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const OnboardingPage()),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthStates>(authControllerProvider, (previous, next) {
+      print(next.status);
+      if (next.status == AuthStatus.onboarding) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const OnboardingPage()),
+        );
+      } else if (next.status == AuthStatus.authenticated) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const NavBar()),
+        );
+      } else if (next.status == AuthStatus.unauthenticated) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SignIn()),
+        );
+      }
+    });
+
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(60),
-        decoration: BoxDecoration(color: Colors.white),
-        child: SafeArea(
-          child: Column(
-            children: [
-              const Spacer(),
-              Center(
-                child: Lottie.asset(
-                  "assets/medias/animations/etantana_sv_black.json",
-                  height: 50,
-                  repeat: false,
-                ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Spacer(),
+            Center(
+              child: Lottie.asset(
+                "assets/medias/animations/etantana_sv_black.json",
+                height: 50.h,
+                repeat: false,
               ),
-              const Spacer(),
-              SizedBox(height: 60.h),
-            ],
-          ),
+            ),
+            const Spacer(),
+            const CircularProgressIndicator(strokeWidth: 2),
+            SizedBox(height: 60.h),
+          ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

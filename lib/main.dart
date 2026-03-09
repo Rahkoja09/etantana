@@ -5,6 +5,7 @@ import 'package:e_tantana/config/constants/mapBox_const.dart';
 import 'package:e_tantana/config/constants/supabase_api_constants.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart' as di;
+import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:e_tantana/features/splashView/presentation/pages/splash_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +16,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_theme/json_theme.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart'
     show MapboxOptions;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // charger shared_preferences ----------------
+  final prefs = await SharedPreferences.getInstance();
 
   // Charger themes dark and light ------------
   final lightStr = await rootBundle.loadString("assets/theme/light_theme.json");
@@ -43,6 +48,9 @@ Future<void> main() async {
 
   runApp(
     ProviderScope(
+      overrides: [
+        storageServiceProvider.overrideWithValue(StorageService(prefs)),
+      ],
       child: DevicePreview(
         enabled: !kReleaseMode,
         builder: (context) => const MyApp(),

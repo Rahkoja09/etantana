@@ -28,6 +28,16 @@ class AuthRepositoryImpl implements AuthRepository {
   // --- SESSION MANAGEMENT (Base) ---
 
   @override
+  Future<Either<Failure, bool>> isUserLoggedIn() async {
+    try {
+      final isLoggedIn = _remoteSource.hasActiveSession();
+      return Right(isLoggedIn);
+    } catch (e) {
+      return Left(ServerFailure(e.toString(), "500"));
+    }
+  }
+
+  @override
   ResultFuture<AuthEntity?> getCurrentUser() async {
     try {
       final user = _remoteSource.getCurrentUser();
