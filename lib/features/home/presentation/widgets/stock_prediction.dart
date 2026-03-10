@@ -1,5 +1,6 @@
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_list.dart';
+import 'package:e_tantana/features/user/presentation/pages/create_user_profil.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/others/gradient_separator_background.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
@@ -37,10 +38,19 @@ class StockPrediction extends ConsumerWidget {
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  child: Icon(
-                    Icons.question_mark_rounded,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    size: 10,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const CreateUserProfil(),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.question_mark_rounded,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      size: 10,
+                    ),
                   ),
                 ),
               ),

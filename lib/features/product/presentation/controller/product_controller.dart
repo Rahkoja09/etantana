@@ -19,7 +19,12 @@ class ProductController extends StateNotifier<ProductState> {
   Future<void> addProduct(ProductEntities entities, File? productImage) async {
     final action = InsertProductAction(entities.name!);
     _setLoadingState(action: action);
-    final res = await _productUsecases.insertProduct(entities, productImage);
+    final res = await _productUsecases.insertProduct(
+      entities,
+      productImage,
+      'testuserID',
+      "testInternalFolder",
+    );
     res.fold((error) => _setError(error: error, action: action), (success) {
       state = state.copyWith(
         isLoading: false,

@@ -9,6 +9,7 @@ class PriceInput extends StatefulWidget {
   final String textHint;
   final IconData iconData;
   final TextEditingController textEditController;
+  final bool? isPrice;
   final String currencySymbol;
 
   const PriceInput({
@@ -17,6 +18,7 @@ class PriceInput extends StatefulWidget {
     required this.iconData,
     required this.textEditController,
     this.currencySymbol = '€',
+    this.isPrice = true,
   });
 
   @override
@@ -25,6 +27,7 @@ class PriceInput extends StatefulWidget {
 
 class _PriceInputState extends State<PriceInput> {
   String _rawValue = '';
+  bool _isFormatting = false;
 
   @override
   void initState() {
@@ -33,37 +36,48 @@ class _PriceInputState extends State<PriceInput> {
   }
 
   void _formatPriceInput() {
+    if (_isFormatting) return;
+
     final currentText = widget.textEditController.text;
 
-    // 🔹 On ne fait rien si le champ est vide
     if (currentText.isEmpty) {
       _rawValue = '';
       return;
     }
 
-    // 🔹 Nettoyer le texte : ne garder que les chiffres
     String cleanedInput = currentText.replaceAll(RegExp(r'[^0-9]'), '');
     if (cleanedInput.isEmpty) {
       _rawValue = '';
+      _isFormatting = true;
       widget.textEditController.text = '';
+      _isFormatting = false;
       return;
     }
 
     _rawValue = cleanedInput;
 
-    // 🔹 Formater avec des points comme séparateurs de milliers
-    int value = int.tryParse(_rawValue) ?? 0;
-    final formatter = NumberFormat('#,###', 'en_US');
-    String formatted = formatter.format(value).replaceAll(',', '.');
+    if (widget.isPrice == true) {
+      int value = int.tryParse(_rawValue) ?? 0;
+      final formatter = NumberFormat('#,###', 'en_US');
+      String formatted = formatter.format(value).replaceAll(',', '.');
 
-    // 🔹 Met à jour uniquement si différent (évite les boucles infinies)
-    if (currentText != formatted) {
-      final selection = widget.textEditController.selection;
-      widget.textEditController.text = formatted;
-      widget.textEditController.selection = TextSelection.collapsed(
-        offset:
-            selection.baseOffset >= 0 ? selection.baseOffset : formatted.length,
-      );
+      if (currentText != formatted) {
+        _isFormatting = true;
+        widget.textEditController.value = TextEditingValue(
+          text: formatted,
+          selection: TextSelection.collapsed(offset: formatted.length),
+        );
+        _isFormatting = false;
+      }
+    } else {
+      if (currentText != _rawValue) {
+        _isFormatting = true;
+        widget.textEditController.value = TextEditingValue(
+          text: _rawValue,
+          selection: TextSelection.collapsed(offset: _rawValue.length),
+        );
+        _isFormatting = false;
+      }
     }
   }
 
@@ -73,7 +87,6 @@ class _PriceInputState extends State<PriceInput> {
     super.dispose();
   }
 
-  /// Retourne la valeur sans format (ex : 50000)
   String get rawValue => _rawValue;
 
   @override
@@ -89,7 +102,7 @@ class _PriceInputState extends State<PriceInput> {
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surface,
+        fillColor: Theme.of(context).colorScheme.surfaceContainer,
         prefixIcon: HugeIcon(
           icon: widget.iconData,
           color: Theme.of(context).colorScheme.onSurface,
@@ -97,17 +110,18 @@ class _PriceInputState extends State<PriceInput> {
         ),
         prefixText: '${widget.currencySymbol} ',
         contentPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-        hintText: widget.textHint.toUpperCase(),
+        hintText: widget.textHint,
         hintStyle: TextStyles.bodyText(
           context: context,
           color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           ),
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
         ),
