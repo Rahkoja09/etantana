@@ -30,7 +30,7 @@ class AuthController extends StateNotifier<AuthStates> {
   // --- SESSION MANAGEMENT (Base) ---
 
   Future<void> checkAuthStatus() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 5));
 
     final res = await _authUsecases.checkAuthStatus();
 
@@ -81,6 +81,7 @@ class AuthController extends StateNotifier<AuthStates> {
       webId: webId,
       iosId: iosId,
     );
+    await checkAuthStatus();
 
     res.fold(
       (error) => _setError(error: error, action: action),
@@ -124,7 +125,6 @@ class AuthController extends StateNotifier<AuthStates> {
 
     final res = await _authUsecases.signInWithEmail(email, password);
     await checkAuthStatus();
-
     res.fold(
       (error) => _setError(error: error, action: action),
       (user) =>

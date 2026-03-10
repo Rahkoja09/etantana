@@ -14,8 +14,7 @@ class DialogueDeleteAction extends StatelessWidget {
       padding: EdgeInsets.all(StylesConstants.spacerContent),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius - 6),
-        border: Border.all(color: Theme.of(context).colorScheme.error),
-        color: Colors.transparent,
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

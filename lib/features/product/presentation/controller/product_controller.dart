@@ -120,7 +120,6 @@ class ProductController extends StateNotifier<ProductState> {
 
     res.fold((error) => _setError(error: error, action: action), (success) {
       if (success.length < _pageSize) _isLastPage = true;
-      print("products result : $success");
       state = state.copyWith(
         isLoading: false,
         isClearError: true,

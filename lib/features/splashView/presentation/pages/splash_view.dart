@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/mainErrorListener/success_error_listener.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
@@ -46,23 +47,25 @@ class _SplashViewState extends ConsumerState<SplashView> {
       }
     });
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            const Spacer(),
-            Center(
-              child: Lottie.asset(
-                "assets/medias/animations/etantana_sv_black.json",
-                height: 50.h,
-                repeat: false,
+    return SuccessErrorListener(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              const Spacer(),
+              Center(
+                child: Lottie.asset(
+                  "assets/medias/animations/etantana_sv_black.json",
+                  height: 50.h,
+                  repeat: false,
+                ),
               ),
-            ),
-            const Spacer(),
-            const CircularProgressIndicator(strokeWidth: 2),
-            SizedBox(height: 60.h),
-          ],
+              const Spacer(),
+              const CircularProgressIndicator(strokeWidth: 2),
+              SizedBox(height: 60.h),
+            ],
+          ),
         ),
       ),
     );

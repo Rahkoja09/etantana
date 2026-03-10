@@ -10,6 +10,7 @@ Future<void> showCustomPopup({
   required String title,
   required String description,
   required Widget child,
+  bool? isLoading,
   required bool isError,
   void Function()? onTapRightBtn,
   void Function()? onTapLeftBtn,
@@ -71,6 +72,7 @@ Future<void> showCustomPopup({
                             SizedBox(height: 4.h),
                             Text(
                               description,
+                              textAlign: TextAlign.center,
                               style: TextStyles.bodyMedium(
                                 context: context,
                                 color: Colors.white.withOpacity(0.8),
@@ -122,6 +124,7 @@ Future<void> showCustomPopup({
                           onTap: onTapRightBtn ?? () => Navigator.pop(context),
                           btnText: rightButtonTitle ?? "valider",
                           btnColor: headerColor,
+                          isLoading: isLoading,
                         ),
                       ),
                     ],

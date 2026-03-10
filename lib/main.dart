@@ -5,6 +5,8 @@ import 'package:e_tantana/config/constants/mapBox_const.dart';
 import 'package:e_tantana/config/constants/supabase_api_constants.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart' as di;
+import 'package:e_tantana/core/mainErrorListener/app_shell.dart';
+import 'package:e_tantana/core/mainErrorListener/success_error_listener.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:e_tantana/features/splashView/presentation/pages/splash_view.dart';
 import 'package:flutter/foundation.dart';
@@ -41,6 +43,10 @@ Future<void> main() async {
   await Supabase.initialize(
     url: SupabaseApiConstants.apiUrl,
     anonKey: SupabaseApiConstants.apiKey,
+    authOptions: const FlutterAuthClientOptions(
+      autoRefreshToken: true,
+      detectSessionInUri: true,
+    ),
   );
   MapboxOptions.setAccessToken(MapboxConst.mapxBoxAccessToken);
 
@@ -53,7 +59,7 @@ Future<void> main() async {
       ],
       child: DevicePreview(
         enabled: !kReleaseMode,
-        builder: (context) => const MyApp(),
+        builder: (context) => MyApp(),
       ),
     ),
   );
@@ -76,7 +82,7 @@ class MyApp extends ConsumerWidget {
             theme: theme,
             debugShowCheckedModeBanner: false,
             title: AppConst.appName,
-            home: const SplashView(),
+            home: const AppShell(),
           ),
         );
       },

@@ -10,6 +10,7 @@ import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
+import 'package:e_tantana/features/sideBar/presentation/pages/side_bar.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/selectableOption/moderne_option_card.dart';
 import 'package:flutter/material.dart';
@@ -107,73 +108,70 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
 
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       },
-      child: SuccessErrorListener(
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-          extendBody: true,
-          appBar: const AppBarCustom(),
-          //endDrawer: const SideBar(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+        extendBody: true,
+        appBar: const AppBarCustom(),
+        endDrawer: const SideBar(),
 
-          // IndexedStack save state of pages eto ooo ----------
-          body: NotificationListener<ScrollNotification>(
-            onNotification: onScrollNotification,
-            child: IndexedStack(
-              index: _bottomNavIndex,
-              children: [Home(), Product(), Order(), Delivery()],
-            ),
+        // IndexedStack save state of pages eto ooo ----------
+        body: NotificationListener<ScrollNotification>(
+          onNotification: onScrollNotification,
+          child: IndexedStack(
+            index: _bottomNavIndex,
+            children: [Home(), Product(), Order(), Delivery()],
           ),
+        ),
 
-          floatingActionButton: ScaleTransition(
-            scale: fabAnimation,
-            child: FloatingActionButton(
-              shape: const CircleBorder(),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              child: const Icon(
-                HugeIcons.strokeRoundedAdd01,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                _showEditOptionsDialog(context);
-              },
+        floatingActionButton: ScaleTransition(
+          scale: fabAnimation,
+          child: FloatingActionButton(
+            shape: const CircleBorder(),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: const Icon(
+              HugeIcons.strokeRoundedAdd01,
+              color: Colors.white,
             ),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-
-          bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-            borderColor: Theme.of(context).colorScheme.surfaceContainer,
-            itemCount: _iconList.length,
-            tabBuilder: (int index, bool isActive) {
-              final color =
-                  isActive
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurfaceVariant;
-
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(_iconList[index], size: 20.w, color: color),
-                  SizedBox(height: 2.h),
-                  Text(
-                    _getLabel(index),
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              );
+            onPressed: () {
+              _showEditOptionsDialog(context);
             },
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            activeIndex: _bottomNavIndex,
-            splashColor: Theme.of(context).colorScheme.primary,
-            notchSmoothness: NotchSmoothness.softEdge,
-            gapLocation: GapLocation.center,
-            onTap: (index) => setState(() => _bottomNavIndex = index),
-            hideAnimationController: _hideBottomBarAnimationController,
           ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+        bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+          borderColor: Theme.of(context).colorScheme.surfaceContainer,
+          itemCount: _iconList.length,
+          tabBuilder: (int index, bool isActive) {
+            final color =
+                isActive
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurfaceVariant;
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(_iconList[index], size: 20.w, color: color),
+                SizedBox(height: 2.h),
+                Text(
+                  _getLabel(index),
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            );
+          },
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          activeIndex: _bottomNavIndex,
+          splashColor: Theme.of(context).colorScheme.primary,
+          notchSmoothness: NotchSmoothness.softEdge,
+          gapLocation: GapLocation.center,
+          onTap: (index) => setState(() => _bottomNavIndex = index),
+          hideAnimationController: _hideBottomBarAnimationController,
         ),
       ),
     );

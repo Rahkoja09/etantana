@@ -1,3 +1,4 @@
+import 'package:e_tantana/config/constants/client_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
@@ -169,7 +170,13 @@ class _SignInState extends ConsumerState<SignIn> {
               ),
               SizedBox(height: 15),
               HorizontalSocialButton(
-                onTap: () async {},
+                onTap: () async {
+                  print("koja");
+                  await authAction.loginWithGoogle(
+                    webId: ClientConst.webClientID,
+                    iosId: ClientConst.iosClientID,
+                  );
+                },
                 socialIconLinkOrAsset: "assets/medias/icons/googleLogo.png",
                 title: "Continuer avec Google",
               ),

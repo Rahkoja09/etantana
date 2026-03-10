@@ -46,10 +46,10 @@ class _OrderState extends ConsumerState<Order> {
   // status update -------------
   String newStatus = "validated";
   List<String> statusList = [
-    DeliveryStatus.validated.label,
-    DeliveryStatus.delivered.label,
-    DeliveryStatus.pending.label,
-    DeliveryStatus.cancelled.label,
+    DeliveryStatus.validated.name,
+    DeliveryStatus.delivered.name,
+    DeliveryStatus.pending.name,
+    DeliveryStatus.cancelled.name,
   ];
 
   @override
@@ -271,8 +271,7 @@ class _OrderState extends ConsumerState<Order> {
                                                         ),
                                                       CustomDropdown(
                                                         textHint:
-                                                            "Chosir le nouveau status",
-
+                                                            "Choisir le nouveau status",
                                                         iconData:
                                                             HugeIcons
                                                                 .strokeRoundedCheckList,
@@ -284,83 +283,38 @@ class _OrderState extends ConsumerState<Order> {
                                                         },
                                                       ),
                                                       SizedBox(height: 30),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Button(
-                                                            onTap:
-                                                                () =>
-                                                                    Navigator.pop(
-                                                                      context,
-                                                                    ),
-                                                            enableNoBackground:
-                                                                true,
-                                                            btnColor:
-                                                                Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .colorScheme
-                                                                    .primary,
-                                                            btnText: "Annuler",
-                                                            btnTextColor:
-                                                                Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .colorScheme
-                                                                    .primary,
-                                                          ),
-                                                          Button(
-                                                            onTap: () async {
-                                                              final navigator =
-                                                                  Navigator.of(
-                                                                    context,
-                                                                  );
-                                                              final update =
-                                                                  item.copyWith(
-                                                                    status: DeliveryStatus
-                                                                        .values
-                                                                        .byName(
-                                                                          newStatus,
-                                                                        ),
-                                                                  );
-                                                              await orderAction
-                                                                  .updateOrderFlow(
-                                                                    update,
-                                                                  );
-                                                              if (newStatus ==
-                                                                  DeliveryStatus
-                                                                      .cancelled
-                                                                      .name) {
-                                                                await productAction
-                                                                    .cancelAndRestock(
-                                                                      item.id!,
-                                                                      clientName:
-                                                                          item.clientName!,
-                                                                    );
-                                                              }
-                                                              await _getOrder();
-                                                              await deilveryAction
-                                                                  .searchDelivering(
-                                                                    null,
-                                                                  );
-                                                              await dashBoardAction
-                                                                  .getDashboardStats();
-                                                              navigator.pop();
-                                                            },
-                                                            btnColor:
-                                                                Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .colorScheme
-                                                                    .primary,
-                                                            btnText: "Valider",
-                                                          ),
-                                                        ],
-                                                      ),
                                                     ],
                                                   ),
+                                                  onTapRightBtn: () async {
+                                                    final update = item
+                                                        .copyWith(
+                                                          status: DeliveryStatus
+                                                              .values
+                                                              .byName(
+                                                                newStatus,
+                                                              ),
+                                                        );
+                                                    await orderAction
+                                                        .updateOrderFlow(
+                                                          update,
+                                                        );
+                                                    if (newStatus ==
+                                                        DeliveryStatus
+                                                            .cancelled
+                                                            .name) {
+                                                      await productAction
+                                                          .cancelAndRestock(
+                                                            item.id!,
+                                                            clientName:
+                                                                item.clientName!,
+                                                          );
+                                                    }
+                                                    await _getOrder();
+                                                    await deilveryAction
+                                                        .searchDelivering(null);
+                                                    await dashBoardAction
+                                                        .getDashboardStats();
+                                                  },
                                                 );
                                               }
                                             }

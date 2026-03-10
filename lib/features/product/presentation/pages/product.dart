@@ -396,14 +396,18 @@ class _ProductState extends ConsumerState<Product> {
                                                               .notifier,
                                                         )
                                                         .deleteProductById(
-                                                          ProductListPageState
-                                                              .selectedProduct!
-                                                              .id!,
+                                                          item.id!,
                                                           productName:
                                                               ProductListPageState
                                                                   .selectedProduct!
                                                                   .name!,
                                                         );
+                                                    await ref
+                                                        .read(
+                                                          productControllerProvider
+                                                              .notifier,
+                                                        )
+                                                        .researchProduct(null);
                                                   },
                                                   child: DialogueDeleteAction(
                                                     nameOrID: "${item.name}",

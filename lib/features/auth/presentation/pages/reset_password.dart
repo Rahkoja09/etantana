@@ -84,6 +84,7 @@ class _ResetPasswordState extends ConsumerState<ResetPassword> {
                       await authAtion.changePassword(
                         confirmPasswordController.text,
                       );
+                      await authAtion.logout();
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (_) => const SignIn()),
                       );
@@ -96,7 +97,7 @@ class _ResetPasswordState extends ConsumerState<ResetPassword> {
                   btnColor: colorScheme.primary,
                   borderRadius: StylesConstants.borderRadius,
                   btnTextColor: Colors.white,
-                  btnText: "Créer mon compte",
+                  btnText: "Changer mon mot de passe",
                   isLoading: authState.isLoading,
                 ),
               ),

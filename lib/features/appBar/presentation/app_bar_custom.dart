@@ -85,20 +85,10 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   color: theme == darkTheme ? Colors.blue : Colors.amberAccent,
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.notifications_rounded,
-                  color: iconColor,
-                  size: iconSize,
-                ),
-              ),
 
               IconButton(
                 onPressed: () {
-                  Navigator.of(
-                    context,
-                  ).push(MaterialPageRoute(builder: (_) => const SignUp()));
+                  Scaffold.of(context).openEndDrawer();
                 },
                 icon: Icon(
                   Icons.menu_rounded,
