@@ -82,7 +82,7 @@ class MyApp extends ConsumerWidget {
             theme: theme,
             debugShowCheckedModeBanner: false,
             title: AppConst.appName,
-            home: const AppShell(),
+            home: AppShell(),
           ),
         );
       },

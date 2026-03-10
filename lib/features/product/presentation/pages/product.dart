@@ -420,7 +420,7 @@ class _ProductState extends ConsumerState<Product> {
                                                 );
                                               },
                                               product: item,
-                                              onEdit: () {
+                                              onEdit: () async {
                                                 ProductListPageAction.selectedProduct(
                                                   item,
                                                 );
@@ -430,9 +430,7 @@ class _ProductState extends ConsumerState<Product> {
                                                         (_) => AddProduct(
                                                           isFutureProduct:
                                                               false,
-                                                          productToEdit:
-                                                              ProductListPageState
-                                                                  .selectedProduct,
+                                                          productToEdit: item,
                                                         ),
                                                   ),
                                                 );

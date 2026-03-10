@@ -70,6 +70,10 @@ class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
     );
   }
 
+  void updateStyle(String styleUrl) {
+    mapboxMap?.style.setStyleURI(styleUrl);
+  }
+
   Future<void> _initializeDeliveryMap() async {
     if (mapboxMap == null) return;
 
@@ -237,10 +241,6 @@ class DeliveryMapWidgetState extends ConsumerState<DeliveryMapWidget> {
       await _circleAnnotationManager!.delete(circle);
       _circleAnnotations.remove(deliveryId);
     }
-  }
-
-  Future<void> updateDeliveryStatus(String deliveryId, String newStatus) async {
-    // À implémenter: supprime l'ancien cercle et en ajoute un nouveau --------
   }
 
   @override

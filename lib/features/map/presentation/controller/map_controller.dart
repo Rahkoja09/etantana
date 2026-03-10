@@ -1,3 +1,4 @@
+import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/features/map/domain/usecases/map_usecases.dart';
@@ -27,6 +28,15 @@ class MapController extends StateNotifier<MapStates> {
     );
   }
 
+  Future<void> setStyleToMap({required styleUrl}) async {
+    state = state.copyWith(
+      mapStyleUrl: styleUrl,
+      isLoading: false,
+      isClearError: true,
+      failure: null,
+    );
+  }
+
   // set loading state ----------
   void _setLoadingState({required mapAction action}) {
     state = state.copyWith(isLoading: true, action: action);
@@ -44,7 +54,20 @@ class MapController extends StateNotifier<MapStates> {
 }
 
 final mapControllerProvider = StateNotifierProvider<MapController, MapStates>((
-  _,
+  ref,
 ) {
-  return MapController(sl<MapUsecases>());
+  final controller = MapController(sl<MapUsecases>());
+
+  ref.listen(themeProvider, (previous, next) {
+    final isDark = next == darkTheme;
+
+    controller.setStyleToMap(
+      styleUrl:
+          isDark
+              ? 'mapbox://styles/rahkoja/cmlhrowbi000401rzgywt3afg'
+              : 'mapbox://styles/rahkoja/cmmkl4gzp000p01s375r74kbd',
+    );
+  }, fireImmediately: true);
+
+  return controller;
 });

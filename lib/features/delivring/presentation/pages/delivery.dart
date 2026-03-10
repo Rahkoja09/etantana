@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/utils/tools/count_delivery.dart';
 import 'package:e_tantana/features/delivring/domain/mapper/order_to_delivering_mapper.dart';
@@ -66,6 +67,11 @@ class _DeliveryState extends ConsumerState<Delivery> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(mapControllerProvider, (previous, next) {
+      if (previous?.mapStyleUrl != next.mapStyleUrl) {
+        _mapKey.currentState?.updateStyle(next.mapStyleUrl);
+      }
+    });
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
@@ -261,9 +267,9 @@ class _DeliveryState extends ConsumerState<Delivery> {
   }
 
   Widget _buildMap() {
+    final mapStyle = ref.watch(mapControllerProvider).mapStyleUrl;
     final deliveringState = ref.watch(deliveringControllerProvider);
     final actualDeliverings = deliveringState.deliverings ?? [];
-
     final mapEntities = actualDeliverings.map((d) => d.toMapEntity()).toList();
 
     return DeliveryMapWidget(
@@ -271,9 +277,9 @@ class _DeliveryState extends ConsumerState<Delivery> {
       config: DeliveryMapConfig(
         center: Position(47.5, -19.0),
         zoom: 13.0,
-        styleUri: 'mapbox://styles/rahkoja/cmlhvlh1e002l01r88yao1l2s',
+        styleUri: mapStyle,
         deliveries: mapEntities,
-        pitch: 50,
+        pitch: 0,
         perimeterRadius: 2000.0,
         onMapCreated: () {},
         onDeliveryTap: (delivery) {

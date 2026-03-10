@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/features/map/domain/entity/map_entity.dart';
 
-enum mapAction { searchGeolocation }
+enum mapAction { searchGeolocation, setMapStyle }
 
 class MapStates extends Equatable {
   final bool isLoading;
@@ -11,6 +11,7 @@ class MapStates extends Equatable {
   final String? errorCode;
   final String? currentCriterial;
   final Failure? failure;
+  final String mapStyleUrl;
 
   MapStates({
     this.isLoading = false,
@@ -19,6 +20,7 @@ class MapStates extends Equatable {
     this.currentCriterial,
     this.errorCode,
     this.failure,
+    this.mapStyleUrl = "mapbox://styles/rahkoja/cmlhrowbi000401rzgywt3afg",
   });
 
   MapStates copyWith({
@@ -29,6 +31,7 @@ class MapStates extends Equatable {
     String? currentCriterial,
     Failure? failure,
     bool? isClearError = false,
+    String? mapStyleUrl,
   }) {
     return MapStates(
       action: action ?? this.action,
@@ -37,6 +40,7 @@ class MapStates extends Equatable {
       failure: isClearError == true ? null : (failure ?? this.failure),
       isLoading: isLoading ?? this.isLoading,
       locations: locations ?? this.locations,
+      mapStyleUrl: mapStyleUrl ?? this.mapStyleUrl,
     );
   }
 
@@ -48,5 +52,6 @@ class MapStates extends Equatable {
     errorCode,
     currentCriterial,
     failure,
+    mapStyleUrl,
   ];
 }

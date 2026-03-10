@@ -112,7 +112,6 @@ class _AddProductState extends ConsumerState<AddProduct> {
     final productState = ref.watch(productControllerProvider);
     final productAction = ref.read(productControllerProvider.notifier);
     final double contentSpacer = 20.h;
-    final double sectionSpacer = 50.h;
     return Stack(
       children: [
         Scaffold(

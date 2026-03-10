@@ -10,14 +10,14 @@ class AuthStates extends Equatable {
   final Failure? error;
   final AuthEntity? user;
   final AuthActions? action;
-  final AuthStatus? status;
+  final AuthStatus status;
 
   const AuthStates({
     this.isLoading = false,
     this.error,
     this.user,
     this.action,
-    this.status,
+    this.status = AuthStatus.initial,
   });
 
   AuthStates copyWith({

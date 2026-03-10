@@ -36,14 +36,8 @@ class MinimalDeliverieView extends StatelessWidget {
               color:
                   isDelivred(delivery.status)
                       ? colorScheme.surface
-                      : colorScheme.surfaceContainerLowest,
+                      : colorScheme.surfaceContainer,
               borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-              border: Border.all(
-                color:
-                    isDelivred(delivery.status)
-                        ? colorScheme.outlineVariant.withValues(alpha: 0.1)
-                        : colorScheme.outlineVariant.withValues(alpha: 0.3),
-              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

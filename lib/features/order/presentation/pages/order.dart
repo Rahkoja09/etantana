@@ -353,6 +353,9 @@ class _OrderState extends ConsumerState<Order> {
                     .read(orderControllerProvider.notifier)
                     .deleteOrderById(selectionForActionOrder!.id!);
                 await _getOrder();
+                await ref
+                    .read(deliveringControllerProvider.notifier)
+                    .searchDelivering(null);
 
                 setState(() {
                   leftActionOrder = false;

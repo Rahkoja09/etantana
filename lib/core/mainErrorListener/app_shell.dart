@@ -8,16 +8,26 @@ import 'package:e_tantana/features/splashView/presentation/pages/splash_view.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authControllerProvider);
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
 
-    return SuccessErrorListener(
-      child: _buildScreen(authState.status ?? AuthStatus.initial),
-    );
+class _AppShellState extends ConsumerState<AppShell> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(authControllerProvider.notifier).checkAuthStatus();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    return SuccessErrorListener(child: _buildScreen(authState.status));
   }
 
   Widget _buildScreen(AuthStatus status) {
