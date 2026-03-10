@@ -3,70 +3,50 @@ import 'package:equatable/equatable.dart';
 class UserEntity extends Equatable {
   final String? id;
   final DateTime? createdAt;
+    final String? name;
+  final String? profilLink;
   final String? email;
-  final String? password;
-  final String? firstName;
-  final String? lastName;
-  final String? shopName;
-  final String? facebookLink;
-  final String? slogan;
-  final String? whatsappContact;
+  final int? sixDigitCode;
   // [FIELDS_ANCHOR]
 
   const UserEntity({
     this.id,
     this.createdAt,
+        this.name,
+    this.profilLink,
     this.email,
-    this.password,
-    this.firstName,
-    this.lastName,
-    this.shopName,
-    this.facebookLink,
-    this.slogan,
-    this.whatsappContact,
+    this.sixDigitCode,
     // [CONSTRUCTOR_ANCHOR]
   });
 
   UserEntity copyWith({
     String? id,
     DateTime? createdAt,
+        String? name,
+    String? profilLink,
     String? email,
-    String? password,
-    String? firstName,
-    String? lastName,
-    String? shopName,
-    String? facebookLink,
-    String? slogan,
-    String? whatsappContact,
+    int? sixDigitCode,
     // [COPYWITH_PARAMS_ANCHOR]
   }) {
     return UserEntity(
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
+            name: name ?? this.name,
+      profilLink: profilLink ?? this.profilLink,
       email: email ?? this.email,
-      password: password ?? this.password,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      shopName: shopName ?? this.shopName,
-      facebookLink: facebookLink ?? this.facebookLink,
-      slogan: slogan ?? this.slogan,
-      whatsappContact: whatsappContact ?? this.whatsappContact,
+      sixDigitCode: sixDigitCode ?? this.sixDigitCode,
       // [COPYWITH_RETURN_ANCHOR]
     );
   }
 
   @override
   List<Object?> get props => [
-    id,
+    id, 
     createdAt,
+        name,
+    profilLink,
     email,
-    password,
-    firstName,
-    lastName,
-    shopName,
-    facebookLink,
-    slogan,
-    whatsappContact,
+    sixDigitCode,
     // [PROPS_ANCHOR]
   ];
 }

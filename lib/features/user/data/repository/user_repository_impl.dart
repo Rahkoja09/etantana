@@ -29,9 +29,7 @@ class UserRepositoryImpl implements UserRepository {
     int start = 0,
     int end = 9,
   }) async {
-    return await _executeAction(
-      () => _remoteSource.searchUser(criteria, start: start, end: end),
-    );
+    return await _executeAction(() => _remoteSource.searchUser(criteria, start: start, end: end));
   }
 
   @override
@@ -45,9 +43,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   /// Helper générique pour gérer la connectivité et les erreurs
-  Future<Either<Failure, T>> _executeAction<T>(
-    Future<T> Function() action,
-  ) async {
+  Future<Either<Failure, T>> _executeAction<T>(Future<T> Function() action) async {
     if (await _networkInfo.isConnected) {
       try {
         final res = await action();

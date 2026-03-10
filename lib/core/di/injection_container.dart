@@ -35,11 +35,6 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:e_tantana/features/user/data/repository/user_repository_impl.dart';
-import 'package:e_tantana/features/user/data/source/user_remote_source.dart';
-import 'package:e_tantana/features/user/domain/repository/user_repository.dart';
-import 'package:e_tantana/features/user/domain/usecases/user_usecases.dart';
-
 import 'package:e_tantana/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:e_tantana/features/auth/data/source/auth_remote_source.dart';
 import 'package:e_tantana/features/auth/data/source/auth_remote_source_impl.dart';
@@ -52,6 +47,11 @@ import 'package:e_tantana/features/shop/data/repository/shop_repository_impl.dar
 import 'package:e_tantana/features/shop/data/source/shop_remote_source.dart';
 import 'package:e_tantana/features/shop/domain/repository/shop_repository.dart';
 import 'package:e_tantana/features/shop/domain/usecases/shop_usecases.dart';
+
+import 'package:e_tantana/features/user/data/repository/user_repository_impl.dart';
+import 'package:e_tantana/features/user/data/source/user_remote_source.dart';
+import 'package:e_tantana/features/user/domain/repository/user_repository.dart';
+import 'package:e_tantana/features/user/domain/usecases/user_usecases.dart';
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -66,9 +66,9 @@ Future<void> init() async {
   _initMediaService();
   _initDashboard();
   _initFutureStockPrediction();
-  _initUser();
   _initAuth();
-    _initShop();
+  _initShop();
+    _initUser();
   // [INIT_ANCHOR]
 
   _initMap();
@@ -155,14 +155,6 @@ Future<void> _initMap() async {
   sl.registerLazySingleton(() => MapUsecases(sl<MapRepository>()));
 }
 
-Future<void> _initUser() async {
-  sl.registerLazySingleton<UserRemoteSource>(() => UserRemoteSourceImpl(sl()));
-  sl.registerLazySingleton<UserRepository>(
-    () => UserRepositoryImpl(sl(), sl()),
-  );
-  sl.registerLazySingleton(() => UserUsecases(sl()));
-}
-
 Future<void> _initAuth() async {
   sl.registerLazySingleton(() => SocialAuthService(sl()));
   sl.registerLazySingleton(() => EmailAuthService(sl()));
@@ -179,11 +171,19 @@ Future<void> _initAuth() async {
 }
 
 Future<void> _initShop() async {
-  sl.registerLazySingleton<ShopRemoteSource>(
-    () => ShopRemoteSourceImpl(sl()),
-  );
+  sl.registerLazySingleton<ShopRemoteSource>(() => ShopRemoteSourceImpl(sl()));
   sl.registerLazySingleton<ShopRepository>(
     () => ShopRepositoryImpl(sl(), sl()),
   );
   sl.registerLazySingleton(() => ShopUsecases(sl()));
+}
+
+Future<void> _initUser() async {
+  sl.registerLazySingleton<UserRemoteSource>(
+    () => UserRemoteSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<UserRepository>(
+    () => UserRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton(() => UserUsecases(sl()));
 }

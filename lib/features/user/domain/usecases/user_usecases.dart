@@ -33,6 +33,10 @@ class UserUsecases {
     int start = 0,
     int end = 9,
   }) async {
-    return await _repo.searchUser(criteria: criteria, start: start, end: end);
+    return await _repo.searchUser(
+      criteria: criteria,
+      start: start,
+      end: end,
+    );
   }
 }

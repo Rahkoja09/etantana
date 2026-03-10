@@ -1,9 +1,9 @@
+import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
+import 'package:e_tantana/features/user/presentation/states/user_states.dart';
 import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
 import 'package:e_tantana/features/shop/presentation/states/shop_states.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
-import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
-import 'package:e_tantana/features/user/presentation/states/user_states.dart';
 import 'package:e_tantana/core/error/error_manager.dart';
 import 'package:e_tantana/core/error/failures.dart';
 import 'package:e_tantana/core/mainErrorListener/last_network_time_provider.dart';
@@ -106,32 +106,6 @@ class SuccessErrorListener extends ConsumerWidget {
       }
     });
 
-    // [LISTENERS_ANCHOR]
-    ref.listen<UserStates>(userControllerProvider, (prev, next) {
-      if (next.error != null && next.error != prev?.error) {
-        _showFilteredError(
-          context: context,
-          ref: ref,
-          failure: next.error!,
-          action: next.action,
-          title: "Erreur utilisateur",
-        );
-      }
-
-      if (prev?.isLoading == true &&
-          next.isLoading == false &&
-          next.error == null) {
-        if (next.action?.isWriteAction == true) {
-          showToast(
-            context,
-            description: next.action!.successMessage,
-            isError: false,
-            title: "Succès utilisateur",
-          );
-        }
-      }
-    });
-
     ref.listen<AuthStates>(authControllerProvider, (prev, next) {
       if (next.error != null && next.error != prev?.error) {
         _showFilteredError(
@@ -157,7 +131,7 @@ class SuccessErrorListener extends ConsumerWidget {
       }
     });
 
-        ref.listen<ShopStates>(shopControllerProvider, (prev, next) {
+    ref.listen<ShopStates>(shopControllerProvider, (prev, next) {
       if (next.error != null && next.error != prev?.error) {
         _showFilteredError(
           context: context,
@@ -177,6 +151,31 @@ class SuccessErrorListener extends ConsumerWidget {
             description: next.action!.successMessage,
             isError: false,
             title: "Succès Shop",
+          );
+        }
+      }
+    });
+
+        ref.listen<UserStates>(userControllerProvider, (prev, next) {
+      if (next.error != null && next.error != prev?.error) {
+        _showFilteredError(
+          context: context,
+          ref: ref,
+          failure: next.error!,
+          action: next.action,
+          title: "Erreur User",
+        );
+      }
+
+      if (prev?.isLoading == true &&
+          next.isLoading == false &&
+          next.error == null) {
+        if (next.action?.isWriteAction == true) {
+          showToast(
+            context,
+            description: next.action!.successMessage,
+            isError: false,
+            title: "Succès User",
           );
         }
       }
