@@ -15,6 +15,8 @@ class ProductUsecases {
   ResultFuture<ProductEntities> insertProduct(
     ProductEntities entities,
     File? productImage,
+    String userId,
+    String shopName,
   ) async {
     try {
       String imageLink = "";
@@ -22,8 +24,9 @@ class ProductUsecases {
         _mediaServices.validateMedia(productImage, AppMediaType.product);
         imageLink = await _mediaServices.uploadMedia(
           file: productImage,
-          uid: "products_images",
+          uid: userId,
           type: AppMediaType.product,
+          internalPath: shopName,
           bucketName: "product",
         );
 

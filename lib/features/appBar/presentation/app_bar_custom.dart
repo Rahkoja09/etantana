@@ -4,6 +4,7 @@ import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class AppBarCustom extends ConsumerStatefulWidget
     implements PreferredSizeWidget {
@@ -90,9 +91,9 @@ class _AppBarCustomState extends ConsumerState<AppBarCustom> {
                   Scaffold.of(context).openEndDrawer();
                 },
                 icon: Icon(
-                  Icons.menu_rounded,
+                  HugeIcons.strokeRoundedSidebarRight,
                   color: iconColor,
-                  size: iconSize + 3,
+                  size: iconSize - 3,
                 ),
               ),
             ],

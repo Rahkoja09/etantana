@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:e_tantana/shared/domain/format_media_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
@@ -118,8 +119,8 @@ class MediaServiceImpl implements MediaServices {
     required File file,
     required String uid,
     required AppMediaType type,
-    String? entityId,
-    String bucketName = 'agency',
+    String? internalPath,
+    String bucketName = 'product',
   }) async {
     if (!(await _networkInfo.isConnected)) {
       throw NetworkException(message: "Pas de connexion internet");
@@ -127,9 +128,15 @@ class MediaServiceImpl implements MediaServices {
 
     validateMedia(file, type);
     final String extension = p.extension(file.path);
-    final String fileName = _getFileNameByType(type, extension);
+    final Map<String, dynamic> fileDetails = _getFileDetailsByType(
+      type,
+      extension,
+      internalPath: internalPath,
+    );
     final String filePath =
-        entityId != null ? '$uid/$entityId/$fileName' : '$uid/$fileName';
+        internalPath != null
+            ? '$uid/${fileDetails["path"]}${fileDetails['name']}'
+            : '$uid/${fileDetails['name']}';
     final String? contentType = lookupMimeType(file.path);
     try {
       await _supabase.storage
@@ -155,7 +162,7 @@ class MediaServiceImpl implements MediaServices {
     required List<File> files,
     required String uid,
     required AppMediaType type,
-    String? entityId,
+    String? internalPath,
     String bucketName = 'agency',
   }) async {
     final List<String> urls = [];
@@ -167,7 +174,7 @@ class MediaServiceImpl implements MediaServices {
             file: files[i],
             uid: uid,
             type: type,
-            entityId: entityId,
+            internalPath: internalPath,
             bucketName: bucketName,
           );
           urls.add(url);
@@ -257,17 +264,39 @@ class MediaServiceImpl implements MediaServices {
 
   //  PRIVATE NAMING ---------------------
 
-  String _getFileNameByType(AppMediaType type, String extension, {int? index}) {
+  Map<String, dynamic> _getFileDetailsByType(
+    AppMediaType type,
+    String extension, {
+    int? index,
+    String? internalPath,
+  }) {
     final suffix = index != null ? '_$index' : '';
     final now = DateTime.now();
     final String timestamp =
         "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour}${now.minute}${now.second}";
+    String pathWithInternal = internalPath != null ? "$internalPath/" : "";
 
     switch (type) {
       case AppMediaType.product:
-        return 'product_$timestamp$suffix$extension';
+        return FormatMediaType.listStringToMap(
+          name: 'product_$timestamp$suffix$extension',
+          path: "products/$pathWithInternal",
+        );
       case AppMediaType.invoice:
-        return 'invoice_$timestamp$suffix$extension';
+        return FormatMediaType.listStringToMap(
+          name: 'invoice_$timestamp$suffix$extension',
+          path: "invoices/$pathWithInternal",
+        );
+      case AppMediaType.user:
+        return FormatMediaType.listStringToMap(
+          name: 'user_$timestamp$suffix$extension',
+          path: "user/$pathWithInternal",
+        );
+      case AppMediaType.shop:
+        return FormatMediaType.listStringToMap(
+          name: 'shop_$timestamp$suffix$extension',
+          path: "shops/$pathWithInternal",
+        );
     }
   }
 

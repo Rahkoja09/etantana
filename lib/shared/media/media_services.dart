@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 
-enum AppMediaType { product, invoice }
+enum AppMediaType { product, invoice, user, shop }
 
 abstract class MediaServices {
   // --- PICKING ---
@@ -24,16 +24,16 @@ abstract class MediaServices {
     required File file,
     required String uid,
     required AppMediaType type,
-    String? entityId,
-    String bucketName = 'agency',
+    String? internalPath,
+    String bucketName = 'product',
   });
 
   Future<String> uploadMultipleMedia({
     required List<File> files,
     required String uid,
     required AppMediaType type,
-    String? entityId,
-    String bucketName = 'agency',
+    String? internalPath,
+    String bucketName = 'product',
   });
 
   Future<void> screenshotAndShareMedia(

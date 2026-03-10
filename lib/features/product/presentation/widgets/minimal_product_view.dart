@@ -269,7 +269,10 @@ class _MinimalProductViewState extends State<MinimalProductView> {
     return Container(
       alignment: alignment,
       padding: EdgeInsets.symmetric(horizontal: 20.w),
-      decoration: BoxDecoration(color: color),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+      ),
       child: Icon(icon, color: Colors.white, size: 28.sp),
     );
   }

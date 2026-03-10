@@ -48,6 +48,10 @@ import 'package:e_tantana/features/auth/domain/usecases/auth_usecases.dart';
 import 'package:e_tantana/features/auth/data/source/email_auth_service.dart';
 import 'package:e_tantana/features/auth/data/source/social_auth_service.dart';
 
+import 'package:e_tantana/features/shop/data/repository/shop_repository_impl.dart';
+import 'package:e_tantana/features/shop/data/source/shop_remote_source.dart';
+import 'package:e_tantana/features/shop/domain/repository/shop_repository.dart';
+import 'package:e_tantana/features/shop/domain/usecases/shop_usecases.dart';
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -64,6 +68,7 @@ Future<void> init() async {
   _initFutureStockPrediction();
   _initUser();
   _initAuth();
+    _initShop();
   // [INIT_ANCHOR]
 
   _initMap();
@@ -171,4 +176,14 @@ Future<void> _initAuth() async {
   );
 
   sl.registerLazySingleton(() => AuthUsecases(sl()));
+}
+
+Future<void> _initShop() async {
+  sl.registerLazySingleton<ShopRemoteSource>(
+    () => ShopRemoteSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<ShopRepository>(
+    () => ShopRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton(() => ShopUsecases(sl()));
 }

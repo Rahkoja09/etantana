@@ -32,6 +32,7 @@ import 'package:e_tantana/shared/widget/loading/loading.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 
+// ignore: must_be_immutable
 class AddOrder extends ConsumerStatefulWidget {
   List<MapData>? orderListToOrderWithQuantity;
   final List<ProductEntities?>? productToOrder;

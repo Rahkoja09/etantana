@@ -234,9 +234,9 @@ class _DeliveryState extends ConsumerState<Delivery> {
                             return MinimalDeliverieView(
                               delivery: delivery,
                               isLoading: mapState.isLoading,
-                              onTap: () {
+                              onTap: () async {
                                 final mapState = _mapKey.currentState;
-                                mapState?.navigateToDelivery(delivery);
+                                await mapState?.navigateToDelivery(delivery);
                               },
                             );
                           },
