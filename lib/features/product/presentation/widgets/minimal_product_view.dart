@@ -177,10 +177,9 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                               children: [
                                 Text(
                                   NameMoreShort().shortenName(
-                                        widget.product.name!,
-                                        30,
-                                      ) ??
-                                      "Sans nom",
+                                    widget.product.name!,
+                                    30,
+                                  ),
                                   maxLines: 1,
                                   style: TextStyles.bodyMedium(
                                     context: context,

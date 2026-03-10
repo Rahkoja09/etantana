@@ -110,7 +110,7 @@ Future<void> _initOrder() async {
     () => OrderRepositoryImpl(sl(), sl()),
   );
   sl.registerLazySingleton<OrderDataSource>(() => OrderDataSourceImpl(sl()));
-  sl.registerLazySingleton(() => OrderUsecases(sl(), sl(), sl()));
+  sl.registerLazySingleton(() => OrderUsecases(sl(), sl()));
 }
 
 // media services -------

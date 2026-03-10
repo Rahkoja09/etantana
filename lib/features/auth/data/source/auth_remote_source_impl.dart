@@ -44,7 +44,7 @@ class AuthRemoteSourceImpl implements AuthRemoteSource {
   @override
   bool hasActiveSession() {
     final session = _client.auth.currentSession;
-    return session != null && session.user != null;
+    return session != null;
   }
 
   @override

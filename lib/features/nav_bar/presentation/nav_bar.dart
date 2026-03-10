@@ -1,7 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/mainErrorListener/success_error_listener.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/delivring/presentation/pages/delivery.dart';
 import 'package:e_tantana/features/home/presentation/pages/home.dart';
@@ -111,7 +110,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         extendBody: true,
-        appBar: const AppBarCustom(),
+        appBar: _bottomNavIndex != 3 ? const AppBarCustom() : null,
         endDrawer: const SideBar(),
 
         // IndexedStack save state of pages eto ooo ----------

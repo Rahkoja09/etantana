@@ -1,6 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/utils/tools/count_delivery.dart';
 import 'package:e_tantana/features/delivring/domain/mapper/order_to_delivering_mapper.dart';
@@ -76,10 +75,10 @@ class _DeliveryState extends ConsumerState<Delivery> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
-          Positioned.fill(bottom: 200.h, child: _buildMap()),
+          Positioned.fill(bottom: 100.h, child: _buildMap()),
 
           Positioned(
-            top: 250.h,
+            top: 200.h,
             left: 0,
             right: 0,
             bottom: 0,

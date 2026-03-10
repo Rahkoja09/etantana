@@ -4,17 +4,11 @@ import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/delivring/domain/repository/delivering_repository.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/repository/order_repository.dart';
-import 'package:e_tantana/features/product/domain/repository/product_repository.dart';
 
 class OrderUsecases {
   final OrderRepository _orderRepository;
   final DeliveringRepository _deliveringRepository;
-  final ProductRepository _productRepository;
-  OrderUsecases(
-    this._orderRepository,
-    this._deliveringRepository,
-    this._productRepository,
-  );
+  OrderUsecases(this._orderRepository, this._deliveringRepository);
 
   ResultFuture<OrderEntities> getOrderById(String orderId) =>
       _orderRepository.getOrderById(orderId);

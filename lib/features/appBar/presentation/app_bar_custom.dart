@@ -1,8 +1,6 @@
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
-import 'package:e_tantana/features/auth/presentation/pages/sign_up.dart';
-import 'package:e_tantana/features/map/presentation/controller/map_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
