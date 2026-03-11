@@ -52,6 +52,7 @@ import 'package:e_tantana/features/user/data/repository/user_repository_impl.dar
 import 'package:e_tantana/features/user/data/source/user_remote_source.dart';
 import 'package:e_tantana/features/user/domain/repository/user_repository.dart';
 import 'package:e_tantana/features/user/domain/usecases/user_usecases.dart';
+
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -68,7 +69,7 @@ Future<void> init() async {
   _initFutureStockPrediction();
   _initAuth();
   _initShop();
-    _initUser();
+  _initUser();
   // [INIT_ANCHOR]
 
   _initMap();
@@ -179,11 +180,9 @@ Future<void> _initShop() async {
 }
 
 Future<void> _initUser() async {
-  sl.registerLazySingleton<UserRemoteSource>(
-    () => UserRemoteSourceImpl(sl()),
-  );
+  sl.registerLazySingleton<UserRemoteSource>(() => UserRemoteSourceImpl(sl()));
   sl.registerLazySingleton<UserRepository>(
     () => UserRepositoryImpl(sl(), sl()),
   );
-  sl.registerLazySingleton(() => UserUsecases(sl()));
+  sl.registerLazySingleton(() => UserUsecases(sl(), sl()));
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
@@ -22,7 +24,7 @@ class UserController extends StateNotifier<UserStates> {
     _isLastPage = false;
 
     _setLoadingState(action: action);
-    
+
     state = state.copyWith(
       currentCriteria: criteria,
       users: [],
@@ -36,26 +38,23 @@ class UserController extends StateNotifier<UserStates> {
       end: _pageSize - 1,
     );
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        if (success.length < _pageSize) _isLastPage = true;
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          users: success,
-          currentCriteria: criteria,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      if (success.length < _pageSize) _isLastPage = true;
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        users: success,
+        currentCriteria: criteria,
+        action: action,
+      );
+    });
   }
 
   // --- LAZY LOADING (PAGINATION) ---
   Future<void> loadNextPage() async {
     if (state.isLoading || _isLastPage) return;
 
-    final action = GetUserAction(); 
+    final action = GetUserAction();
     _currentPage++;
     final int start = _currentPage * _pageSize;
     final int end = start + _pageSize - 1;
@@ -87,23 +86,24 @@ class UserController extends StateNotifier<UserStates> {
   }
 
   // --- INSERTION ---
-  Future<void> createUser(UserEntity entity) async {
-    final action = CreateUserAction(entity.id ?? "nouveau");
+  Future<void> createUser(
+    UserEntity entity,
+    File profilFile,
+    String authId,
+  ) async {
+    final action = CreateUserAction(entity.id ?? entity.name!);
     _setLoadingState(action: action);
 
-    final res = await _userUsecases.insertUser(entity);
+    final res = await _userUsecases.insertUser(entity, profilFile, authId);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          users: [success, ...?state.users],
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        users: [success, ...?state.users],
+        action: action,
+      );
+    });
   }
 
   // --- MISE À JOUR ---
@@ -113,21 +113,21 @@ class UserController extends StateNotifier<UserStates> {
 
     final res = await _userUsecases.updateUser(entity);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (updatedEntity) {
-        final newList = state.users?.map((item) {
-          return item.id == updatedEntity.id ? updatedEntity : item;
-        }).toList();
+    res.fold((error) => _setError(error: error, action: action), (
+      updatedEntity,
+    ) {
+      final newList =
+          state.users?.map((item) {
+            return item.id == updatedEntity.id ? updatedEntity : item;
+          }).toList();
 
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          users: newList,
-          action: action,
-        );
-      },
-    );
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        users: newList,
+        action: action,
+      );
+    });
   }
 
   // --- SUPPRESSION ---
@@ -137,18 +137,15 @@ class UserController extends StateNotifier<UserStates> {
 
     final res = await _userUsecases.deleteUserById(id);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (_) {
-        final newList = state.users?.where((i) => i.id != id).toList() ?? [];
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          users: newList,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (_) {
+      final newList = state.users?.where((i) => i.id != id).toList() ?? [];
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        users: newList,
+        action: action,
+      );
+    });
   }
 
   // --- UTILITAIRES INTERNES ---
@@ -169,5 +166,5 @@ class UserController extends StateNotifier<UserStates> {
 // --- PROVIDER ---
 final userControllerProvider =
     StateNotifierProvider<UserController, UserStates>((ref) {
-  return UserController(sl<UserUsecases>());
-});
+      return UserController(sl<UserUsecases>());
+    });

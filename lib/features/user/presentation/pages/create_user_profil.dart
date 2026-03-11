@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
+import 'package:e_tantana/features/user/domain/entity/user_entity.dart';
+import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:e_tantana/features/user/presentation/widgets/profile_image_uploader.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
@@ -11,26 +14,41 @@ import 'package:e_tantana/shared/widget/loading/loading.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class CreateUserProfil extends StatefulWidget {
+class CreateUserProfil extends ConsumerStatefulWidget {
   const CreateUserProfil({super.key});
 
   @override
-  State<CreateUserProfil> createState() => _CreateUserProfilState();
+  ConsumerState<CreateUserProfil> createState() => _CreateUserProfilState();
 }
 
-class _CreateUserProfilState extends State<CreateUserProfil> {
+class _CreateUserProfilState extends ConsumerState<CreateUserProfil> {
   final _mediaService = sl<MediaServices>();
   File? profilImage;
-  bool isLoading = false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController lockKeyControler = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(authControllerProvider).user;
+      if (user != null && user.email != null) {
+        emailController.text = user.email!;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    final userState = ref.watch(userControllerProvider);
+    final userAction = ref.read(userControllerProvider.notifier);
     final colorScheme = Theme.of(context).colorScheme;
     return Stack(
       children: [
@@ -95,11 +113,24 @@ class _CreateUserProfilState extends State<CreateUserProfil> {
           ),
           bottomNavigationBar: BottomContainerButton(
             onBack: () {},
-            onValidate: () {},
+            onValidate: () async {
+              final userProfil = UserEntity(
+                name: nameController.text.trim(),
+                email: emailController.text.trim().toLowerCase(),
+              );
+              if (profilImage == null) {
+                return;
+              }
+              await userAction.createUser(
+                userProfil,
+                profilImage!,
+                authState.user!.id!,
+              );
+            },
             nextBtnText: "Créer",
           ),
         ),
-        if (isLoading)
+        if (userState.isLoading)
           Positioned(
             top: 0,
             left: 0,

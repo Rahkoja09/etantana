@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 
-enum AppMediaType { product, invoice, user, shop }
+enum AppMediaType { product, invoice, userProfil, shop }
 
 abstract class MediaServices {
   // --- PICKING ---

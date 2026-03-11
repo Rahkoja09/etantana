@@ -287,10 +287,10 @@ class MediaServiceImpl implements MediaServices {
           name: 'invoice_$timestamp$suffix$extension',
           path: "invoices/$pathWithInternal",
         );
-      case AppMediaType.user:
+      case AppMediaType.userProfil:
         return FormatMediaType.listStringToMap(
-          name: 'user_$timestamp$suffix$extension',
-          path: "user/$pathWithInternal",
+          name: 'userProfil_$timestamp$suffix$extension',
+          path: "userProfil/$pathWithInternal",
         );
       case AppMediaType.shop:
         return FormatMediaType.listStringToMap(

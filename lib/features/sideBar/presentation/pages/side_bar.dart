@@ -4,6 +4,7 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
 import 'package:e_tantana/features/sideBar/presentation/widgets/logout_dialogue.dart';
+import 'package:e_tantana/features/user/presentation/pages/profil_page.dart';
 import 'package:e_tantana/shared/widget/iconCard/action_icon_box.dart';
 import 'package:e_tantana/shared/widget/input/list_item_action.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
@@ -96,7 +97,11 @@ class SideBar extends ConsumerWidget {
                     ListItemAction(
                       icon: Icons.person_outline,
                       label: "Profil",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ProfilPage()),
+                        );
+                      },
                       noIcon: true,
                     ),
                     ListItemAction(

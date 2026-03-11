@@ -156,7 +156,7 @@ class SuccessErrorListener extends ConsumerWidget {
       }
     });
 
-        ref.listen<UserStates>(userControllerProvider, (prev, next) {
+    ref.listen<UserStates>(userControllerProvider, (prev, next) {
       if (next.error != null && next.error != prev?.error) {
         _showFilteredError(
           context: context,

@@ -39,7 +39,9 @@ class _HomeState extends ConsumerState<Home> {
   @override
   void initState() {
     super.initState();
-    refreshHomePage();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await refreshHomePage();
+    });
   }
 
   @override
