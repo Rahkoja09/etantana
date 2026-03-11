@@ -31,8 +31,8 @@ class _HomeState extends ConsumerState<Home> {
   }
 
   Future<void> refreshHomePage() async {
-    await ref.read(productControllerProvider.notifier).researchProduct(null);
-    await ref.read(stockPredictionControllerProvider.notifier).refresh();
+    ref.read(productControllerProvider.notifier).researchProduct(null);
+    ref.read(stockPredictionControllerProvider.notifier).refresh();
     ref.read(dashboardStatsControllerProvider.notifier).getDashboardStats();
   }
 

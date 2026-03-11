@@ -106,12 +106,6 @@ class SideBar extends ConsumerWidget {
                       noIcon: true,
                     ),
                     ListItemAction(
-                      icon: Icons.settings_outlined,
-                      label: "Paramètres",
-                      onTap: () {},
-                      noIcon: true,
-                    ),
-                    ListItemAction(
                       icon: Icons.gavel_outlined,
                       label: "Politiques",
                       onTap: () {
@@ -121,12 +115,6 @@ class SideBar extends ConsumerWidget {
                           ),
                         );
                       },
-                      noIcon: true,
-                    ),
-                    ListItemAction(
-                      icon: Icons.quiz_outlined,
-                      label: "FAQ",
-                      onTap: () {},
                       noIcon: true,
                     ),
                     const Spacer(),

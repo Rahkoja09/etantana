@@ -32,43 +32,39 @@ class StockPredictionList extends ConsumerWidget {
     final predictionsToShow =
         isLoading ? _fakePredictions : (state.predictions ?? []);
 
-    return Container(
-      child:
-          !isLoading && predictionsToShow.isEmpty
-              ? EmptyContentView(
-                icon: HugeIcons.strokeRoundedChartBubble01,
-                text: "Aucune donnée de prédiction disponible.",
-              )
-              : ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: predictionsToShow.length,
+    if (!isLoading && predictionsToShow.isEmpty) {
+      return EmptyContentView(
+        icon: HugeIcons.strokeRoundedChartBubble01,
+        text: "Aucune donnée de prédiction disponible.",
+      );
+    }
 
-                itemBuilder: (context, index) {
-                  final prediction = predictionsToShow[index];
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: predictionsToShow.length,
+      itemBuilder: (context, index) {
+        final prediction = predictionsToShow[index];
+        final product = products?.cast<ProductEntities?>().firstWhere(
+          (p) => p?.id == prediction.productId,
+          orElse: () => null,
+        );
 
-                  final product = products?.cast<ProductEntities?>().firstWhere(
-                    (p) => p?.id == prediction.productId,
-                    orElse: () => null,
-                  );
-                  print(prediction);
-
-                  return StockPredictionCard(
-                    imagePath:
-                        isLoading
-                            ? AppConst.defaultImage
-                            : (product?.images ?? AppConst.defaultImage),
-                    productName:
-                        isLoading
-                            ? "Nom du produit factice"
-                            : (product?.name ?? "Inconnu"),
-                    salesPerWeek: prediction.salesPerWeek,
-                    currentStock: prediction.currentStock,
-                    daysRemaining: prediction.daysRemaining,
-                    pressure: prediction.stockPressure,
-                  );
-                },
-              ),
+        return StockPredictionCard(
+          imagePath:
+              isLoading
+                  ? AppConst.defaultImage
+                  : (product?.images ?? AppConst.defaultImage),
+          productName:
+              isLoading
+                  ? "Nom du produit factice"
+                  : (product?.name ?? "Inconnu"),
+          salesPerWeek: prediction.salesPerWeek,
+          currentStock: prediction.currentStock,
+          daysRemaining: prediction.daysRemaining,
+          pressure: prediction.stockPressure,
+        );
+      },
     );
   }
 }

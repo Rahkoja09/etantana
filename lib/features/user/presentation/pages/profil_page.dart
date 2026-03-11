@@ -135,16 +135,6 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                             },
                             title: "FeedBack",
                           ),
-                          ItemActionList(
-                            leadingIcon: HugeIcons.strokeRoundedSettings01,
-                            onTap: () {},
-                            title: "Paramètres",
-                          ),
-                          ItemActionList(
-                            leadingIcon: HugeIcons.strokeRoundedMessageQuestion,
-                            onTap: () {},
-                            title: "Vous avez des questions",
-                          ),
                         ],
                       )
                       : RegisterPlaceholder(

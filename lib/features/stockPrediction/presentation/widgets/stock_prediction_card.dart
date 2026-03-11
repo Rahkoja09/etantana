@@ -22,83 +22,103 @@ class StockPredictionCard extends StatelessWidget {
     required this.pressure,
   });
 
+  Color get _pressureColor {
+    if (pressure > 0.8) return const Color(0xFFEF4444);
+    if (pressure > 0.5) return const Color(0xFFF97316);
+    return const Color(0xFF22C55E);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: StylesConstants.spacerContent),
+      margin: EdgeInsets.only(bottom: 10.h),
+      padding: EdgeInsets.all(12.r),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
       ),
       child: Row(
         children: [
-          // Image produit
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: ImageViewer(imageFileOrLink: imagePath, borderRadius: 12),
+          // Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: SizedBox(
+              width: 48.r,
+              height: 48.r,
+              child: ImageViewer(imageFileOrLink: imagePath, borderRadius: 10),
             ),
           ),
+          SizedBox(width: 12.w),
 
-          const SizedBox(width: 12),
-
+          // Nom + ventes
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   productName,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 4.h),
                 Text(
                   "${salesPerWeek.toStringAsFixed(0)} ventes / semaine",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
-                    fontSize: 11,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.45),
                   ),
                 ),
+                SizedBox(height: 8.h),
+                PredictionProgressBar(pressure: pressure),
               ],
             ),
           ),
+          SizedBox(width: 12.w),
 
-          const SizedBox(width: 12),
-
-          // Stock + jours + barre
+          // Stock + jours
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Text(
-                    "${currentStock}u.",
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    "${daysRemaining}j",
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                  ),
-                ],
+              Text(
+                "$currentStock",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-              const SizedBox(height: 6),
-              SizedBox(
-                width: 92.w,
-                child: PredictionProgressBar(pressure: pressure),
+              Text(
+                "unités",
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
+              ),
+              SizedBox(height: 6.h),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
+                decoration: BoxDecoration(
+                  color: _pressureColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  "${daysRemaining}j",
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                    color: _pressureColor,
+                  ),
+                ),
               ),
             ],
           ),
