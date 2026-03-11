@@ -1,24 +1,27 @@
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
+import 'package:e_tantana/features/feedback/domain/entity/feedback_entity.dart';
+import 'package:e_tantana/features/feedback/presentation/controller/feedback_controller.dart';
 import 'package:e_tantana/features/feedback/presentation/star_rating_input.dart';
 import 'package:e_tantana/features/feedback/presentation/states/chip_selector.dart';
 import 'package:e_tantana/features/feedback/presentation/states/primary_button.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class FeedbackPage extends StatefulWidget {
+class FeedbackPage extends ConsumerStatefulWidget {
   const FeedbackPage({Key? key}) : super(key: key);
 
   @override
-  State<FeedbackPage> createState() => _FeedbackPageState();
+  ConsumerState<FeedbackPage> createState() => _FeedbackPageState();
 }
 
-class _FeedbackPageState extends State<FeedbackPage> {
+class _FeedbackPageState extends ConsumerState<FeedbackPage> {
   final TextEditingController _commentController = TextEditingController();
   int _rating = 0;
   List<String> _selectedCategories = [];
-  bool _isLoading = false;
 
   final List<String> _categories = [
     "Interface",
@@ -33,9 +36,15 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   Future<void> _submit() async {
     if (!_canSubmit) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2)); // remplace par ton appel
-    setState(() => _isLoading = false);
+    final myFeedback = FeedbackEntity(
+      rates: _rating,
+      categoryOfFeedback: _selectedCategories,
+      comment: _commentController.text,
+      user_id: await ref.watch(authControllerProvider).user!.id,
+    );
+    await ref
+        .read(feedbackControllerProvider.notifier)
+        .createFeedback(myFeedback);
     if (mounted) Navigator.pop(context);
   }
 
@@ -47,6 +56,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   @override
   Widget build(BuildContext context) {
+    final feebackStates = ref.watch(feedbackControllerProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: SimpleAppbar(
@@ -102,7 +112,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
               PrimaryButton(
                 label: "Envoyer mon avis",
                 icon: HugeIcons.strokeRoundedSent,
-                isLoading: _isLoading,
+                isLoading: feebackStates.isLoading,
                 onTap: _canSubmit ? _submit : null,
               ),
 

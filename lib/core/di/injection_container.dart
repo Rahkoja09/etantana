@@ -57,6 +57,7 @@ import 'package:e_tantana/features/feedback/data/repository/feedback_repository_
 import 'package:e_tantana/features/feedback/data/source/feedback_remote_source.dart';
 import 'package:e_tantana/features/feedback/domain/repository/feedback_repository.dart';
 import 'package:e_tantana/features/feedback/domain/usecases/feedback_usecases.dart';
+
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -74,7 +75,7 @@ Future<void> init() async {
   _initAuth();
   _initShop();
   _initUser();
-    _initFeedback();
+  _initFeedback();
   // [INIT_ANCHOR]
 
   _initMap();

@@ -6,7 +6,11 @@ import 'package:e_tantana/features/feedback/domain/entity/feedback_entity.dart';
 abstract class FeedbackRemoteSource {
   Future<FeedbackModel> insertFeedback(FeedbackEntity entity);
   Future<FeedbackModel> updateFeedback(FeedbackEntity entity);
-  Future<List<FeedbackModel>> searchFeedback(FeedbackEntity? criteria, {int start = 0, int end = 9});
+  Future<List<FeedbackModel>> searchFeedback(
+    FeedbackEntity? criteria, {
+    int start = 0,
+    int end = 9,
+  });
   Future<FeedbackModel> getFeedbackById(String id);
   Future<void> deleteFeedbackById(String id);
 }
@@ -15,13 +19,19 @@ class FeedbackRemoteSourceImpl implements FeedbackRemoteSource {
   final SupabaseClient _client;
   FeedbackRemoteSourceImpl(this._client);
 
-  static const String _tableName = "feedbacks"; 
+  static const String _tableName = "feedbacks";
 
   @override
   Future<FeedbackModel> insertFeedback(FeedbackEntity entity) async {
     try {
+      final user = _client.auth.currentUser;
+      if (user == null) throw UnexceptedException(message: "Non authentifié");
       final model = FeedbackModel.fromEntity(entity);
-      final data = await _client.from(_tableName).insert(model.toMap()).select().single();
+      final map =
+          model.toMap()
+            ..remove('id')
+            ..remove('created_at');
+      final data = await _client.from(_tableName).insert(map).select().single();
       return FeedbackModel.fromMap(data);
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message, code: e.code ?? "POSTGREST_ERROR");
@@ -33,15 +43,17 @@ class FeedbackRemoteSourceImpl implements FeedbackRemoteSource {
   @override
   Future<FeedbackModel> updateFeedback(FeedbackEntity entity) async {
     try {
-      if (entity.id == null) throw ApiException(message: "ID manquant pour la mise à jour");
+      if (entity.id == null)
+        throw ApiException(message: "ID manquant pour la mise à jour");
       final model = FeedbackModel.fromEntity(entity);
-      
-      final data = await _client
-          .from(_tableName)
-          .update(model.toMap())
-          .eq('id', entity.id!)
-          .select()
-          .single();
+
+      final data =
+          await _client
+              .from(_tableName)
+              .update(model.toMap())
+              .eq('id', entity.id!)
+              .select()
+              .single();
       return FeedbackModel.fromMap(data);
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message, code: e.code ?? "UPDATE_ERROR");
@@ -51,7 +63,11 @@ class FeedbackRemoteSourceImpl implements FeedbackRemoteSource {
   }
 
   @override
-  Future<List<FeedbackModel>> searchFeedback(FeedbackEntity? criteria, {int start = 0, int end = 9}) async {
+  Future<List<FeedbackModel>> searchFeedback(
+    FeedbackEntity? criteria, {
+    int start = 0,
+    int end = 9,
+  }) async {
     try {
       var query = _client.from(_tableName).select("*");
 
@@ -60,7 +76,7 @@ class FeedbackRemoteSourceImpl implements FeedbackRemoteSource {
         if (id != null) {
           query = query.eq("id", id);
         }
-                final user_id = criteria.user_id;
+        final user_id = criteria.user_id;
         if (user_id != null) {
           query = query.ilike("user_id", "%$user_id%");
         }
@@ -90,7 +106,8 @@ class FeedbackRemoteSourceImpl implements FeedbackRemoteSource {
   @override
   Future<FeedbackModel> getFeedbackById(String id) async {
     try {
-      final data = await _client.from(_tableName).select().eq('id', id).single();
+      final data =
+          await _client.from(_tableName).select().eq('id', id).single();
       return FeedbackModel.fromMap(data);
     } catch (e) {
       throw UnexceptedException(message: "Élément introuvable : $e");

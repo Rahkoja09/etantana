@@ -41,11 +41,11 @@ class FeedbackStates extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        error,
-        feedbacks,
-        currentCriteria,
-        action,
-        errorCode,
-      ];
+    isLoading,
+    error,
+    feedbacks,
+    currentCriteria,
+    action,
+    errorCode,
+  ];
 }

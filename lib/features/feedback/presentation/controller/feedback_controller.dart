@@ -22,7 +22,7 @@ class FeedbackController extends StateNotifier<FeedbackStates> {
     _isLastPage = false;
 
     _setLoadingState(action: action);
-    
+
     state = state.copyWith(
       currentCriteria: criteria,
       feedbacks: [],
@@ -36,26 +36,23 @@ class FeedbackController extends StateNotifier<FeedbackStates> {
       end: _pageSize - 1,
     );
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        if (success.length < _pageSize) _isLastPage = true;
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          feedbacks: success,
-          currentCriteria: criteria,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      if (success.length < _pageSize) _isLastPage = true;
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        feedbacks: success,
+        currentCriteria: criteria,
+        action: action,
+      );
+    });
   }
 
   // --- LAZY LOADING (PAGINATION) ---
   Future<void> loadNextPage() async {
     if (state.isLoading || _isLastPage) return;
 
-    final action = GetFeedbackAction(); 
+    final action = GetFeedbackAction();
     _currentPage++;
     final int start = _currentPage * _pageSize;
     final int end = start + _pageSize - 1;
@@ -88,22 +85,19 @@ class FeedbackController extends StateNotifier<FeedbackStates> {
 
   // --- INSERTION ---
   Future<void> createFeedback(FeedbackEntity entity) async {
-    final action = CreateFeedbackAction(entity.id ?? "nouveau");
+    final action = CreateFeedbackAction(entity.id ?? "votre feedback");
     _setLoadingState(action: action);
 
     final res = await _feedbackUsecases.insertFeedback(entity);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          feedbacks: [success, ...?state.feedbacks],
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        feedbacks: [success, ...?state.feedbacks],
+        action: action,
+      );
+    });
   }
 
   // --- MISE À JOUR ---
@@ -113,21 +107,21 @@ class FeedbackController extends StateNotifier<FeedbackStates> {
 
     final res = await _feedbackUsecases.updateFeedback(entity);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (updatedEntity) {
-        final newList = state.feedbacks?.map((item) {
-          return item.id == updatedEntity.id ? updatedEntity : item;
-        }).toList();
+    res.fold((error) => _setError(error: error, action: action), (
+      updatedEntity,
+    ) {
+      final newList =
+          state.feedbacks?.map((item) {
+            return item.id == updatedEntity.id ? updatedEntity : item;
+          }).toList();
 
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          feedbacks: newList,
-          action: action,
-        );
-      },
-    );
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        feedbacks: newList,
+        action: action,
+      );
+    });
   }
 
   // --- SUPPRESSION ---
@@ -137,18 +131,15 @@ class FeedbackController extends StateNotifier<FeedbackStates> {
 
     final res = await _feedbackUsecases.deleteFeedbackById(id);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (_) {
-        final newList = state.feedbacks?.where((i) => i.id != id).toList() ?? [];
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          feedbacks: newList,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (_) {
+      final newList = state.feedbacks?.where((i) => i.id != id).toList() ?? [];
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        feedbacks: newList,
+        action: action,
+      );
+    });
   }
 
   // --- UTILITAIRES INTERNES ---
@@ -169,5 +160,5 @@ class FeedbackController extends StateNotifier<FeedbackStates> {
 // --- PROVIDER ---
 final feedbackControllerProvider =
     StateNotifierProvider<FeedbackController, FeedbackStates>((ref) {
-  return FeedbackController(sl<FeedbackUsecases>());
-});
+      return FeedbackController(sl<FeedbackUsecases>());
+    });

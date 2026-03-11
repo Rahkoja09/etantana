@@ -9,7 +9,7 @@ class CreateFeedbackAction extends FeedbackActions {
   CreateFeedbackAction(this.identifier);
 
   @override
-  String get errorMessage => "Impossible d'enregistrer : $identifier";
+  String get errorMessage => "Impossible d'envoyer : $identifier";
 
   @override
   bool get isWriteAction => true;
