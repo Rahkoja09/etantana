@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/user/domain/entity/user_entity.dart';
@@ -9,6 +10,8 @@ import 'package:e_tantana/features/user/presentation/widgets/profile_image_uploa
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
+import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
+import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/loading/loading.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
@@ -31,7 +34,10 @@ class _CreateUserProfilState extends ConsumerState<CreateUserProfil> {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
-  TextEditingController lockKeyControler = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController nickNameController = TextEditingController();
+  DateTime? birthDate;
+  String? JobTitle;
 
   @override
   void initState() {
@@ -87,25 +93,86 @@ class _CreateUserProfilState extends ConsumerState<CreateUserProfil> {
                       title: "Photo de profil",
                     ),
                   ),
-                  SizedBox(height: 25),
+                  Center(
+                    child: Text(
+                      emailController.text,
+                      style: TextStyles.bodyMedium(
+                        context: context,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 35),
                   MediumTitleWithDegree(
                     showDegree: true,
                     degree: 1,
                     title: "Informations personnelles",
                   ),
-                  SimpleInput(
-                    textHint: "Adresse Email",
-                    iconData: HugeIcons.strokeRoundedMail01,
-                    textEditControlleur: emailController,
-                    maxLines: 1,
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SimpleInput(
+                          textHint: "Nom",
+                          iconData: HugeIcons.strokeRoundedIdentityCard,
+                          textEditControlleur: nameController,
+                          maxLines: 1,
+                        ),
+                      ),
+                      SizedBox(width: 15),
+
+                      Expanded(
+                        child: SimpleInput(
+                          textHint: "Prenom",
+                          iconData: HugeIcons.strokeRoundedIdentification,
+                          textEditControlleur: lastNameController,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 15),
 
                   SimpleInput(
-                    textHint: "Nom ou pseudo",
-                    iconData: HugeIcons.strokeRoundedUser,
-                    textEditControlleur: nameController,
+                    textHint: "Pseudo",
+                    iconData: HugeIcons.strokeRoundedAnonymous,
+                    textEditControlleur: nickNameController,
                     maxLines: 1,
+                  ),
+                  SizedBox(height: 15),
+                  DateInput(
+                    iconData: HugeIcons.strokeRoundedCalendarAdd01,
+                    textHint: "date de naissance",
+                    isRange: false,
+                    onDateSelected: (birthDate) {
+                      setState(() {
+                        birthDate = birthDate;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 35),
+                  MediumTitleWithDegree(
+                    showDegree: true,
+                    degree: 1,
+                    title: "Informations supplementaire",
+                  ),
+                  CustomDropdown(
+                    items: [
+                      "Vendeur",
+                      "Livreur",
+                      "Propriétaire",
+                      "Investisseur",
+                      "Agence de Livraison",
+                      "Client",
+                      "Autres",
+                    ],
+                    iconData: HugeIcons.strokeRoundedWork,
+                    onChanged: (jobValue) {
+                      setState(() {
+                        JobTitle = jobValue;
+                      });
+                    },
+                    textHint: "je suis ...",
                   ),
                 ],
               ),
@@ -116,7 +183,14 @@ class _CreateUserProfilState extends ConsumerState<CreateUserProfil> {
             onValidate: () async {
               final userProfil = UserEntity(
                 name: nameController.text.trim(),
+                lastName: lastNameController.text.trim(),
+                nickName: nickNameController.text.trim(),
                 email: emailController.text.trim().toLowerCase(),
+                birthDate: birthDate,
+                isRegistered: true,
+                jobTitle: JobTitle,
+                myShops: [],
+                userPlan: "free",
               );
               if (profilImage == null) {
                 return;

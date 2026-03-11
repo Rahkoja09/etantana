@@ -1,3 +1,5 @@
+import 'package:e_tantana/features/feedback/presentation/controller/feedback_controller.dart';
+import 'package:e_tantana/features/feedback/presentation/states/feedback_states.dart';
 import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:e_tantana/features/user/presentation/states/user_states.dart';
 import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
@@ -176,6 +178,31 @@ class SuccessErrorListener extends ConsumerWidget {
             description: next.action!.successMessage,
             isError: false,
             title: "Succès User",
+          );
+        }
+      }
+    });
+
+        ref.listen<FeedbackStates>(feedbackControllerProvider, (prev, next) {
+      if (next.error != null && next.error != prev?.error) {
+        _showFilteredError(
+          context: context,
+          ref: ref,
+          failure: next.error!,
+          action: next.action,
+          title: "Erreur Feedback",
+        );
+      }
+
+      if (prev?.isLoading == true &&
+          next.isLoading == false &&
+          next.error == null) {
+        if (next.action?.isWriteAction == true) {
+          showToast(
+            context,
+            description: next.action!.successMessage,
+            isError: false,
+            title: "Succès Feedback",
           );
         }
       }

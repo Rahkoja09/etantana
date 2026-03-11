@@ -10,11 +10,12 @@ class UserModel extends UserEntity {
     super.email,
     super.sixDigitCode,
     super.myShops,
-        super.lastName,
+    super.lastName,
     super.birthDate,
     super.nickName,
     super.jobTitle,
-        super.userPlan,
+    super.userPlan,
+    super.isRegistered,
     // [CONSTRUCTOR_ANCHOR]
   });
 
@@ -30,11 +31,15 @@ class UserModel extends UserEntity {
       email: data['email'] as String?,
       sixDigitCode: data['six_digit_code'] as int?,
       myShops: List<String>.from(data['my_shops'] ?? []),
-            lastName: data['last_name'] as String?,
-      birthDate: data['birth_date'] != null ? DateTime.parse(data['birth_date']) : null,
+      lastName: data['last_name'] as String?,
+      birthDate:
+          data['birth_date'] != null
+              ? DateTime.parse(data['birth_date'])
+              : null,
       nickName: data['nick_name'] as String?,
       jobTitle: data['job_title'] as String?,
-            userPlan: data['user_plan'] as String?,
+      userPlan: data['user_plan'] as String?,
+      isRegistered: data['is_registered'] as bool?,
       // [FROM_MAP_ANCHOR]
     );
   }
@@ -48,11 +53,12 @@ class UserModel extends UserEntity {
       'email': email,
       'six_digit_code': sixDigitCode,
       'my_shops': myShops,
-            'last_name': lastName,
+      'last_name': lastName,
       'birth_date': birthDate?.toIso8601String(),
       'nick_name': nickName,
       'job_title': jobTitle,
-            'user_plan': userPlan,
+      'user_plan': userPlan,
+      'is_registered': isRegistered,
       // [TO_MAP_ANCHOR]
     };
   }
@@ -66,11 +72,12 @@ class UserModel extends UserEntity {
       email: entity.email,
       sixDigitCode: entity.sixDigitCode,
       myShops: entity.myShops,
-            lastName: entity.lastName,
+      lastName: entity.lastName,
       birthDate: entity.birthDate,
       nickName: entity.nickName,
       jobTitle: entity.jobTitle,
-            userPlan: entity.userPlan,
+      userPlan: entity.userPlan,
+      isRegistered: entity.isRegistered,
       // [FROM_ENTITY_ANCHOR]
     );
   }

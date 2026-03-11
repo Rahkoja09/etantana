@@ -94,7 +94,7 @@ class UserRemoteSourceImpl implements UserRemoteSource {
         if (sixDigitCode != null) {
           query = query.eq("six_digit_code", sixDigitCode);
         }
-                final lastName = criteria.lastName;
+        final lastName = criteria.lastName;
         if (lastName != null) {
           query = query.ilike("last_name", "%$lastName%");
         }
@@ -110,9 +110,13 @@ class UserRemoteSourceImpl implements UserRemoteSource {
         if (jobTitle != null) {
           query = query.ilike("job_title", "%$jobTitle%");
         }
-                final userPlan = criteria.userPlan;
+        final userPlan = criteria.userPlan;
         if (userPlan != null) {
           query = query.ilike("user_plan", "%$userPlan%");
+        }
+        final isRegistered = criteria.isRegistered;
+        if (isRegistered != null) {
+          query = query.eq("is_registered", isRegistered);
         }
         // [FILTERS_ANCHOR]
       }

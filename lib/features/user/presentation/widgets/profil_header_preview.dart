@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ProfilHeaderPreview extends StatefulWidget {
   final String imageFileOrLink;
   final String userName;
-  final String userId;
+  final String email;
   final String userPlan;
   final int shopNumber;
   final String jobTitle;
@@ -17,7 +17,7 @@ class ProfilHeaderPreview extends StatefulWidget {
     required this.imageFileOrLink,
     required this.jobTitle,
     required this.shopNumber,
-    required this.userId,
+    required this.email,
     required this.userName,
     required this.userPlan,
   });
@@ -30,7 +30,8 @@ class _ProfilHeaderPreviewState extends State<ProfilHeaderPreview> {
   @override
   Widget build(BuildContext context) {
     final profilVeiwerHeight = 80.h;
-    return SizedBox(
+    return Container(
+      constraints: BoxConstraints(maxHeight: 90),
       height: profilVeiwerHeight,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,7 +53,9 @@ class _ProfilHeaderPreviewState extends State<ProfilHeaderPreview> {
               Row(
                 children: [
                   Text(
-                    widget.userName,
+                    widget.userName.split(' ')[0],
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                     style: TextStyles.titleSmall(
                       context: context,
                       fontWeight: FontWeight.bold,
@@ -63,7 +66,7 @@ class _ProfilHeaderPreviewState extends State<ProfilHeaderPreview> {
                 ],
               ),
               Text(
-                'ID:${widget.userId}',
+                '${widget.email}',
                 style: TextStyles.bodyMedium(
                   context: context,
                   fontWeight: FontWeight.bold,
@@ -83,7 +86,7 @@ class _ProfilHeaderPreviewState extends State<ProfilHeaderPreview> {
                         ),
                       ),
                       Text(
-                        'shop(s)',
+                        'boutique(s)',
                         style: TextStyles.bodyMedium(
                           context: context,
                           fontWeight: FontWeight.w400,
@@ -102,7 +105,7 @@ class _ProfilHeaderPreviewState extends State<ProfilHeaderPreview> {
                   Row(
                     children: [
                       Text(
-                        '@. ',
+                        '@',
                         style: TextStyles.bodyMedium(
                           context: context,
                           fontWeight: FontWeight.bold,
@@ -110,7 +113,7 @@ class _ProfilHeaderPreviewState extends State<ProfilHeaderPreview> {
                         ),
                       ),
                       Text(
-                        '${widget.jobTitle}',
+                        '${widget.jobTitle.toLowerCase()}',
                         style: TextStyles.bodyMedium(
                           context: context,
                           fontWeight: FontWeight.w400,

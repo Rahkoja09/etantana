@@ -53,6 +53,10 @@ import 'package:e_tantana/features/user/data/source/user_remote_source.dart';
 import 'package:e_tantana/features/user/domain/repository/user_repository.dart';
 import 'package:e_tantana/features/user/domain/usecases/user_usecases.dart';
 
+import 'package:e_tantana/features/feedback/data/repository/feedback_repository_impl.dart';
+import 'package:e_tantana/features/feedback/data/source/feedback_remote_source.dart';
+import 'package:e_tantana/features/feedback/domain/repository/feedback_repository.dart';
+import 'package:e_tantana/features/feedback/domain/usecases/feedback_usecases.dart';
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -70,6 +74,7 @@ Future<void> init() async {
   _initAuth();
   _initShop();
   _initUser();
+    _initFeedback();
   // [INIT_ANCHOR]
 
   _initMap();
@@ -185,4 +190,14 @@ Future<void> _initUser() async {
     () => UserRepositoryImpl(sl(), sl()),
   );
   sl.registerLazySingleton(() => UserUsecases(sl(), sl()));
+}
+
+Future<void> _initFeedback() async {
+  sl.registerLazySingleton<FeedbackRemoteSource>(
+    () => FeedbackRemoteSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<FeedbackRepository>(
+    () => FeedbackRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton(() => FeedbackUsecases(sl()));
 }

@@ -8,11 +8,12 @@ class UserEntity extends Equatable {
   final String? email;
   final int? sixDigitCode;
   final List<String>? myShops;
-    final String? lastName;
+  final String? lastName;
   final DateTime? birthDate;
   final String? nickName;
   final String? jobTitle;
-    final String? userPlan;
+  final String? userPlan;
+  final bool? isRegistered;
   // [FIELDS_ANCHOR]
 
   const UserEntity({
@@ -23,11 +24,12 @@ class UserEntity extends Equatable {
     this.email,
     this.sixDigitCode,
     this.myShops,
-        this.lastName,
+    this.lastName,
     this.birthDate,
     this.nickName,
     this.jobTitle,
-        this.userPlan,
+    this.userPlan,
+    this.isRegistered,
     // [CONSTRUCTOR_ANCHOR]
   });
 
@@ -39,11 +41,12 @@ class UserEntity extends Equatable {
     String? email,
     int? sixDigitCode,
     List<String>? myShops,
-        String? lastName,
+    String? lastName,
     DateTime? birthDate,
     String? nickName,
     String? jobTitle,
-        String? userPlan,
+    String? userPlan,
+    bool? isRegistered,
     // [COPYWITH_PARAMS_ANCHOR]
   }) {
     return UserEntity(
@@ -54,11 +57,12 @@ class UserEntity extends Equatable {
       email: email ?? this.email,
       sixDigitCode: sixDigitCode ?? this.sixDigitCode,
       myShops: myShops ?? this.myShops,
-            lastName: lastName ?? this.lastName,
+      lastName: lastName ?? this.lastName,
       birthDate: birthDate ?? this.birthDate,
       nickName: nickName ?? this.nickName,
       jobTitle: jobTitle ?? this.jobTitle,
-            userPlan: userPlan ?? this.userPlan,
+      userPlan: userPlan ?? this.userPlan,
+      isRegistered: isRegistered ?? this.isRegistered,
       // [COPYWITH_RETURN_ANCHOR]
     );
   }
@@ -72,11 +76,12 @@ class UserEntity extends Equatable {
     email,
     sixDigitCode,
     myShops,
-        lastName,
+    lastName,
     birthDate,
     nickName,
     jobTitle,
-        userPlan,
+    userPlan,
+    isRegistered,
     // [PROPS_ANCHOR]
   ];
 }

@@ -1,0 +1,47 @@
+import 'package:equatable/equatable.dart';
+
+class FeedbackEntity extends Equatable {
+  final String? id;
+  final DateTime? createdAt;
+    final String? user_id;
+  final int? rates;
+  final String? comment;
+  // [FIELDS_ANCHOR]
+
+  const FeedbackEntity({
+    this.id,
+    this.createdAt,
+        this.user_id,
+    this.rates,
+    this.comment,
+    // [CONSTRUCTOR_ANCHOR]
+  });
+
+  FeedbackEntity copyWith({
+    String? id,
+    DateTime? createdAt,
+        String? user_id,
+    int? rates,
+    String? comment,
+    // [COPYWITH_PARAMS_ANCHOR]
+  }) {
+    return FeedbackEntity(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+            user_id: user_id ?? this.user_id,
+      rates: rates ?? this.rates,
+      comment: comment ?? this.comment,
+      // [COPYWITH_RETURN_ANCHOR]
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    id, 
+    createdAt,
+        user_id,
+    rates,
+    comment,
+    // [PROPS_ANCHOR]
+  ];
+}
