@@ -5,6 +5,10 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
 import 'package:e_tantana/features/policies/presentation/pages/policies_page.dart';
 import 'package:e_tantana/features/sideBar/presentation/widgets/logout_dialogue.dart';
+import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
+import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_pages.dart';
+import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_settings_page.dart';
+import 'package:e_tantana/features/stockPrediction/presentation/widgets/stock_prediction_banner_card.dart';
 import 'package:e_tantana/features/user/presentation/pages/profil_page.dart';
 import 'package:e_tantana/shared/widget/iconCard/action_icon_box.dart';
 import 'package:e_tantana/shared/widget/input/list_item_action.dart';
@@ -14,6 +18,7 @@ import 'package:e_tantana/shared/widget/sizeBar/custom_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class SideBar extends ConsumerWidget {
@@ -23,6 +28,7 @@ class SideBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
     final authAction = ref.read(authControllerProvider.notifier);
+    final stockPredictionState = ref.watch(stockPredictionControllerProvider);
     final user = authState.user;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -74,14 +80,29 @@ class SideBar extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ActionIconBox(icon: Icons.notifications_none),
-                        ActionIconBox(icon: Icons.shopping_bag_outlined),
-                        ActionIconBox(icon: Icons.add_chart_sharp),
-                        ActionIconBox(icon: Icons.qr_code_2),
-                        ActionIconBox(icon: Icons.share_outlined),
+                        ActionIconBox(
+                          icon: Icons.notifications_none,
+                          onTap: () {},
+                        ),
+                        ActionIconBox(
+                          icon: Icons.shopping_bag_outlined,
+                          onTap: () {},
+                        ),
+                        ActionIconBox(
+                          icon: HugeIcons.strokeRoundedAiContentGenerator01,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const StockPredictionPage(),
+                              ),
+                            );
+                          },
+                        ),
+                        ActionIconBox(icon: Icons.qr_code_2, onTap: () {}),
+                        ActionIconBox(icon: Icons.share_outlined, onTap: () {}),
                       ],
                     ),
                   ],
@@ -118,6 +139,25 @@ class SideBar extends ConsumerWidget {
                       noIcon: true,
                     ),
                     const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: StockPredictionBannerCard(
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const StockPredictionPage(),
+                              ),
+                            ),
+                        criticalCount:
+                            stockPredictionState.predictions
+                                ?.where((p) => p.stockPressure > 0.8)
+                                .length ??
+                            0,
+                        totalProducts:
+                            stockPredictionState.predictions?.length ?? 0,
+                      ),
+                    ),
                     const Divider(),
                     ListItemAction(
                       icon: Icons.logout_rounded,

@@ -557,7 +557,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
             await orderAction.placeCompleteOrder(orderData);
             await productAction.researchProduct(null);
             await deliveryAction.searchDelivering(null);
-            await stockPredictionAction.refresh();
+            await stockPredictionAction.refreshHome();
 
             // réinitialiser les inputs -------------
             qteProduit = 0;

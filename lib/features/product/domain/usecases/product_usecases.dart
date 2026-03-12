@@ -27,10 +27,14 @@ class ProductUsecases {
           uid: userId,
           type: AppMediaType.product,
           internalPath: shopName,
+
           bucketName: "product",
         );
 
-        final entitiesWithImageLink = entities.copyWith(images: imageLink);
+        final entitiesWithImageLink = entities.copyWith(
+          images: imageLink,
+          userId: userId,
+        );
         return _productRepository.insertProduct(entitiesWithImageLink);
       }
       return _productRepository.insertProduct(entities);

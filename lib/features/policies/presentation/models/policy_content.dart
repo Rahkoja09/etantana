@@ -1,7 +1,6 @@
 class PoliciesContent {
   static const String appName = "E-Tantana";
-  static const String contactEmail =
-      "Fb: Fanevaniaina Koja Nekena Ramanamehefa";
+  static const String contactEmail = "Fb: Koja Nekena Ramanamehefa";
   static const String lastUpdated = "Mars 2026";
 
   static const List<PolicySection> termsOfService = [

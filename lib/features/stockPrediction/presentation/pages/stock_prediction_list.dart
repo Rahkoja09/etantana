@@ -28,9 +28,9 @@ class StockPredictionList extends ConsumerWidget {
     final state = ref.watch(stockPredictionControllerProvider);
     final products = ref.watch(productControllerProvider).product;
 
-    final bool isLoading = state.isLoading;
+    final bool isLoading = state.isHomeLoading;
     final predictionsToShow =
-        isLoading ? _fakePredictions : (state.predictions ?? []);
+        isLoading ? _fakePredictions : (state.predictionListForHome ?? []);
 
     if (!isLoading && predictionsToShow.isEmpty) {
       return EmptyContentView(

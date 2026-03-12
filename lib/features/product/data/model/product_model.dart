@@ -17,11 +17,13 @@ class ProductModel extends ProductEntities {
     super.futureProduct,
     super.isPack,
     super.packComposition,
+    super.userId,
   });
 
   factory ProductModel.fromMap(MapData data) {
     return ProductModel(
       id: data['id'],
+      userId: data["user_id"],
       name: data['name'],
       quantity: data["quantity"],
       createdAt: DateTime.parse(data['created_at']),
@@ -47,6 +49,7 @@ class ProductModel extends ProductEntities {
     return {
       'id': id,
       'created_at': createdAt?.toIso8601String(),
+      'user_id': userId,
       'name': name,
       'quantity': quantity,
       'description': description,
@@ -65,6 +68,7 @@ class ProductModel extends ProductEntities {
   factory ProductModel.fromEntity(ProductEntities entity) {
     return ProductModel(
       id: entity.id,
+      userId: entity.userId,
       name: entity.name,
       quantity: entity.quantity,
       createdAt: entity.createdAt,
@@ -83,6 +87,7 @@ class ProductModel extends ProductEntities {
 
   ProductModel copyWith({
     String? id,
+    String? userId,
     String? name,
     int? quantity,
     DateTime? createdAt,
@@ -99,6 +104,7 @@ class ProductModel extends ProductEntities {
   }) {
     return ProductModel(
       name: name ?? this.name,
+      userId: userId ?? this.userId,
       quantity: quantity ?? this.quantity,
       createdAt: createdAt ?? this.createdAt,
       description: description ?? this.description,

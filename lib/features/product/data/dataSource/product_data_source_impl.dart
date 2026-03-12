@@ -46,6 +46,7 @@ class ProductDataSourceImpl implements ProductDataSource {
               .from("product")
               .insert({
                 'name': entities.name,
+                'user_id': entities.userId,
                 'quantity': entities.quantity,
                 'description': entities.description,
                 'type': entities.type,
@@ -79,6 +80,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
       if (criterial != null) {
         final eId = criterial.eId;
+        final userId = criterial.userId;
         final name = criterial.name;
         final quantity = criterial.quantity;
         final description = criterial.description;
@@ -90,6 +92,7 @@ class ProductDataSourceImpl implements ProductDataSource {
         final isPack = criterial.isPack;
 
         if (eId != null) query = query.eq("e_id", eId);
+        if (userId != null) query = query.eq('user_id', userId);
         if (name != null) query = query.ilike("name", '%$name%');
         if (quantity != null) query = query.eq("quantity", quantity);
         if (description != null) query = query.eq("description", description);

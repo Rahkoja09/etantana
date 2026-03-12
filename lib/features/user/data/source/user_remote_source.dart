@@ -33,7 +33,7 @@ class UserRemoteSourceImpl implements UserRemoteSource {
             ..remove('id')
             ..remove('created_at');
 
-      final data = await _client.from(_tableName).insert(map).select().single();
+      final data = await _client.from(_tableName).upsert(map).select().single();
       return UserModel.fromMap(data);
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message, code: e.code ?? "POSTGREST_ERROR");

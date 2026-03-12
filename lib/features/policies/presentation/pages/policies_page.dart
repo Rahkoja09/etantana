@@ -1,3 +1,4 @@
+import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/features/policies/presentation/models/policy_content.dart';
 import 'package:e_tantana/features/policies/presentation/widgets/policy_detail_page.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
@@ -89,8 +90,8 @@ class PoliciesPage extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
         ),
         child: Row(
           children: [
@@ -159,7 +160,7 @@ class PoliciesPage extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
       ),
       child: Row(
         children: [

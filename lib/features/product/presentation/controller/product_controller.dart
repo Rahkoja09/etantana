@@ -16,14 +16,19 @@ class ProductController extends StateNotifier<ProductState> {
 
   ProductController(this._productUsecases) : super(ProductState());
 
-  Future<void> addProduct(ProductEntities entities, File? productImage) async {
+  Future<void> addProduct(
+    ProductEntities entities,
+    File? productImage,
+    String userId,
+    String shopName,
+  ) async {
     final action = InsertProductAction(entities.name!);
     _setLoadingState(action: action);
     final res = await _productUsecases.insertProduct(
       entities,
       productImage,
-      'testuserID',
-      "testInternalFolder",
+      userId,
+      shopName,
     );
     res.fold((error) => _setError(error: error, action: action), (success) {
       state = state.copyWith(

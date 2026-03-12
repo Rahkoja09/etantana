@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
@@ -83,13 +84,16 @@ class _ProductState extends ConsumerState<Product> {
 
   Future<void> getProduct() async {
     setState(() => _currentPage = 0);
-    await ref.read(productControllerProvider.notifier).researchProduct(null);
+    await ref
+        .read(productListPageControllerProvider.notifier)
+        .getAllProduct(ref);
   }
 
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
     final ProductListPageState = ref.watch(productListPageControllerProvider);
+    final authState = ref.watch(authControllerProvider);
     final ProductListPageAction = ref.read(
       productListPageControllerProvider.notifier,
     );
@@ -190,13 +194,20 @@ class _ProductState extends ConsumerState<Product> {
                                   ref
                                       .read(productControllerProvider.notifier)
                                       .researchProduct(
-                                        ProductEntities(name: val),
+                                        ProductEntities(
+                                          name: val,
+                                          userId: authState.user?.id ?? null,
+                                        ),
                                       );
                                 } else {
                                   // Si on efface tout, on recharge la liste de base (criterial = null)
                                   ref
                                       .read(productControllerProvider.notifier)
-                                      .researchProduct(null);
+                                      .researchProduct(
+                                        ProductEntities(
+                                          userId: authState.user?.id ?? null,
+                                        ),
+                                      );
                                 }
                               },
                             );
@@ -220,7 +231,10 @@ class _ProductState extends ConsumerState<Product> {
                                   ref
                                       .read(productControllerProvider.notifier)
                                       .researchProduct(
-                                        ProductEntities(futureProduct: true),
+                                        ProductEntities(
+                                          futureProduct: true,
+                                          userId: authState.user?.id ?? null,
+                                        ),
                                       );
                                   break;
                                 }
@@ -229,7 +243,10 @@ class _ProductState extends ConsumerState<Product> {
                                   ref
                                       .read(productControllerProvider.notifier)
                                       .researchProduct(
-                                        ProductEntities(quantity: 0),
+                                        ProductEntities(
+                                          quantity: 0,
+                                          userId: authState.user?.id ?? null,
+                                        ),
                                       );
                                   break;
                                 }
@@ -407,7 +424,15 @@ class _ProductState extends ConsumerState<Product> {
                                                           productControllerProvider
                                                               .notifier,
                                                         )
-                                                        .researchProduct(null);
+                                                        .researchProduct(
+                                                          ProductEntities(
+                                                            userId:
+                                                                authState
+                                                                    .user
+                                                                    ?.id ??
+                                                                null,
+                                                          ),
+                                                        );
                                                   },
                                                   child: DialogueDeleteAction(
                                                     nameOrID: "${item.name}",

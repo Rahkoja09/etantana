@@ -1,9 +1,12 @@
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
+import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/states/product_list_state.dart';
 
 class ProductListPageController extends StateNotifier<ProductListState> {
   ProductListPageController() : super(ProductListState());
+
   void toggleCheckBox() {
     state = state.copyWith(checkboxInList: !state.checkboxInList);
   }
@@ -47,6 +50,22 @@ class ProductListPageController extends StateNotifier<ProductListState> {
             currentPack.where((item) => item['id'] != entity.id).toList(),
       );
     }
+  }
+
+  Future<void> getAllProduct(WidgetRef ref) async {
+    await ref
+        .read(productControllerProvider.notifier)
+        .researchProduct(
+          ProductEntities(
+            userId: await ref.watch(authControllerProvider).user?.id,
+          ),
+        );
+  }
+
+  Future<void> searchProducts(WidgetRef ref, ProductEntities criteria) async {
+    await ref
+        .read(productControllerProvider.notifier)
+        .researchProduct(criteria);
   }
 
   void updateProductOrder(ProductEntities item, int quantity) {

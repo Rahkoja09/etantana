@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
@@ -111,6 +112,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
     final productAction = ref.read(productControllerProvider.notifier);
+    final authState = ref.watch(authControllerProvider);
     final double contentSpacer = 20.h;
     return Stack(
       children: [
@@ -408,7 +410,12 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     purchasePrice: double.tryParse(purchasePriceInput.text),
                     sellingPrice: double.tryParse(sellingPriceInput.text),
                   );
-                  await productAction.addProduct(addMe, _productImage);
+                  await productAction.addProduct(
+                    addMe,
+                    _productImage,
+                    authState.user!.id!,
+                    "shopNameTest",
+                  );
                 }
                 // refresh list ----------
                 await productAction.researchProduct(null);

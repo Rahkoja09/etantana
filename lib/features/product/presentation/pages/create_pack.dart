@@ -1,6 +1,7 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/home/presentation/widgets/big_stat_view.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stat_number_view.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
@@ -40,6 +41,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
   Widget build(BuildContext context) {
     final productAction = ref.read(productControllerProvider.notifier);
     final productStates = ref.watch(productControllerProvider);
+    final authState = ref.watch(authControllerProvider);
     return Stack(
       children: [
         Scaffold(
@@ -246,7 +248,12 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                     eId:
                         "Pack_${DateTime.fromMicrosecondsSinceEpoch(1640979000000000)}",
                   );
-                  productAction.addProduct(myPack, null);
+                  productAction.addProduct(
+                    myPack,
+                    null,
+                    authState.user!.id!,
+                    "shopNameTest",
+                  );
                 } else {
                   setState(() {
                     showToast(
