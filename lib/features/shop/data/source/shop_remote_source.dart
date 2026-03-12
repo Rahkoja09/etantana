@@ -5,6 +5,7 @@ import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
 
 abstract class ShopRemoteSource {
   Future<ShopModel> insertShop(ShopEntity entity);
+  Future<ShopModel> createShopAndUpdateUser(ShopEntity entity);
   Future<ShopModel> updateShop(ShopEntity entity);
   Future<List<ShopModel>> searchShop(
     ShopEntity? criteria, {
@@ -31,6 +32,34 @@ class ShopRemoteSourceImpl implements ShopRemoteSource {
               .insert(model.toMap())
               .select()
               .single();
+      return ShopModel.fromMap(data);
+    } on PostgrestException catch (e) {
+      throw ApiException(message: e.message, code: e.code ?? "POSTGREST_ERROR");
+    } catch (e) {
+      throw UnexceptedException(message: "$e");
+    }
+  }
+
+  @override
+  Future<ShopModel> createShopAndUpdateUser(ShopEntity entity) async {
+    try {
+      // Appel RPC atomique ------
+      final shopId = await _client.rpc(
+        'create_shop_and_update_user',
+        params: {
+          'p_user_id': entity.userId,
+          'p_shop_name': entity.shopName,
+          'p_slogan': entity.slogan,
+          'p_description': entity.description,
+          'p_phone_contact': entity.phoneContact,
+          'p_social_link': entity.socialLink,
+          'p_social_contact': entity.socialContact,
+          'p_shop_logo': entity.shopLogo,
+        },
+      );
+      final data =
+          await _client.from("shops").select().eq("id", shopId).single();
+
       return ShopModel.fromMap(data);
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message, code: e.code ?? "POSTGREST_ERROR");

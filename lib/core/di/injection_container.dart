@@ -182,7 +182,7 @@ Future<void> _initShop() async {
   sl.registerLazySingleton<ShopRepository>(
     () => ShopRepositoryImpl(sl(), sl()),
   );
-  sl.registerLazySingleton(() => ShopUsecases(sl()));
+  sl.registerLazySingleton(() => ShopUsecases(sl(), sl()));
 }
 
 Future<void> _initUser() async {

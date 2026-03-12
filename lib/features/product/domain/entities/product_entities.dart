@@ -16,6 +16,7 @@ class ProductEntities extends Equatable {
   final double? sellingPrice;
   final bool? futureProduct;
   final bool? isPack;
+  final String? shopId;
   final List<MapData>? packComposition;
 
   const ProductEntities({
@@ -34,6 +35,7 @@ class ProductEntities extends Equatable {
     this.futureProduct,
     this.isPack = false,
     this.packComposition,
+    this.shopId,
   });
 
   ProductEntities copyWith({
@@ -52,6 +54,7 @@ class ProductEntities extends Equatable {
     bool? futureProduct,
     bool? isPack,
     List<MapData>? packComposition,
+    String? shopId,
   }) {
     return ProductEntities(
       name: name ?? this.name,
@@ -69,6 +72,7 @@ class ProductEntities extends Equatable {
       futureProduct: futureProduct ?? this.futureProduct,
       isPack: isPack ?? this.isPack,
       packComposition: packComposition ?? this.packComposition,
+      shopId: shopId ?? this.shopId,
     );
   }
 
@@ -82,6 +86,7 @@ class ProductEntities extends Equatable {
       "unit_price": entity.sellingPrice,
       "product_name": entity.name,
       "purchase_price": entity.purchasePrice,
+      "shop_id": entity.shopId,
     };
   }
 
@@ -93,6 +98,7 @@ class ProductEntities extends Equatable {
       'selling_price': entity.sellingPrice,
       'image': entity.images,
       'name': entity.name,
+      'shop_id': entity.shopId,
     };
   }
 
@@ -113,5 +119,6 @@ class ProductEntities extends Equatable {
     futureProduct,
     isPack,
     packComposition,
+    shopId,
   ];
 }

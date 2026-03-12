@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
+import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
 import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
 import 'package:e_tantana/features/user/presentation/widgets/profile_image_uploader.dart';
@@ -87,7 +88,12 @@ class _CreateShopPageState extends ConsumerState<CreateShopPage> {
 
     await ref
         .read(shopControllerProvider.notifier)
-        .createShop(shop, _shopLogo!);
+        .createShop(
+          shop,
+          _shopLogo!,
+          ref.watch(authControllerProvider).user?.id,
+        );
+    if (mounted) Navigator.pop(context);
   }
 
   @override

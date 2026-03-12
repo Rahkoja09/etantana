@@ -4,10 +4,11 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
 import 'package:e_tantana/features/policies/presentation/pages/policies_page.dart';
+import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
+import 'package:e_tantana/features/shop/presentation/pages/shop_page.dart';
 import 'package:e_tantana/features/sideBar/presentation/widgets/logout_dialogue.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_pages.dart';
-import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_settings_page.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/widgets/stock_prediction_banner_card.dart';
 import 'package:e_tantana/features/user/presentation/pages/profil_page.dart';
 import 'package:e_tantana/shared/widget/iconCard/action_icon_box.dart';
@@ -27,6 +28,7 @@ class SideBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
+    final shopState = ref.watch(shopControllerProvider);
     final authAction = ref.read(authControllerProvider.notifier);
     final stockPredictionState = ref.watch(stockPredictionControllerProvider);
     final user = authState.user;
@@ -89,7 +91,15 @@ class SideBar extends ConsumerWidget {
                         ),
                         ActionIconBox(
                           icon: HugeIcons.strokeRoundedStore02,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder:
+                                    (_) =>
+                                        ShopPage(shop: (shopState.shops?[0])!),
+                              ),
+                            );
+                          },
                         ),
                         ActionIconBox(
                           icon: HugeIcons.strokeRoundedAiContentGenerator01,

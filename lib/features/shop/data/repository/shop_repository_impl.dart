@@ -29,7 +29,9 @@ class ShopRepositoryImpl implements ShopRepository {
     int start = 0,
     int end = 9,
   }) async {
-    return await _executeAction(() => _remoteSource.searchShop(criteria, start: start, end: end));
+    return await _executeAction(
+      () => _remoteSource.searchShop(criteria, start: start, end: end),
+    );
   }
 
   @override
@@ -42,8 +44,17 @@ class ShopRepositoryImpl implements ShopRepository {
     return await _executeAction(() => _remoteSource.deleteShopById(id));
   }
 
+  @override
+  ResultFuture<ShopEntity> createShopAndUpdateUser(ShopEntity entity) async {
+    return await _executeAction(
+      () => _remoteSource.createShopAndUpdateUser(entity),
+    );
+  }
+
   /// Helper générique pour gérer la connectivité et les erreurs
-  Future<Either<Failure, T>> _executeAction<T>(Future<T> Function() action) async {
+  Future<Either<Failure, T>> _executeAction<T>(
+    Future<T> Function() action,
+  ) async {
     if (await _networkInfo.isConnected) {
       try {
         final res = await action();

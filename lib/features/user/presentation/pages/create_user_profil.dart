@@ -144,9 +144,9 @@ class _CreateUserProfilState extends ConsumerState<CreateUserProfil> {
                     iconData: HugeIcons.strokeRoundedCalendarAdd01,
                     textHint: "date de naissance",
                     isRange: false,
-                    onDateSelected: (birthDate) {
+                    onDateSelected: (myBirthDate) {
                       setState(() {
-                        birthDate = birthDate;
+                        birthDate = myBirthDate;
                       });
                     },
                   ),

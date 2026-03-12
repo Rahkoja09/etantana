@@ -86,11 +86,11 @@ class ShopController extends StateNotifier<ShopStates> {
   }
 
   // --- INSERTION ---
-  Future<void> createShop(ShopEntity entity, File file) async {
-    final action = CreateShopAction(entity.id ?? "nouveau");
+  Future<void> createShop(ShopEntity entity, File file, String? userId) async {
+    final action = CreateShopAction(entity.id ?? entity.shopName!);
     _setLoadingState(action: action);
 
-    final res = await _shopUsecases.insertShop(entity);
+    final res = await _shopUsecases.insertShop(entity, file, userId!);
 
     res.fold((error) => _setError(error: error, action: action), (success) {
       state = state.copyWith(

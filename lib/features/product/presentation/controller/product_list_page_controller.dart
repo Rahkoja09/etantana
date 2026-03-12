@@ -62,6 +62,17 @@ class ProductListPageController extends StateNotifier<ProductListState> {
         );
   }
 
+  Future<void> getAllSelectedShopProducts(WidgetRef ref, String shopId) async {
+    await ref
+        .read(productControllerProvider.notifier)
+        .researchProduct(
+          ProductEntities(
+            userId: await ref.watch(authControllerProvider).user?.id,
+            shopId: shopId,
+          ),
+        );
+  }
+
   Future<void> searchProducts(WidgetRef ref, ProductEntities criteria) async {
     await ref
         .read(productControllerProvider.notifier)

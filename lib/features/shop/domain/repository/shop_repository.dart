@@ -5,6 +5,8 @@ abstract class ShopRepository {
   /// Insère un nouveau Shop
   ResultFuture<ShopEntity> insertShop(ShopEntity entity);
 
+  ResultFuture<ShopEntity> createShopAndUpdateUser(ShopEntity entity);
+
   /// Met à jour un Shop existant
   ResultFuture<ShopEntity> updateShop(ShopEntity entity);
 

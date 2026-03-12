@@ -3,7 +3,9 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/feedback/presentation/pages/feedback_page.dart';
+import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
 import 'package:e_tantana/features/shop/presentation/pages/create_shop_page.dart';
+import 'package:e_tantana/features/shop/presentation/pages/shop_page.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/create_shop_card.dart';
 import 'package:e_tantana/features/user/domain/entity/user_entity.dart';
 import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
@@ -42,6 +44,7 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final userStates = ref.watch(userControllerProvider);
+    final shopState = ref.watch(shopControllerProvider);
     final authStates = ref.watch(authControllerProvider);
 
     final userProfile =
@@ -136,7 +139,16 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                           if (hasShop)
                             ItemActionList(
                               leadingIcon: HugeIcons.strokeRoundedStore02,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => ShopPage(
+                                          shop: (shopState.shops?[0])!,
+                                        ),
+                                  ),
+                                );
+                              },
                               title: "Mes Boutiques",
                             ),
                           ItemActionList(
