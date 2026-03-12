@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
@@ -22,7 +24,7 @@ class ShopController extends StateNotifier<ShopStates> {
     _isLastPage = false;
 
     _setLoadingState(action: action);
-    
+
     state = state.copyWith(
       currentCriteria: criteria,
       shops: [],
@@ -36,26 +38,23 @@ class ShopController extends StateNotifier<ShopStates> {
       end: _pageSize - 1,
     );
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        if (success.length < _pageSize) _isLastPage = true;
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          shops: success,
-          currentCriteria: criteria,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      if (success.length < _pageSize) _isLastPage = true;
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        shops: success,
+        currentCriteria: criteria,
+        action: action,
+      );
+    });
   }
 
   // --- LAZY LOADING (PAGINATION) ---
   Future<void> loadNextPage() async {
     if (state.isLoading || _isLastPage) return;
 
-    final action = GetShopAction(); 
+    final action = GetShopAction();
     _currentPage++;
     final int start = _currentPage * _pageSize;
     final int end = start + _pageSize - 1;
@@ -87,23 +86,20 @@ class ShopController extends StateNotifier<ShopStates> {
   }
 
   // --- INSERTION ---
-  Future<void> createShop(ShopEntity entity) async {
+  Future<void> createShop(ShopEntity entity, File file) async {
     final action = CreateShopAction(entity.id ?? "nouveau");
     _setLoadingState(action: action);
 
     final res = await _shopUsecases.insertShop(entity);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          shops: [success, ...?state.shops],
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        shops: [success, ...?state.shops],
+        action: action,
+      );
+    });
   }
 
   // --- MISE À JOUR ---
@@ -113,21 +109,21 @@ class ShopController extends StateNotifier<ShopStates> {
 
     final res = await _shopUsecases.updateShop(entity);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (updatedEntity) {
-        final newList = state.shops?.map((item) {
-          return item.id == updatedEntity.id ? updatedEntity : item;
-        }).toList();
+    res.fold((error) => _setError(error: error, action: action), (
+      updatedEntity,
+    ) {
+      final newList =
+          state.shops?.map((item) {
+            return item.id == updatedEntity.id ? updatedEntity : item;
+          }).toList();
 
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          shops: newList,
-          action: action,
-        );
-      },
-    );
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        shops: newList,
+        action: action,
+      );
+    });
   }
 
   // --- SUPPRESSION ---
@@ -137,18 +133,15 @@ class ShopController extends StateNotifier<ShopStates> {
 
     final res = await _shopUsecases.deleteShopById(id);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (_) {
-        final newList = state.shops?.where((i) => i.id != id).toList() ?? [];
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          shops: newList,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (_) {
+      final newList = state.shops?.where((i) => i.id != id).toList() ?? [];
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        shops: newList,
+        action: action,
+      );
+    });
   }
 
   // --- UTILITAIRES INTERNES ---
@@ -169,5 +162,5 @@ class ShopController extends StateNotifier<ShopStates> {
 // --- PROVIDER ---
 final shopControllerProvider =
     StateNotifierProvider<ShopController, ShopStates>((ref) {
-  return ShopController(sl<ShopUsecases>());
-});
+      return ShopController(sl<ShopUsecases>());
+    });

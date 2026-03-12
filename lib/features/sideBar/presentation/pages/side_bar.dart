@@ -88,7 +88,7 @@ class SideBar extends ConsumerWidget {
                           onTap: () {},
                         ),
                         ActionIconBox(
-                          icon: Icons.shopping_bag_outlined,
+                          icon: HugeIcons.strokeRoundedStore02,
                           onTap: () {},
                         ),
                         ActionIconBox(

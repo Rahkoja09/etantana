@@ -16,6 +16,7 @@ class UserModel extends UserEntity {
     super.jobTitle,
     super.userPlan,
     super.isRegistered,
+    super.selectedShop,
     // [CONSTRUCTOR_ANCHOR]
   });
 
@@ -40,6 +41,7 @@ class UserModel extends UserEntity {
       jobTitle: data['job_title'] as String?,
       userPlan: data['user_plan'] as String?,
       isRegistered: data['is_registered'] as bool?,
+      selectedShop: data['selected_shop'] as String?,
       // [FROM_MAP_ANCHOR]
     );
   }
@@ -59,6 +61,7 @@ class UserModel extends UserEntity {
       'job_title': jobTitle,
       'user_plan': userPlan,
       'is_registered': isRegistered,
+      'selected_shop': selectedShop,
       // [TO_MAP_ANCHOR]
     };
   }
@@ -78,6 +81,7 @@ class UserModel extends UserEntity {
       jobTitle: entity.jobTitle,
       userPlan: entity.userPlan,
       isRegistered: entity.isRegistered,
+      selectedShop: entity.selectedShop,
       // [FROM_ENTITY_ANCHOR]
     );
   }

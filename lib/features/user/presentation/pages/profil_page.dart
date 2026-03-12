@@ -3,6 +3,8 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/feedback/presentation/pages/feedback_page.dart';
+import 'package:e_tantana/features/shop/presentation/pages/create_shop_page.dart';
+import 'package:e_tantana/features/shop/presentation/widgets/create_shop_card.dart';
 import 'package:e_tantana/features/user/domain/entity/user_entity.dart';
 import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:e_tantana/features/user/presentation/pages/create_user_profil.dart';
@@ -51,6 +53,8 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
         userStates.users != null &&
         userStates.users!.isNotEmpty &&
         userStates.users![0].isRegistered == true;
+    final hasShop =
+        hasProfile == true && userStates.users![0].myShops!.length > 0;
 
     final String displayImage =
         userProfile?.profilLink ??
@@ -119,11 +123,22 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                       ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ItemActionList(
-                            leadingIcon: HugeIcons.strokeRoundedStore02,
-                            onTap: () {},
-                            title: "Mes Boutiques",
-                          ),
+                          if (!hasShop)
+                            CreateShopCard(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const CreateShopPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          if (hasShop)
+                            ItemActionList(
+                              leadingIcon: HugeIcons.strokeRoundedStore02,
+                              onTap: () {},
+                              title: "Mes Boutiques",
+                            ),
                           ItemActionList(
                             leadingIcon: HugeIcons.strokeRoundedMessageEdit02,
                             onTap: () {

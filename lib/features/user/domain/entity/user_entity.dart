@@ -14,6 +14,7 @@ class UserEntity extends Equatable {
   final String? jobTitle;
   final String? userPlan;
   final bool? isRegistered;
+  final String? selectedShop;
   // [FIELDS_ANCHOR]
 
   const UserEntity({
@@ -30,6 +31,7 @@ class UserEntity extends Equatable {
     this.jobTitle,
     this.userPlan,
     this.isRegistered,
+    this.selectedShop,
     // [CONSTRUCTOR_ANCHOR]
   });
 
@@ -47,6 +49,7 @@ class UserEntity extends Equatable {
     String? jobTitle,
     String? userPlan,
     bool? isRegistered,
+    String? selectedShop,
     // [COPYWITH_PARAMS_ANCHOR]
   }) {
     return UserEntity(
@@ -63,6 +66,7 @@ class UserEntity extends Equatable {
       jobTitle: jobTitle ?? this.jobTitle,
       userPlan: userPlan ?? this.userPlan,
       isRegistered: isRegistered ?? this.isRegistered,
+      selectedShop: selectedShop ?? this.selectedShop,
       // [COPYWITH_RETURN_ANCHOR]
     );
   }
@@ -82,6 +86,7 @@ class UserEntity extends Equatable {
     jobTitle,
     userPlan,
     isRegistered,
+    selectedShop,
     // [PROPS_ANCHOR]
   ];
 }

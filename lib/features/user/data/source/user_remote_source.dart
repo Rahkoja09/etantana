@@ -18,9 +18,7 @@ abstract class UserRemoteSource {
 class UserRemoteSourceImpl implements UserRemoteSource {
   final SupabaseClient _client;
   UserRemoteSourceImpl(this._client);
-
   static const String _tableName = "user";
-
   @override
   Future<UserModel> insertUser(UserEntity entity) async {
     try {
@@ -117,6 +115,10 @@ class UserRemoteSourceImpl implements UserRemoteSource {
         final isRegistered = criteria.isRegistered;
         if (isRegistered != null) {
           query = query.eq("is_registered", isRegistered);
+        }
+        final selectedShop = criteria.selectedShop;
+        if (selectedShop != null) {
+          query = query.ilike("selected_shop", "%$selectedShop%");
         }
         // [FILTERS_ANCHOR]
       }
