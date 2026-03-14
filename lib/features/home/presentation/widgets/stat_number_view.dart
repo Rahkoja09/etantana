@@ -29,7 +29,9 @@ class StatNumberView extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(
                   StylesConstants.borderRadius,
                 ),

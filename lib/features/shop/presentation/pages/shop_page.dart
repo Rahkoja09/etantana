@@ -4,15 +4,18 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
+import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_action_buttons.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_avatar.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_info_cards.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_product_card.dart';
+import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ShopPage extends ConsumerStatefulWidget {
@@ -34,17 +37,13 @@ class _ShopPageState extends ConsumerState<ShopPage> {
     final isLoading = productState.isLoading;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = Theme.of(context).colorScheme.primary;
-
     final shopProducts =
         products.where((p) => p.shopId == widget.shop.id).toList();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 0,
-        backgroundColor: Colors.transparent,
-      ),
+
+      appBar: SimpleAppbar(onBack: () {}, title: "Ma boutique"),
       body: Stack(
         children: [
           CustomScrollView(

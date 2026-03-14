@@ -45,6 +45,18 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
             valueOfCardIcon: HugeIcons.strokeRoundedChart,
             image3DStyleAssetsOrLink: "assets/medias/logos/chart_3D_2.png",
           ),
+          SizedBox(width: StylesConstants.spacerContent),
+          PresentationCard(
+            onTap: widget.onTap,
+            icon: HugeIcons.strokeRoundedChartLineData01,
+            headText: "Je",
+            bodyText: "Dirige",
+            commenteText: "Mes boutiques en un seul endroit",
+            themeColor: Colors.red,
+            valueOfCardText: "Je pilote facilement",
+            valueOfCardIcon: HugeIcons.strokeRoundedStore02,
+            image3DStyleAssetsOrLink: "assets/medias/logos/store.png",
+          ),
         ],
       ),
     );

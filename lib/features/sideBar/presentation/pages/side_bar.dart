@@ -82,28 +82,6 @@ class SideBar extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ActionIconBox(
-                          icon: Icons.notifications_none,
-                          onTap: () {},
-                        ),
-                        ActionIconBox(
-                          icon: HugeIcons.strokeRoundedAiContentGenerator01,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const StockPredictionPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        ActionIconBox(icon: Icons.qr_code_2, onTap: () {}),
-                        ActionIconBox(icon: Icons.share_outlined, onTap: () {}),
-                      ],
-                    ),
                   ],
                 ),
               ),

@@ -15,6 +15,8 @@ import 'package:e_tantana/features/user/presentation/widgets/profil_header_previ
 import 'package:e_tantana/features/user/presentation/widgets/register_placehorlder.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/others/separator_background.dart';
+import 'package:e_tantana/shared/widget/share/share_qr_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -31,6 +33,12 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (ref.watch(shopControllerProvider).shops == null) {
+        await ref.read(shopControllerProvider.notifier).searchShop(null);
+      }
+    });
   }
 
   @override
@@ -71,7 +79,10 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
         },
         child: Skeletonizer(
           effect: LoadingEffect.getCommonEffect(context),
-          enabled: userStates.isLoading || authStates.isLoading,
+          enabled:
+              userStates.isLoading ||
+              authStates.isLoading ||
+              shopState.isLoading,
           ignoreContainers: true,
           justifyMultiLineText: true,
           child: SingleChildScrollView(
@@ -92,15 +103,43 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          HugeIcons.strokeRoundedQrCode,
-                          size: 25,
-                          color: colorScheme.onSurface,
+                      if (hasProfile)
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => ShareQrPage(
+                                      qrData:
+                                          "etantana://user/${userProfile?.id}",
+                                      title: userProfile!.name!,
+                                      subtitle: userProfile.email,
+                                      badgeLabel: "Vendeur",
+                                      accentColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      actions: [
+                                        ShareQrAction(
+                                          icon: HugeIcons.strokeRoundedShare01,
+                                          label: "Partager",
+                                          onTap: () {},
+                                        ),
+                                        ShareQrAction(
+                                          icon:
+                                              HugeIcons.strokeRoundedDownload01,
+                                          label: "Sauvegarder",
+                                          onTap: () {},
+                                        ),
+                                      ],
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            HugeIcons.strokeRoundedQrCode,
+                            size: 25,
+                            color: colorScheme.onSurface,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   SizedBox(height: 30),
@@ -129,31 +168,38 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                                 );
                               },
                             ),
-                          if (hasShop)
-                            ItemActionList(
-                              leadingIcon: HugeIcons.strokeRoundedStore02,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => ShopPage(
-                                          shop: (shopState.shops?[0])!,
+                          SeparatorBackground(
+                            child: Column(
+                              children: [
+                                if (hasShop)
+                                  ItemActionList(
+                                    leadingIcon: HugeIcons.strokeRoundedStore02,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) => ShopPage(
+                                                shop: (shopState.shops?[0])!,
+                                              ),
                                         ),
+                                      );
+                                    },
+                                    title: "Mes Boutiques",
                                   ),
-                                );
-                              },
-                              title: "Mes Boutiques",
-                            ),
-                          ItemActionList(
-                            leadingIcon: HugeIcons.strokeRoundedMessageEdit02,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const FeedbackPage(),
+                                ItemActionList(
+                                  leadingIcon:
+                                      HugeIcons.strokeRoundedMessageEdit02,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const FeedbackPage(),
+                                      ),
+                                    );
+                                  },
+                                  title: "FeedBack",
                                 ),
-                              );
-                            },
-                            title: "FeedBack",
+                              ],
+                            ),
                           ),
                         ],
                       )
