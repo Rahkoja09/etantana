@@ -15,7 +15,9 @@ class ShopController extends StateNotifier<ShopStates> {
   final int _pageSize = 10;
   bool _isLastPage = false;
 
-  ShopController(this._shopUsecases) : super(const ShopStates());
+  ShopController(this._shopUsecases) : super(const ShopStates()) {
+    searchShop(null);
+  }
 
   // --- RÉCUPÉRATION / RECHERCHE ---
   Future<void> searchShop(ShopEntity? criteria) async {
@@ -39,6 +41,7 @@ class ShopController extends StateNotifier<ShopStates> {
     );
 
     res.fold((error) => _setError(error: error, action: action), (success) {
+      print("hop: j'ai trouver un shop, le voici : $success");
       if (success.length < _pageSize) _isLastPage = true;
       state = state.copyWith(
         isLoading: false,
@@ -150,6 +153,7 @@ class ShopController extends StateNotifier<ShopStates> {
   }
 
   void _setError({required Failure error, required ShopActions action}) {
+    print("nop: j'ai pas trouver un shop, le voici : $error");
     state = state.copyWith(
       isLoading: false,
       error: error,

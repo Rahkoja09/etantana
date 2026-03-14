@@ -165,7 +165,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                         isFavorite: _isFavorite,
                         onFavoriteTap:
                             () => setState(() => _isFavorite = !_isFavorite),
-                        onShareTap: () {},
+                        onEditTap: () {},
                         onQrTap: () {},
                       ),
                     ),
@@ -251,7 +251,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 14.w,
-                        mainAxisSpacing: 20.h,
+                        mainAxisSpacing: 25.h,
                         childAspectRatio: 0.68,
                       ),
                     ),
@@ -296,7 +296,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 14.w,
-                        mainAxisSpacing: 20.h,
+                        mainAxisSpacing: 25.h,
                         childAspectRatio: 0.68,
                       ),
                     ),

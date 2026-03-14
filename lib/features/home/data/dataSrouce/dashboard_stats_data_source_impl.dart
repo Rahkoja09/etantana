@@ -12,8 +12,11 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
   Future<DashboardStatsModel> getDashboardStats() async {
     try {
       final now = DateTime.now();
-      final todayStart =
-          DateTime(now.year, now.month, now.day, 0, 0, 0).toIso8601String();
+
+      // ── 7 derniers jours (aujourd'hui inclus) ──────────────
+      final day7Start =
+          DateTime(now.year, now.month, now.day - 6).toIso8601String();
+
       final todayEnd =
           DateTime(
             now.year,
@@ -25,6 +28,10 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
             999,
           ).toIso8601String();
 
+      final todayStart =
+          DateTime(now.year, now.month, now.day).toIso8601String();
+
+      // ── Livraisons validées aujourd'hui ───────────────────
       final deliveryRes = await _client
           .from('delivering')
           .select('*')
@@ -34,35 +41,72 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
 
       final int deliveryToday = deliveryRes.count;
 
-      final List<dynamic> ordersData = await _client
-          .from('order')
-          .select('id, products_and_quantities')
-          .eq('status', DeliveryStatus.delivered.name)
-          .gte('delivery_date', todayStart)
-          .lte('delivery_date', todayEnd);
-
+      // ── Commandes totales aujourd'hui ─────────────────────
       final List<dynamic> ordersTotal = await _client
           .from('order')
-          .select('id, products_and_quantities')
+          .select('id')
           .gte('created_at', todayStart);
 
-      int totalOrders = ordersTotal.length;
-      double dailyRevenue = 0;
+      final int totalOrders = ordersTotal.length;
 
-      for (var order in ordersData) {
-        final dynamic productsOrdered = order['products_and_quantities'];
+      // ── Commandes livrées sur 7 jours ─────────────────────
+      final List<dynamic> orders7Days = await _client
+          .from('order')
+          .select('delivery_date, products_and_quantities')
+          .eq('status', DeliveryStatus.delivered.name)
+          .gte('delivery_date', day7Start)
+          .lte('delivery_date', todayEnd);
+
+      // ── Calcul revenu par jour sur 7 jours ────────────────
+      // Map : "yyyy-MM-dd" → revenu
+      final Map<String, double> revenuePerDay = {};
+
+      // Initialise les 7 jours à 0
+      for (int i = 6; i >= 0; i--) {
+        final day = now.subtract(Duration(days: i));
+        final key =
+            "${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}";
+        revenuePerDay[key] = 0.0;
+      }
+
+      // Somme les revenus par jour
+      for (var order in orders7Days) {
+        final String? deliveryDate = order['delivery_date'];
+        if (deliveryDate == null) continue;
+
+        final dateKey = deliveryDate.substring(0, 10); // "yyyy-MM-dd"
+        if (!revenuePerDay.containsKey(dateKey)) continue;
 
         double price = 0.0;
+        final dynamic productsOrdered = order['products_and_quantities'];
         for (var product in productsOrdered) {
-          price += product["unit_price"]! * product["quantity"]!;
+          price += (product["unit_price"] ?? 0) * (product["quantity"] ?? 0);
         }
-        dailyRevenue += price;
+        revenuePerDay[dateKey] = (revenuePerDay[dateKey] ?? 0) + price;
+      }
+
+      // Liste ordonnée du plus ancien au plus récent
+      final List<double> revenueHistory = revenuePerDay.values.toList();
+
+      // Variation : aujourd'hui vs hier
+      final double today = revenueHistory.last;
+      final double yesterday =
+          revenueHistory.length >= 2
+              ? revenueHistory[revenueHistory.length - 2]
+              : 0;
+
+      String revenueIncrease = "+0%";
+      if (yesterday > 0) {
+        final double diff = ((today - yesterday) / yesterday) * 100;
+        revenueIncrease = "${diff >= 0 ? '+' : ''}${diff.toStringAsFixed(0)}%";
+      } else if (today > 0) {
+        revenueIncrease = "+100%";
       }
 
       return DashboardStatsModel(
         period: "Aujourd'hui",
-        revenue: dailyRevenue,
-        revenueIncrease: "+0%",
+        revenue: revenueHistory,
+        revenueIncrease: revenueIncrease,
         totalOrders: totalOrders,
         deliveryToday: deliveryToday,
       );

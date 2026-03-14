@@ -53,9 +53,6 @@ class _ProductState extends ConsumerState<Product> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await getProduct();
-    });
   }
 
   // multiple order actions --------

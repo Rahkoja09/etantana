@@ -4,8 +4,8 @@ import 'package:e_tantana/features/home/domain/entities/dashboard_stats_entities
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/home/presentation/states/dashboard_states.dart';
 import 'package:e_tantana/features/home/presentation/widgets/big_stat_view.dart';
+import 'package:e_tantana/features/home/presentation/widgets/income_stat.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stat_number_view.dart';
-import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
@@ -25,24 +25,15 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await getDashboard();
-    });
   }
 
   DashboardStatsEntities dashboard = DashboardStatsEntities(
     period: "loading",
-    revenue: 0.0,
+    revenue: [0.0],
     revenueIncrease: "+0%",
     totalOrders: 0,
     deliveryToday: 0,
   );
-
-  Future<void> getDashboard() async {
-    await ref
-        .read(dashboardStatsControllerProvider.notifier)
-        .getDashboardStats();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,66 +53,64 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
         });
       }
     });
-    return AppRefreshIndicator(
-      onRefresh: getDashboard,
-      child: Skeletonizer(
-        enabled: dashboardState.isLoading,
-        ignoreContainers: true,
-        effect: LoadingEffect.getCommonEffect(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                MediumTitleWithDegree(
-                  showDegree: false,
-                  title: "Tableau de bord",
-                ),
-                InkWell(
-                  child: Text(
-                    "voir plus",
-                    style: TextStyles.bodyMedium(
-                      context: context,
-                      color: Colors.blue,
-                    ),
+    return Skeletonizer(
+      enabled: dashboardState.isLoading,
+      ignoreContainers: true,
+      effect: LoadingEffect.getCommonEffect(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              MediumTitleWithDegree(
+                showDegree: false,
+                title: "Tableau de bord",
+              ),
+              InkWell(
+                child: Text(
+                  "voir plus",
+                  style: TextStyles.bodyMedium(
+                    context: context,
+                    color: Colors.blue,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
 
-            BigStatView(
-              icon: HugeIcons.strokeRoundedMoneyBag01,
-              title: "Chiffres d'affaire",
-              cycle: "${dashboard.period}",
-              moneySign: "Ariary",
-              increasePercent: "${dashboard.revenueIncrease}",
-              value: "${dashboard.revenue}",
-              themeColor: Theme.of(context).colorScheme.surfaceContainer,
-            ),
-            SizedBox(height: StylesConstants.spacerContent),
-            Row(
-              children: [
-                Expanded(
-                  child: StatNumberView(
-                    icon: HugeIcons.strokeRoundedInvoice,
-                    title: "Commande(s)",
-                    value: "${dashboard.totalOrders}",
-                  ),
+          IncomeStat(
+            icon: HugeIcons.strokeRoundedMoneyBag01,
+            title: "Chiffres d'affaire",
+            cycle: dashboard.period!,
+            moneySign: "Ariary",
+            increasePercent: dashboard.revenueIncrease!,
+            value: dashboard.revenue!.last.toStringAsFixed(0),
+            revenueHistory: dashboard.revenue,
+            themeColor: Theme.of(context).colorScheme.surfaceContainer,
+          ),
+          SizedBox(height: StylesConstants.spacerContent),
+          Row(
+            children: [
+              Expanded(
+                child: StatNumberView(
+                  icon: HugeIcons.strokeRoundedInvoice,
+                  title: "Commande(s)",
+                  value: "${dashboard.totalOrders}",
                 ),
-                SizedBox(width: StylesConstants.spacerContent),
-                Expanded(
-                  child: StatNumberView(
-                    icon: HugeIcons.strokeRoundedPackage03,
-                    title: "Livraison(s)",
-                    value: "${dashboard.deliveryToday}",
-                  ),
+              ),
+              SizedBox(width: StylesConstants.spacerContent),
+              Expanded(
+                child: StatNumberView(
+                  icon: HugeIcons.strokeRoundedPackage03,
+                  title: "Livraison(s)",
+                  value: "${dashboard.deliveryToday}",
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

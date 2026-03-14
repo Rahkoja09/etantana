@@ -11,6 +11,7 @@ import 'package:e_tantana/features/stockPrediction/presentation/controller/stock
 import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_pages.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/widgets/stock_prediction_banner_card.dart';
 import 'package:e_tantana/features/user/presentation/pages/profil_page.dart';
+import 'package:e_tantana/shared/widget/banner/custom_simple_banner.dart';
 import 'package:e_tantana/shared/widget/iconCard/action_icon_box.dart';
 import 'package:e_tantana/shared/widget/input/list_item_action.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
@@ -90,18 +91,6 @@ class SideBar extends ConsumerWidget {
                           onTap: () {},
                         ),
                         ActionIconBox(
-                          icon: HugeIcons.strokeRoundedStore02,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder:
-                                    (_) =>
-                                        ShopPage(shop: (shopState.shops?[0])!),
-                              ),
-                            );
-                          },
-                        ),
-                        ActionIconBox(
                           icon: HugeIcons.strokeRoundedAiContentGenerator01,
                           onTap: () {
                             Navigator.of(context).push(
@@ -151,7 +140,10 @@ class SideBar extends ConsumerWidget {
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: StockPredictionBannerCard(
+                      child: CustomSimpleBanner(
+                        title: "Smart Inventory Predictor",
+                        subtitle:
+                            "Anticipez les ruptures avant qu'elles arrivent.",
                         onTap:
                             () => Navigator.push(
                               context,
@@ -159,13 +151,6 @@ class SideBar extends ConsumerWidget {
                                 builder: (_) => const StockPredictionPage(),
                               ),
                             ),
-                        criticalCount:
-                            stockPredictionState.predictions
-                                ?.where((p) => p.stockPressure > 0.8)
-                                .length ??
-                            0,
-                        totalProducts:
-                            stockPredictionState.predictions?.length ?? 0,
                       ),
                     ),
                     const Divider(),

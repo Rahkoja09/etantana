@@ -31,6 +31,7 @@ class ShopRepositoryImpl implements ShopRepository {
   }) async {
     return await _executeAction(
       () => _remoteSource.searchShop(criteria, start: start, end: end),
+      isCritical: false,
     );
   }
 
@@ -52,19 +53,29 @@ class ShopRepositoryImpl implements ShopRepository {
   }
 
   /// Helper générique pour gérer la connectivité et les erreurs
-  Future<Either<Failure, T>> _executeAction<T>(
-    Future<T> Function() action,
-  ) async {
-    if (await _networkInfo.isConnected) {
+  ResultFuture<T> _executeAction<T>(
+    Future<T> Function() action, {
+    bool isCritical = true,
+  }) async {
+    final bool connected =
+        isCritical
+            ? await _networkInfo.isConnected
+            : await _networkInfo.hasConnection;
+
+    if (connected) {
       try {
         final res = await action();
         return Right(res);
       } on ApiException catch (e) {
         return Left(ApiFailure.fromException(e));
+      } on AuthUserException catch (e) {
+        return Left(AuthFailure.fromException(e));
       } catch (e) {
-        return Left(UnexceptedFailure(e.toString(), "500"));
+        return Left(UnexceptedFailure(e.toString(), "000"));
       }
     }
-    return const Left(NetworkFailure("Pas de connexion Internet", "NET_001"));
+    return const Left(
+      NetworkFailure("Pas de connexion internet", "Network_01"),
+    );
   }
 }

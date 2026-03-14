@@ -1,17 +1,18 @@
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ShopActionButtons extends StatelessWidget {
   final VoidCallback? onQrTap;
-  final VoidCallback? onShareTap;
+  final VoidCallback? onEditTap;
   final VoidCallback? onFavoriteTap;
   final bool isFavorite;
 
   const ShopActionButtons({
     super.key,
     this.onQrTap,
-    this.onShareTap,
+    this.onEditTap,
     this.onFavoriteTap,
     this.isFavorite = false,
   });
@@ -34,8 +35,9 @@ class ShopActionButtons extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: (isDark ? primary : Colors.black)
-                        .withValues(alpha: 0.25),
+                    color: (isDark ? primary : Colors.black).withValues(
+                      alpha: 0.25,
+                    ),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
@@ -66,18 +68,19 @@ class ShopActionButtons extends StatelessWidget {
         SizedBox(width: 10.w),
 
         // Share
-        _IconBtn(
-          icon: Icons.share_outlined,
-          onTap: onShareTap,
-        ),
+        _IconBtn(icon: HugeIcons.strokeRoundedEdit04, onTap: onEditTap),
         SizedBox(width: 10.w),
 
         // Favorite
         _IconBtn(
-          icon: isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
-          iconColor: isFavorite
-              ? const Color(0xFFEF4444)
-              : Theme.of(context).colorScheme.onSurface,
+          icon:
+              isFavorite
+                  ? Icons.favorite_rounded
+                  : Icons.favorite_outline_rounded,
+          iconColor:
+              isFavorite
+                  ? const Color(0xFFEF4444)
+                  : Theme.of(context).colorScheme.onSurface,
           onTap: onFavoriteTap,
         ),
       ],
@@ -103,10 +106,9 @@ class _IconBtn extends StatelessWidget {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: Theme.of(context)
-                .colorScheme
-                .onSurface
-                .withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.1),
           ),
           boxShadow: [
             BoxShadow(

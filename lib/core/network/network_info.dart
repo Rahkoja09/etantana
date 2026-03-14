@@ -1,3 +1,5 @@
+import 'package:e_tantana/core/di/injection_container.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 abstract class NetworkInfo {
@@ -33,3 +35,7 @@ class NetworkInfoImpl implements NetworkInfo {
     return connectionChecker.onStatusChange;
   }
 }
+
+final connectivityProvider = StreamProvider<InternetStatus>((ref) {
+  return NetworkInfoImpl(sl<InternetConnection>()).onStatusChanged;
+});

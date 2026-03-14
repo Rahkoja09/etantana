@@ -15,7 +15,10 @@ class UserController extends StateNotifier<UserStates> {
   final int _pageSize = 10;
   bool _isLastPage = false;
 
-  UserController(this._userUsecases) : super(const UserStates());
+  UserController(this._userUsecases) : super(const UserStates()) {
+    print("oui, je suis instancier et je recuperer les données user en plus");
+    searchUser(null);
+  }
 
   // --- RÉCUPÉRATION / RECHERCHE ---
   Future<void> searchUser(UserEntity? criteria) async {

@@ -14,7 +14,9 @@ class ProductController extends StateNotifier<ProductState> {
   final int _pageSize = 10;
   bool _isLastPage = false;
 
-  ProductController(this._productUsecases) : super(ProductState());
+  ProductController(this._productUsecases) : super(ProductState()) {
+    researchProduct(null);
+  }
 
   Future<void> addProduct(
     ProductEntities entities,

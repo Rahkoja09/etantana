@@ -41,14 +41,6 @@ class _StockPredictionPageState extends ConsumerState<StockPredictionPage> {
   );
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await getAllPredictedStock();
-    });
-  }
-
-  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();

@@ -6,7 +6,9 @@ import 'package:riverpod/riverpod.dart';
 
 class DashboardController extends StateNotifier<DashboardStates> {
   final DashboardStatsUsecase _usecase;
-  DashboardController(this._usecase) : super(DashboardStates());
+  DashboardController(this._usecase) : super(DashboardStates()) {
+    getDashboardStats();
+  }
 
   Future<void> getDashboardStats() async {
     _setLoadingState();

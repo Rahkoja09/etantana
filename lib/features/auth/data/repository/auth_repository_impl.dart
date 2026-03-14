@@ -52,7 +52,8 @@ class AuthRepositoryImpl implements AuthRepository {
       _remoteSource.onAuthStateChanged();
 
   @override
-  ResultVoid signOut() async => await _execute(() => _remoteSource.signOut());
+  ResultVoid signOut() async =>
+      await _executeAction(() => _remoteSource.signOut(), isCritical: false);
 
   // {{social_repo_impl_methods_anchor}}
 
@@ -63,8 +64,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String webId,
     String? iosId,
   }) async {
-    return await _execute(
+    return await _executeAction(
       () => _remoteSource.signInWithGoogle(webId: webId, iosId: iosId),
+      isCritical: false,
     );
   }
 
@@ -76,44 +78,68 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   ResultFuture<AuthEntity> signUpWithEmail(String e, String p) async {
-    return await _execute(() => _remoteSource.signUpWithEmail(e, p));
+    return await _executeAction(
+      () => _remoteSource.signUpWithEmail(e, p),
+      isCritical: true,
+    );
   }
 
   @override
   ResultFuture<AuthEntity> signInWithEmail(String e, String p) async {
-    return await _execute(() => _remoteSource.signInWithEmail(e, p));
+    return await _executeAction(() => _remoteSource.signInWithEmail(e, p));
   }
 
   @override
   ResultVoid sendOtp(String e) async {
-    return await _execute(() => _remoteSource.sendOtp(e));
+    return await _executeAction(
+      () => _remoteSource.sendOtp(e),
+      isCritical: false,
+    );
   }
 
   @override
   ResultFuture<AuthEntity> verifyOtp(String e, String c, OtpType type) async {
-    return await _execute(() => _remoteSource.verifyOtp(e, c, type));
+    return await _executeAction(
+      () => _remoteSource.verifyOtp(e, c, type),
+      isCritical: false,
+    );
   }
 
   @override
   ResultVoid updatePassword(String newPassword) async {
-    return await _execute(() => _remoteSource.updatePassword(newPassword));
+    return await _executeAction(
+      () => _remoteSource.updatePassword(newPassword),
+      isCritical: false,
+    );
   }
 
   // {{email_repo_impl_methods_anchor}}
 
   // --- HELPER DE GESTION D'ERREURS (Toujours inclus) ---
 
-  Future<Either<Failure, T>> _execute<T>(Future<T> Function() action) async {
-    if (await _networkInfo.isConnected) {
+  ResultFuture<T> _executeAction<T>(
+    Future<T> Function() action, {
+    bool isCritical = true,
+  }) async {
+    final bool connected =
+        isCritical
+            ? await _networkInfo.isConnected
+            : await _networkInfo.hasConnection;
+
+    if (connected) {
       try {
         final res = await action();
         return Right(res);
       } on ApiException catch (e) {
         return Left(ApiFailure.fromException(e));
+      } on AuthUserException catch (e) {
+        return Left(AuthFailure.fromException(e));
       } catch (e) {
-        return Left(UnexceptedFailure(e.toString(), "500"));
+        return Left(UnexceptedFailure(e.toString(), "000"));
       }
     }
-    return const Left(NetworkFailure("Pas de connexion Internet", "NET_001"));
+    return const Left(
+      NetworkFailure("Pas de connexion internet", "Network_01"),
+    );
   }
 }

@@ -37,14 +37,6 @@ class _HomeState extends ConsumerState<Home> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await refreshHomePage();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final double spacerSection = 25.h;
     return AppRefreshIndicator(

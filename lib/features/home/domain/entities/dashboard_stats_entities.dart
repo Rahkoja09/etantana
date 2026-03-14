@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class DashboardStatsEntities extends Equatable {
   final int? totalOrders;
   final int? deliveryToday;
-  final double? revenue;
+  final List<double>? revenue;
   final String? revenueIncrease;
   final String? period;
 

@@ -16,10 +16,12 @@ class _UserPageState extends ConsumerState<UserPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    
-    // Chargement initial
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(userControllerProvider.notifier).searchUser(null);
+      final users = ref.read(userControllerProvider).users;
+      if (users == null) {
+        ref.read(userControllerProvider.notifier).searchUser(null);
+      }
     });
   }
 
@@ -41,29 +43,29 @@ class _UserPageState extends ConsumerState<UserPage> {
     final state = ref.watch(userControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("User"),
-      ),
-      body: state.isLoading && (state.users?.isEmpty ?? true)
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              controller: _scrollController,
-              itemCount: (state.users?.length ?? 0) + (state.isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index < (state.users?.length ?? 0)) {
-                  final item = state.users![index];
-                  return ListTile(
-                    title: Text(item.id ?? "No ID"),
-                    subtitle: Text(item.createdAt?.toString() ?? ""),
-                  );
-                } else {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-              },
-            ),
+      appBar: AppBar(title: Text("User")),
+      body:
+          state.isLoading && (state.users?.isEmpty ?? true)
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                controller: _scrollController,
+                itemCount:
+                    (state.users?.length ?? 0) + (state.isLoading ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index < (state.users?.length ?? 0)) {
+                    final item = state.users![index];
+                    return ListTile(
+                      title: Text(item.id ?? "No ID"),
+                      subtitle: Text(item.createdAt?.toString() ?? ""),
+                    );
+                  } else {
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                },
+              ),
     );
   }
 }

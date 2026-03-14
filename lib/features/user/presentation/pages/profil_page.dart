@@ -31,13 +31,6 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref
-          .read(userControllerProvider.notifier)
-          .searchUser(
-            UserEntity(id: await ref.watch(authControllerProvider).user!.id!),
-          );
-    });
   }
 
   @override

@@ -11,7 +11,13 @@ class StockPredictionController extends StateNotifier<StockPredictionState> {
 
   StockPredictionController(this._usecases)
     : super(const StockPredictionState()) {
+    init();
+  }
+
+  // fetch les données important dès le debut -----
+  Future<void> init() async {
     fetchStockPredictionsForHome();
+    fetchStockPredictions();
   }
 
   // ---- HOME PREVIEW ----
