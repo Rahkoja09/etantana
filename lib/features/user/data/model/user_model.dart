@@ -46,23 +46,23 @@ class UserModel extends UserEntity {
     );
   }
 
-  MapData toMap() {
+  MapData toMap({bool forUpdate = false}) {
     return {
+      if (!forUpdate)
+        'created_at': (createdAt ?? DateTime.now()).toIso8601String(),
       if (id != null) 'id': id,
-      'created_at': (createdAt ?? DateTime.now()).toIso8601String(),
-      'name': name,
-      'profil_link': profilLink,
-      'email': email,
-      'six_digit_code': sixDigitCode,
-      'my_shops': myShops,
-      'last_name': lastName,
-      'birth_date': birthDate?.toIso8601String(),
-      'nick_name': nickName,
-      'job_title': jobTitle,
-      'user_plan': userPlan,
-      'is_registered': isRegistered,
-      'selected_shop': selectedShop,
-      // [TO_MAP_ANCHOR]
+      if (name != null) 'name': name,
+      if (profilLink != null) 'profil_link': profilLink,
+      if (email != null) 'email': email,
+      if (sixDigitCode != null) 'six_digit_code': sixDigitCode,
+      if (myShops != null) 'my_shops': myShops,
+      if (lastName != null) 'last_name': lastName,
+      if (birthDate != null) 'birth_date': birthDate!.toIso8601String(),
+      if (nickName != null) 'nick_name': nickName,
+      if (jobTitle != null) 'job_title': jobTitle,
+      if (userPlan != null) 'user_plan': userPlan,
+      if (isRegistered != null) 'is_registered': isRegistered,
+      if (selectedShop != null) 'selected_shop': selectedShop,
     };
   }
 

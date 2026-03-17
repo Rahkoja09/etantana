@@ -9,14 +9,12 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
   DashboardStatsDataSourceImpl(this._client);
 
   @override
-  Future<DashboardStatsModel> getDashboardStats() async {
+  Future<DashboardStatsModel> getDashboardStats(String? shopId) async {
     try {
       final now = DateTime.now();
 
-      // ── 7 derniers jours (aujourd'hui inclus) ──────────────
       final day7Start =
           DateTime(now.year, now.month, now.day - 6).toIso8601String();
-
       final todayEnd =
           DateTime(
             now.year,
@@ -27,41 +25,55 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
             59,
             999,
           ).toIso8601String();
-
       final todayStart =
           DateTime(now.year, now.month, now.day).toIso8601String();
 
       // ── Livraisons validées aujourd'hui ───────────────────
-      final deliveryRes = await _client
+      final deliveryQuery = _client
           .from('delivering')
           .select('*')
           .eq('status', DeliveryStatus.validated.name)
           .gte('date_of_delivering', todayStart)
-          .count(CountOption.exact);
+          .lte('date_of_delivering', todayEnd);
+
+      final deliveryRes = await (shopId != null
+              ? deliveryQuery.eq('shop_id', shopId)
+              : deliveryQuery)
+          .count(CountOption.exact)
+          .timeout(const Duration(seconds: 20));
 
       final int deliveryToday = deliveryRes.count;
 
       // ── Commandes totales aujourd'hui ─────────────────────
-      final List<dynamic> ordersTotal = await _client
+      final ordersTotalQuery = _client
           .from('order')
           .select('id')
-          .gte('created_at', todayStart);
+          .gte('created_at', todayStart)
+          .lte('created_at', todayEnd);
+
+      final List<dynamic> ordersTotal = await (shopId != null
+              ? ordersTotalQuery.eq('shop_id', shopId)
+              : ordersTotalQuery)
+          .timeout(const Duration(seconds: 20));
 
       final int totalOrders = ordersTotal.length;
 
       // ── Commandes livrées sur 7 jours ─────────────────────
-      final List<dynamic> orders7Days = await _client
+      final orders7DaysQuery = _client
           .from('order')
           .select('delivery_date, products_and_quantities')
           .eq('status', DeliveryStatus.delivered.name)
           .gte('delivery_date', day7Start)
           .lte('delivery_date', todayEnd);
 
+      final List<dynamic> orders7Days =
+          await (shopId != null
+              ? orders7DaysQuery.eq('shop_id', shopId)
+              : orders7DaysQuery);
+
       // ── Calcul revenu par jour sur 7 jours ────────────────
-      // Map : "yyyy-MM-dd" → revenu
       final Map<String, double> revenuePerDay = {};
 
-      // Initialise les 7 jours à 0
       for (int i = 6; i >= 0; i--) {
         final day = now.subtract(Duration(days: i));
         final key =
@@ -69,12 +81,11 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
         revenuePerDay[key] = 0.0;
       }
 
-      // Somme les revenus par jour
       for (var order in orders7Days) {
         final String? deliveryDate = order['delivery_date'];
         if (deliveryDate == null) continue;
 
-        final dateKey = deliveryDate.substring(0, 10); // "yyyy-MM-dd"
+        final dateKey = deliveryDate.substring(0, 10);
         if (!revenuePerDay.containsKey(dateKey)) continue;
 
         double price = 0.0;
@@ -85,10 +96,8 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
         revenuePerDay[dateKey] = (revenuePerDay[dateKey] ?? 0) + price;
       }
 
-      // Liste ordonnée du plus ancien au plus récent
       final List<double> revenueHistory = revenuePerDay.values.toList();
 
-      // Variation : aujourd'hui vs hier
       final double today = revenueHistory.last;
       final double yesterday =
           revenueHistory.length >= 2

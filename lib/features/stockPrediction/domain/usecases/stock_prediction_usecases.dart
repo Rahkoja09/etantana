@@ -20,18 +20,20 @@ class StockPredictionUsecases {
   /// [previewCount] null = tout afficher (page dédiée)
   /// [previewCount] int = top N produits commandés (home)
   ResultFuture<List<StockPredictionEntity>> getStockPrediction({
+    OrderEntities? orderCriteria,
+    ProductEntities? productCriteria,
     StockPredictionSettings settings = const StockPredictionSettings(),
     int? previewCount,
   }) async {
     final productsResult = await _productRepository.researchProduct(
-      const ProductEntities(),
+      productCriteria,
       start: 0,
       end: 1000,
     );
 
     return productsResult.fold((failure) => Left(failure), (products) async {
       final ordersResult = await _orderRepository.researchOrder(
-        const OrderEntities(),
+        orderCriteria,
         start: 0,
         end: 10000,
       );

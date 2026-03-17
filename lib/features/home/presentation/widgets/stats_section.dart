@@ -27,31 +27,32 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
     super.initState();
   }
 
-  DashboardStatsEntities dashboard = DashboardStatsEntities(
-    period: "loading",
-    revenue: [0.0],
-    revenueIncrease: "+0%",
-    totalOrders: 0,
-    deliveryToday: 0,
-  );
-
   @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardStatsControllerProvider);
+
+    // ← Plus de variable locale dashboard, plus de setState
+    final dashboard =
+        dashboardState.dashboard ??
+        DashboardStatsEntities(
+          period: "Aujourd'hui",
+          revenue: [0.0],
+          revenueIncrease: "+0%",
+          totalOrders: 0,
+          deliveryToday: 0,
+        );
+
     ref.listen<DashboardStates>(dashboardStatsControllerProvider, (prev, next) {
       if (next.errorMessage != null &&
           next.errorMessage != prev?.errorMessage) {
         showToast(
           context,
-          title: 'Erreur de récuperation des donnée de board.',
+          title: 'Erreur de récupération des données.',
           isError: true,
           description: next.errorMessage!,
         );
-      } else if (next.dashboard != null) {
-        setState(() {
-          dashboard = next.dashboard!;
-        });
       }
+      // ← Plus de setState ici
     });
     return Skeletonizer(
       enabled: dashboardState.isLoading,

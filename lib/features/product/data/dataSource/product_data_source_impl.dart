@@ -94,7 +94,7 @@ class ProductDataSourceImpl implements ProductDataSource {
         final shopId = criterial.shopId;
 
         if (eId != null) query = query.eq("e_id", eId);
-        if (shopId != null) query = query.eq('shopId', shopId);
+        if (shopId != null) query = query.eq('shop_id', shopId);
         if (userId != null) query = query.eq('user_id', userId);
         if (name != null) query = query.ilike("name", '%$name%');
         if (quantity != null) query = query.eq("quantity", quantity);

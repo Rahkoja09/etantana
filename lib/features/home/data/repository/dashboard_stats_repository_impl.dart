@@ -12,9 +12,9 @@ class DashboardStatsRepositoryImpl implements DashboardStatsRepository {
   final NetworkInfo _networkInfo;
   DashboardStatsRepositoryImpl(this._dataSource, this._networkInfo);
   @override
-  ResultFuture<DashboardStatsEntities> getDashboardStats() async {
+  ResultFuture<DashboardStatsEntities> getDashboardStats(String? shopId) async {
     return await _executeAction<DashboardStatsEntities>(
-      () => _dataSource.getDashboardStats(),
+      () => _dataSource.getDashboardStats(shopId),
       isCritical: false,
     );
   }

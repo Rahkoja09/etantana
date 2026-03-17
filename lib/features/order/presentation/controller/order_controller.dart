@@ -1,23 +1,38 @@
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
 import 'package:e_tantana/features/order/domain/actions/order_actions.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/domain/usecases/order_usecases.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
+import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OrderController extends StateNotifier<OrderStates> {
   final OrderUsecases _orderUsecases;
+  final Ref ref;
 
   int _currentPage = 0;
   final int _pageSize = 6;
   bool _isLastPage = false;
 
-  OrderController(this._orderUsecases) : super(OrderStates());
+  OrderController(this._orderUsecases, this.ref) : super(OrderStates()) {
+    researchOrder(null);
+  }
 
   // --- RÉCUPÉRATION / RECHERCHE ---
   Future<void> researchOrder(OrderEntities? criteria) async {
-    final action = SearchOrderAction(criteria?.clientName ?? "toutes");
+    final shopId =
+        ref.read(activeShopIdProvider).id ??
+        ref.read(userControllerProvider).users?[0].selectedShop ??
+        null;
+    if (shopId != null && shopId != "" && criteria != null) {
+      criteria = criteria.copyWith(shopId: shopId);
+    } else if (criteria == null) {
+      criteria = OrderEntities(shopId: shopId);
+    }
+
+    final action = SearchOrderAction(criteria.clientName ?? "toutes");
     _currentPage = 0;
     _isLastPage = false;
 
@@ -78,6 +93,8 @@ class OrderController extends StateNotifier<OrderStates> {
 
   // --- INSERTION (RPC COMPLETE ORDER) ---
   Future<void> placeCompleteOrder(OrderEntities entity) async {
+    final shopId = ref.watch(activeShopIdProvider).id ?? null;
+    entity = entity.copyWith(shopId: shopId);
     final action = CreateOrderAction(entity.clientName ?? "Inconnu");
     _setLoadingState(action: action);
 
@@ -177,5 +194,5 @@ class OrderController extends StateNotifier<OrderStates> {
 final orderControllerProvider =
     StateNotifierProvider<OrderController, OrderStates>((ref) {
       final orderUsecases = sl<OrderUsecases>();
-      return OrderController(orderUsecases);
+      return OrderController(orderUsecases, ref);
     });

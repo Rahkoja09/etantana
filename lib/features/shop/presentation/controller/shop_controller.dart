@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
@@ -10,13 +12,20 @@ import 'package:e_tantana/features/shop/presentation/states/shop_states.dart';
 
 class ShopController extends StateNotifier<ShopStates> {
   final ShopUsecases _shopUsecases;
+  final Ref ref;
 
   int _currentPage = 0;
   final int _pageSize = 10;
   bool _isLastPage = false;
 
-  ShopController(this._shopUsecases) : super(const ShopStates()) {
+  ShopController(this._shopUsecases, this.ref) : super(const ShopStates()) {
     searchShop(null);
+    selectShop();
+  }
+
+  Future<void> refreshShop(ShopEntity? criteria) async {
+    await searchShop(criteria);
+    await selectShop();
   }
 
   // --- RÉCUPÉRATION / RECHERCHE ---
@@ -105,6 +114,23 @@ class ShopController extends StateNotifier<ShopStates> {
     });
   }
 
+  // selecte my SHOP -----
+  Future<void> selectShop() async {
+    final selectedShopId =
+        ref.read(activeShopIdProvider).id ??
+        ref.read(userControllerProvider).users?[0].selectedShop;
+    print("ooowwweeeee $selectedShopId");
+    if (selectedShopId != null && selectedShopId != "") {
+      state = state.copyWith(
+        selectedShop: state.shops?.firstWhere(
+          (shop) => shop.id == selectedShopId,
+        ),
+      );
+    } else {
+      state = state.copyWith(selectedShop: state.shops?[0]);
+    }
+  }
+
   // --- MISE À JOUR ---
   Future<void> updateShop(ShopEntity entity) async {
     final action = UpdateShopAction(entity.id ?? "inconnu");
@@ -166,5 +192,5 @@ class ShopController extends StateNotifier<ShopStates> {
 // --- PROVIDER ---
 final shopControllerProvider =
     StateNotifierProvider<ShopController, ShopStates>((ref) {
-      return ShopController(sl<ShopUsecases>());
+      return ShopController(sl<ShopUsecases>(), ref);
     });

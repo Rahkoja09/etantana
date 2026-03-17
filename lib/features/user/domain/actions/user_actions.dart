@@ -33,6 +33,22 @@ class UpdateUserAction extends UserActions {
   String get successMessage => "Mise à jour de #$id effectuée";
 }
 
+/// switch shop account ------
+class SwitchShopUserAction extends UserActions {
+  final String shopName;
+  SwitchShopUserAction(this.shopName);
+
+  @override
+  String get errorMessage => "Échec du chargement vers #$shopName";
+
+  @override
+  bool get isWriteAction => true;
+
+  @override
+  String get successMessage =>
+      "Changement de boutique effectuée: actullemment dans #$shopName";
+}
+
 /// Action to Delete a User
 class DeleteUserAction extends UserActions {
   final String id;

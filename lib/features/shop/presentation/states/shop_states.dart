@@ -10,6 +10,7 @@ class ShopStates extends Equatable {
   final ShopEntity? currentCriteria;
   final ShopActions? action;
   final String? errorCode;
+  final ShopEntity? selectedShop;
 
   const ShopStates({
     this.isLoading = false,
@@ -18,6 +19,7 @@ class ShopStates extends Equatable {
     this.currentCriteria,
     this.action,
     this.errorCode,
+    this.selectedShop,
   });
 
   ShopStates copyWith({
@@ -28,6 +30,7 @@ class ShopStates extends Equatable {
     String? errorCode,
     Failure? error,
     bool isClearError = false,
+    ShopEntity? selectedShop,
   }) {
     return ShopStates(
       isLoading: isLoading ?? this.isLoading,
@@ -36,16 +39,18 @@ class ShopStates extends Equatable {
       currentCriteria: currentCriteria ?? this.currentCriteria,
       action: action ?? this.action,
       errorCode: errorCode ?? this.errorCode,
+      selectedShop: selectedShop ?? this.selectedShop,
     );
   }
 
   @override
   List<Object?> get props => [
-        isLoading,
-        error,
-        shops,
-        currentCriteria,
-        action,
-        errorCode,
-      ];
+    isLoading,
+    error,
+    shops,
+    currentCriteria,
+    action,
+    errorCode,
+    selectedShop,
+  ];
 }

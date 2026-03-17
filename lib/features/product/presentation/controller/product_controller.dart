@@ -1,20 +1,23 @@
 import 'dart:io';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
 import 'package:e_tantana/features/product/domain/action/product_actions.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/domain/usecases/product_usecases.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
+import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductController extends StateNotifier<ProductState> {
   final ProductUsecases _productUsecases;
+  final Ref ref;
 
   int _currentPage = 0;
   final int _pageSize = 10;
   bool _isLastPage = false;
 
-  ProductController(this._productUsecases) : super(ProductState()) {
+  ProductController(this._productUsecases, this.ref) : super(ProductState()) {
     researchProduct(null);
   }
 
@@ -24,6 +27,8 @@ class ProductController extends StateNotifier<ProductState> {
     String userId,
     String shopName,
   ) async {
+    final shopId = ref.read(activeShopIdProvider).id;
+    entities = entities.copyWith(shopId: shopId);
     final action = InsertProductAction(entities.name!);
     _setLoadingState(action: action);
     final res = await _productUsecases.insertProduct(
@@ -111,7 +116,17 @@ class ProductController extends StateNotifier<ProductState> {
   }
 
   Future<void> researchProduct(ProductEntities? criterial) async {
-    final action = searchProductAction(criterial?.name ?? "");
+    final shopId =
+        ref.watch(activeShopIdProvider).id ??
+        ref.read(userControllerProvider).users?[0].selectedShop ??
+        null;
+    if (shopId != null && shopId != "" && criterial != null) {
+      criterial = criterial.copyWith(shopId: shopId);
+    } else if (criterial == null) {
+      criterial = ProductEntities(shopId: shopId);
+    }
+
+    final action = searchProductAction(criterial.name ?? "");
     _currentPage = 0;
     _isLastPage = false;
 
@@ -194,5 +209,5 @@ class ProductController extends StateNotifier<ProductState> {
 final productControllerProvider =
     StateNotifierProvider<ProductController, ProductState>((ref) {
       final productUsecases = sl<ProductUsecases>();
-      return ProductController(productUsecases);
+      return ProductController(productUsecases, ref);
     });

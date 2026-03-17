@@ -133,6 +133,29 @@ class UserController extends StateNotifier<UserStates> {
     });
   }
 
+  Future<void> switchShop(UserEntity entity, String shopName) async {
+    final action = SwitchShopUserAction(shopName);
+    _setLoadingState(action: action);
+
+    final res = await _userUsecases.updateUser(entity);
+
+    res.fold((error) => _setError(error: error, action: action), (
+      updatedEntity,
+    ) {
+      final newList =
+          state.users?.map((item) {
+            return item.id == updatedEntity.id ? updatedEntity : item;
+          }).toList();
+
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        users: newList,
+        action: action,
+      );
+    });
+  }
+
   // --- SUPPRESSION ---
   Future<void> deleteUserById(String id) async {
     final action = DeleteUserAction(id);

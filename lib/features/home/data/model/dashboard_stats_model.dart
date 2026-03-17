@@ -13,7 +13,7 @@ class DashboardStatsModel extends DashboardStatsEntities {
   factory DashboardStatsModel.fromMap(MapData data) {
     return DashboardStatsModel(
       period: data['period'] as String? ?? "Aujourd'hui",
-      revenue: List<double>.from(data['revenue'].toDouble()) ?? [],
+      revenue: List<double>.from(data['revenue'].toDouble()),
       revenueIncrease: data['revenue_increase'] as String? ?? "0%",
       totalOrders: (data['total_orders'] as num?)?.toInt() ?? 0,
       deliveryToday: (data['delivery_today'] as num?)?.toInt() ?? 0,

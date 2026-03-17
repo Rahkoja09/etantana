@@ -16,6 +16,7 @@ class OrderModel extends OrderEntities {
     super.clientAdrs,
     super.deliveryCosts,
     super.deliveryDate,
+    super.shopId,
   });
 
   factory OrderModel.fromEntity(OrderEntities entity) {
@@ -32,6 +33,7 @@ class OrderModel extends OrderEntities {
       invoiceLink: entity.invoiceLink,
       deliveryCosts: entity.deliveryCosts,
       deliveryDate: entity.deliveryDate,
+      shopId: entity.shopId,
     );
   }
 
@@ -57,6 +59,7 @@ class OrderModel extends OrderEntities {
           data["delivery_date"] != null
               ? DateTime.parse(data["delivery_date"])
               : null,
+      shopId: data["shop_id"],
     );
   }
 
@@ -74,6 +77,7 @@ class OrderModel extends OrderEntities {
       'details': details,
       'delivery_costs': deliveryCosts,
       'delivery_date': deliveryDate?.toIso8601String(),
+      'shop_id': shopId,
     };
   }
 
@@ -99,6 +103,7 @@ class OrderModel extends OrderEntities {
     String? clientAdrs,
     double? deliveryCosts,
     DateTime? deliveryDate,
+    String? shopId,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -115,6 +120,7 @@ class OrderModel extends OrderEntities {
       quantity: quantity ?? this.quantity,
       deliveryCosts: deliveryCosts ?? this.deliveryCosts,
       deliveryDate: deliveryDate ?? this.deliveryDate,
+      shopId: shopId ?? this.shopId,
     );
   }
 }

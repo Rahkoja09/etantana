@@ -26,17 +26,23 @@ class _AppShellState extends ConsumerState<AppShell> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.watch(authControllerProvider);
       await ref.read(authControllerProvider.notifier).checkAuthStatus();
+      await ref.watch(userControllerProvider);
+      await ref.watch(shopControllerProvider);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    //  auth , user et shop avant  les autres ----
+    final authState = ref.watch(authControllerProvider);
+
     ref.watch(productControllerProvider);
     ref.watch(orderControllerProvider);
     ref.watch(deliveringControllerProvider);
     ref.watch(stockPredictionControllerProvider);
-    final authState = ref.watch(authControllerProvider);
+
     return SuccessErrorListener(child: _buildScreen(authState.status));
   }
 

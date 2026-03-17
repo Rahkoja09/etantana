@@ -165,7 +165,7 @@ class SuccessErrorListener extends ConsumerWidget {
           ref: ref,
           failure: next.error!,
           action: next.action,
-          title: "Erreur User",
+          title: "Erreur utilisateur",
         );
       }
 
@@ -177,13 +177,13 @@ class SuccessErrorListener extends ConsumerWidget {
             context,
             description: next.action!.successMessage,
             isError: false,
-            title: "Succès User",
+            title: "Succès Utilisateur",
           );
         }
       }
     });
 
-        ref.listen<FeedbackStates>(feedbackControllerProvider, (prev, next) {
+    ref.listen<FeedbackStates>(feedbackControllerProvider, (prev, next) {
       if (next.error != null && next.error != prev?.error) {
         _showFilteredError(
           context: context,

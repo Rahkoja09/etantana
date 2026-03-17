@@ -76,6 +76,7 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
           await ref
               .read(userControllerProvider.notifier)
               .searchUser(UserEntity(id: authStates.user!.id));
+          await ref.read(shopControllerProvider.notifier).refreshShop(null);
         },
         child: Skeletonizer(
           effect: LoadingEffect.getCommonEffect(context),
@@ -179,7 +180,7 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                                         MaterialPageRoute(
                                           builder:
                                               (_) => ShopPage(
-                                                shop: (shopState.shops?[0])!,
+                                                shop: shopState.selectedShop!,
                                               ),
                                         ),
                                       );

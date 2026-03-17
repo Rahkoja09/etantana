@@ -5,6 +5,6 @@ import 'package:e_tantana/features/home/domain/repository/dashboard_stats_reposi
 class DashboardStatsUsecase {
   final DashboardStatsRepository _repository;
   DashboardStatsUsecase(this._repository);
-  ResultFuture<DashboardStatsEntities> getDashboardStats() =>
-      _repository.getDashboardStats();
+  ResultFuture<DashboardStatsEntities> getDashboardStats(String? shopId) =>
+      _repository.getDashboardStats(shopId);
 }

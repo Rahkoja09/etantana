@@ -47,10 +47,12 @@ class UserRemoteSourceImpl implements UserRemoteSource {
         throw ApiException(message: "ID manquant pour la mise à jour");
       final model = UserModel.fromEntity(entity);
 
+      final map = model.toMap(forUpdate: true)..remove('created_at');
+
       final data =
           await _client
               .from(_tableName)
-              .update(model.toMap())
+              .update(map)
               .eq('id', entity.id!)
               .select()
               .single();

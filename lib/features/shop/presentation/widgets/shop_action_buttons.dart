@@ -6,15 +6,13 @@ import 'package:hugeicons/hugeicons.dart';
 class ShopActionButtons extends StatelessWidget {
   final VoidCallback? onQrTap;
   final VoidCallback? onEditTap;
-  final VoidCallback? onFavoriteTap;
-  final bool isFavorite;
+  final VoidCallback? onSwitchTap;
 
   const ShopActionButtons({
     super.key,
     this.onQrTap,
     this.onEditTap,
-    this.onFavoriteTap,
-    this.isFavorite = false,
+    this.onSwitchTap,
   });
 
   @override
@@ -71,18 +69,8 @@ class ShopActionButtons extends StatelessWidget {
         _IconBtn(icon: HugeIcons.strokeRoundedEdit04, onTap: onEditTap),
         SizedBox(width: 10.w),
 
-        // Favorite
-        _IconBtn(
-          icon:
-              isFavorite
-                  ? Icons.favorite_rounded
-                  : Icons.favorite_outline_rounded,
-          iconColor:
-              isFavorite
-                  ? const Color(0xFFEF4444)
-                  : Theme.of(context).colorScheme.onSurface,
-          onTap: onFavoriteTap,
-        ),
+        // switch shop
+        _IconBtn(icon: HugeIcons.strokeRoundedReload, onTap: onSwitchTap),
       ],
     );
   }

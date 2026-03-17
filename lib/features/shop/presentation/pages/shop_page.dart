@@ -1,17 +1,27 @@
 import 'dart:ui';
 
+import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/core/providers/shop/shop_switch_loading_provider.dart';
+import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
+import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
+import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
 import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
+import 'package:e_tantana/features/shop/presentation/pages/create_shop_page.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_action_buttons.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_avatar.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_info_cards.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_product_card.dart';
+import 'package:e_tantana/features/shop/presentation/widgets/switch_shop_loading.dart';
+import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
+import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
-
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,7 +37,6 @@ class ShopPage extends ConsumerStatefulWidget {
 }
 
 class _ShopPageState extends ConsumerState<ShopPage> {
-  bool _isFavorite = false;
   bool _descExpanded = false;
 
   @override
@@ -42,6 +51,22 @@ class _ShopPageState extends ConsumerState<ShopPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+        elevation: 2,
+        onPressed: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const CreateShopPage()));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+          ),
+          child: Icon(HugeIcons.strokeRoundedStoreAdd02),
+        ),
+      ),
 
       appBar: SimpleAppbar(onBack: () {}, title: "Ma boutique"),
       body: Stack(
@@ -161,9 +186,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: ShopActionButtons(
-                        isFavorite: _isFavorite,
-                        onFavoriteTap:
-                            () => setState(() => _isFavorite = !_isFavorite),
+                        onSwitchTap: () => _showShopSwitcher(context, ref),
                         onEditTap: () {},
                         onQrTap: () {},
                       ),
@@ -175,6 +198,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: ShopInfoCards(shop: widget.shop),
                     ),
+                    SizedBox(height: 26.h),
                   ],
                 ),
               ),
@@ -302,8 +326,144 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                   ),
             ],
           ),
+
+          if (ref.watch(shopSwitchLoadingProvider) == true) ShopSwitchOverlay(),
         ],
       ),
     );
   }
+}
+
+void _showShopSwitcher(BuildContext context, WidgetRef ref) {
+  final shops = ref.read(shopControllerProvider).shops ?? [];
+  final user = ref.watch(userControllerProvider).users?[0];
+  final activeId = ref.read(activeShopIdProvider).id;
+
+  Future<void> updateData() async {
+    await ref.read(productControllerProvider.notifier).researchProduct(null);
+    await ref.read(orderControllerProvider.notifier).researchOrder(null);
+    await ref
+        .read(deliveringControllerProvider.notifier)
+        .searchDelivering(null);
+    await ref
+        .read(dashboardStatsControllerProvider.notifier)
+        .getDashboardStats();
+    await ref.read(stockPredictionControllerProvider.notifier).refreshFull();
+    await ref.read(stockPredictionControllerProvider.notifier).refreshHome();
+  }
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder:
+        (_) => Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle
+              Center(
+                child: Container(
+                  width: 36.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.h),
+
+              Text(
+                "Mes boutiques",
+                style: TextStyles.titleSmall(context: context),
+              ),
+              SizedBox(height: 14.h),
+
+              ...shops.map((shop) {
+                final isActive = shop.id == activeId;
+                return GestureDetector(
+                  onTap: () async {
+                    ref.read(activeShopIdProvider.notifier).state = (
+                      id: shop.id,
+                      isSwitching: true,
+                    );
+                    await ref
+                        .read(shopControllerProvider.notifier)
+                        .selectShop();
+                    final userEntity = user?.copyWith(selectedShop: shop.id);
+                    await ref
+                        .read(userControllerProvider.notifier)
+                        .switchShop(userEntity!, shop.shopName!);
+                    await updateData();
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 14.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          isActive
+                              ? Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.08)
+                              : Theme.of(context).colorScheme.surfaceContainer,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color:
+                            isActive
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.transparent,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 40.h,
+                          width: 40.w,
+                          child: ImageViewer(
+                            imageFileOrLink: shop.shopLogo,
+                            borderRadius: 60,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Text(
+                          shop.shopName ?? "shop_name",
+                          style: TextStyles.bodyText(
+                            context: context,
+                            fontWeight:
+                                isActive ? FontWeight.w700 : FontWeight.w400,
+                            color:
+                                isActive
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (isActive)
+                          Icon(
+                            Icons.check_rounded,
+                            size: 16.sp,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              SizedBox(height: 8.h),
+            ],
+          ),
+        ),
+  );
 }

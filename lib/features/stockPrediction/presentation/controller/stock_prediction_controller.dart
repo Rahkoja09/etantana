@@ -1,5 +1,8 @@
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
+import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/stockPrediction/domain/actions/stock_prediction_actions.dart';
 import 'package:e_tantana/features/stockPrediction/domain/usecases/stock_prediction_usecases.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/settings/stock_prediction_settings.dart';
@@ -8,8 +11,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class StockPredictionController extends StateNotifier<StockPredictionState> {
   final StockPredictionUsecases _usecases;
+  final Ref ref;
 
-  StockPredictionController(this._usecases)
+  StockPredictionController(this._usecases, this.ref)
     : super(const StockPredictionState()) {
     init();
   }
@@ -28,7 +32,16 @@ class StockPredictionController extends StateNotifier<StockPredictionState> {
     final action = getStockPredictionAction();
     state = state.copyWith(isHomeLoading: true, action: action);
 
+    final productCriteria = ProductEntities(
+      shopId: ref.read(activeShopIdProvider).id,
+    );
+    final orderCriteria = OrderEntities(
+      shopId: ref.read(activeShopIdProvider).id,
+    );
+
     final res = await _usecases.getStockPrediction(
+      productCriteria: productCriteria,
+      orderCriteria: orderCriteria,
       previewCount: previewCount,
       settings: settings,
     );
@@ -59,7 +72,16 @@ class StockPredictionController extends StateNotifier<StockPredictionState> {
     final action = getStockPredictionAction();
     state = state.copyWith(isFullLoading: true, action: action);
 
+    final productCriteria = ProductEntities(
+      shopId: ref.read(activeShopIdProvider).id,
+    );
+    final orderCriteria = OrderEntities(
+      shopId: ref.read(activeShopIdProvider).id,
+    );
+
     final res = await _usecases.getStockPrediction(
+      productCriteria: productCriteria,
+      orderCriteria: orderCriteria,
       previewCount: null,
       settings: settings,
     );
@@ -90,5 +112,5 @@ class StockPredictionController extends StateNotifier<StockPredictionState> {
 // --- Provider ---
 final stockPredictionControllerProvider =
     StateNotifierProvider<StockPredictionController, StockPredictionState>(
-      (ref) => StockPredictionController(sl<StockPredictionUsecases>()),
+      (ref) => StockPredictionController(sl<StockPredictionUsecases>(), ref),
     );
