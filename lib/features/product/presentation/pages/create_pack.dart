@@ -248,12 +248,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                     eId:
                         "Pack_${DateTime.fromMicrosecondsSinceEpoch(1640979000000000)}",
                   );
-                  productAction.addProduct(
-                    myPack,
-                    null,
-                    authState.user!.id!,
-                    "shopNameTest",
-                  );
+                  productAction.addProduct(myPack, null, authState.user!.id!);
                 } else {
                   setState(() {
                     showToast(

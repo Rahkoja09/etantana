@@ -1,6 +1,7 @@
 import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/feedback/presentation/pages/feedback_page.dart';
 import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
@@ -22,77 +23,46 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class ProfilPage extends ConsumerStatefulWidget {
+class ProfilPage extends ConsumerWidget {
   const ProfilPage({super.key});
 
   @override
-  ConsumerState<ProfilPage> createState() => _ProfilPageState();
-}
-
-class _ProfilPageState extends ConsumerState<ProfilPage> {
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (ref.watch(shopControllerProvider).shops == null) {
-        await ref.read(shopControllerProvider.notifier).searchShop(null);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final userStates = ref.watch(userControllerProvider);
-    final shopState = ref.watch(shopControllerProvider);
-    final authStates = ref.watch(authControllerProvider);
+    final authState = ref.watch(authControllerProvider);
 
-    final userProfile =
-        (userStates.users != null && userStates.users!.isNotEmpty)
-            ? userStates.users![0]
-            : null;
+    final session = ref.watch(sessionProvider);
+    final user = session.user;
+    final activeShop = session.activeShop;
 
-    final bool hasProfile =
-        userStates.users != null &&
-        userStates.users!.isNotEmpty &&
-        userStates.users![0].isRegistered == true;
-    final hasShop =
-        hasProfile == true && userStates.users![0].myShops!.length > 0;
+    final bool hasProfile = user?.isRegistered == true;
+    final bool hasShop = hasProfile && (user?.myShops?.isNotEmpty ?? false);
 
     final String displayImage =
-        userProfile?.profilLink ??
-        authStates.user?.photoUrl ??
-        AppConst.defaultImage;
-
+        user?.profilLink ?? authState.user?.photoUrl ?? AppConst.defaultImage;
     final String displayName =
-        userProfile?.name ?? authStates.user!.fullName ?? "Utilisateur";
+        user?.name ?? authState.user?.fullName ?? "Utilisateur";
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(automaticallyImplyLeading: false, toolbarHeight: 0),
       body: AppRefreshIndicator(
         onRefresh: () async {
-          await ref
-              .read(userControllerProvider.notifier)
-              .searchUser(UserEntity(id: authStates.user!.id));
-          await ref.read(shopControllerProvider.notifier).refreshShop(null);
+          await ref.read(sessionProvider.notifier).refresh();
         },
         child: Skeletonizer(
           effect: LoadingEffect.getCommonEffect(context),
-          enabled:
-              userStates.isLoading ||
-              authStates.isLoading ||
-              shopState.isLoading,
+          enabled: session.isInitializing || authState.isLoading,
           ignoreContainers: true,
           justifyMultiLineText: true,
           child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.all(StylesConstants.spacerContent),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ── Header titre + QR ─────────────────────
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -111,13 +81,11 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                               MaterialPageRoute(
                                 builder:
                                     (_) => ShareQrPage(
-                                      qrData:
-                                          "etantana://user/${userProfile?.id}",
-                                      title: userProfile!.name!,
-                                      subtitle: userProfile.email,
+                                      qrData: "etantana://user/${user?.id}",
+                                      title: user?.name ?? "",
+                                      subtitle: user?.email,
                                       badgeLabel: "Vendeur",
-                                      accentColor:
-                                          Theme.of(context).colorScheme.primary,
+                                      accentColor: colorScheme.primary,
                                       actions: [
                                         ShareQrAction(
                                           icon: HugeIcons.strokeRoundedShare01,
@@ -143,17 +111,18 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                         ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
-                  ProfilHeaderPreview(
-                    imageFileOrLink: displayImage,
-                    userName: displayName,
-                    email: authStates.user!.email!,
-                    userPlan: userProfile?.userPlan ?? "Gratuit",
-                    jobTitle: userProfile?.jobTitle ?? "Vendeur",
-                    shopNumber: userProfile?.myShops?.length ?? 0,
-                  ),
-                  SizedBox(height: 30),
+                  if (user != null)
+                    ProfilHeaderPreview(
+                      imageFileOrLink: displayImage,
+                      userName: displayName,
+                      email: user.email ?? "",
+                      userPlan: user.userPlan ?? "Gratuit",
+                      jobTitle: user.jobTitle ?? "Vendeur",
+                      shopNumber: user.myShops?.length ?? 0,
+                    ),
+                  const SizedBox(height: 30),
 
                   hasProfile
                       ? Column(
@@ -172,16 +141,14 @@ class _ProfilPageState extends ConsumerState<ProfilPage> {
                           SeparatorBackground(
                             child: Column(
                               children: [
-                                if (hasShop)
+                                if (hasShop && activeShop != null)
                                   ItemActionList(
                                     leadingIcon: HugeIcons.strokeRoundedStore02,
                                     onTap: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder:
-                                              (_) => ShopPage(
-                                                shop: shopState.selectedShop!,
-                                              ),
+                                              (_) => ShopPage(shop: activeShop),
                                         ),
                                       );
                                     },

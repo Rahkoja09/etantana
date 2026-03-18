@@ -14,7 +14,6 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
 
   @override
   Future<MapModel?> getCoordinatesFromAddress(String address) async {
-    print("Entrée ici ============ <<<");
     try {
       final uri = Uri.https('api.mapbox.com', '/search/geocode/v6/forward', {
         'q': address,
@@ -24,7 +23,6 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
       });
 
       final response = await client.get(uri);
-      print("response status code = ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final dynamic decodedData = jsonDecode(response.body);
@@ -35,14 +33,11 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
         final List features = json['features'] ?? [];
         if (features.isEmpty) return null;
 
-        print('Feature trouvé: ${features[0]}');
-
         return MapModel.fromMapbox(features[0], address, 0.0);
       } else {
         throw Exception("Erreur Mapbox: ${response.statusCode}");
       }
     } catch (e) {
-      print(' Erreur geocoding: $e');
       rethrow;
     }
   }

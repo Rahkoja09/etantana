@@ -1,6 +1,5 @@
 import 'package:e_tantana/core/di/injection_container.dart';
-import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/stockPrediction/domain/actions/stock_prediction_actions.dart';
@@ -33,10 +32,10 @@ class StockPredictionController extends StateNotifier<StockPredictionState> {
     state = state.copyWith(isHomeLoading: true, action: action);
 
     final productCriteria = ProductEntities(
-      shopId: ref.read(activeShopIdProvider).id,
+      shopId: ref.watch(sessionProvider).activeShopId,
     );
     final orderCriteria = OrderEntities(
-      shopId: ref.read(activeShopIdProvider).id,
+      shopId: ref.watch(sessionProvider).activeShopId,
     );
 
     final res = await _usecases.getStockPrediction(
@@ -73,10 +72,10 @@ class StockPredictionController extends StateNotifier<StockPredictionState> {
     state = state.copyWith(isFullLoading: true, action: action);
 
     final productCriteria = ProductEntities(
-      shopId: ref.read(activeShopIdProvider).id,
+      shopId: ref.watch(sessionProvider).activeShopId,
     );
     final orderCriteria = OrderEntities(
-      shopId: ref.read(activeShopIdProvider).id,
+      shopId: ref.watch(sessionProvider).activeShopId,
     );
 
     final res = await _usecases.getStockPrediction(

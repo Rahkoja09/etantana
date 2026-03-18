@@ -414,7 +414,6 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     addMe,
                     _productImage,
                     authState.user!.id!,
-                    "shopNameTest",
                   );
                 }
                 // refresh list ----------

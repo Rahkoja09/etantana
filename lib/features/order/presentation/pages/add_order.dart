@@ -1,10 +1,8 @@
 import 'package:e_tantana/core/enums/order_status.dart';
-import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
-import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
-import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
 import 'package:e_tantana/shared/widget/input/swith_selector.dart';
@@ -149,9 +147,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
     final productAction = ref.read(productControllerProvider.notifier);
     final deliveryAction = ref.read(deliveringControllerProvider.notifier);
     final authState = ref.watch(authControllerProvider);
-    final shopId =
-        ref.watch(activeShopIdProvider).id ??
-        ref.watch(userControllerProvider).users?[0].selectedShop;
+    final shopId = ref.watch(sessionProvider).activeShopId;
     final stockPredictionAction = ref.read(
       stockPredictionControllerProvider.notifier,
     );

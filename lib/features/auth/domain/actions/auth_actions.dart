@@ -5,7 +5,7 @@
 // souhaitez pouvoir ajouter des fonctionnalites via la commande "cscm auth".
 // -----------------------------------------------------------------------------
 
-import 'package:e_tantana/core/actions/app_action.dart';
+import 'package:e_tantana/core/app/actions/app_action.dart';
 
 sealed class AuthActions implements AppAction {}
 

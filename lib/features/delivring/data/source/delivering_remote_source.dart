@@ -60,6 +60,12 @@ class DeliveringRemoteSourceImpl implements DeliveringRemoteSource {
         if (criteriales.deliveringPrice != null) {
           query = query.eq("delivering_price", criteriales.deliveringPrice!);
         }
+        if (criteriales.userId != null) {
+          query = query.eq("user_id", criteriales.userDetails);
+        }
+        if (criteriales.shopId != null) {
+          query = query.eq("shop_id", criteriales.shopId!);
+        }
         if (criteriales.dateOfDelivering != null) {
           query = query.eq(
             "date_of_delivering",

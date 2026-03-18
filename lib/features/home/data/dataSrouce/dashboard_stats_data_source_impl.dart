@@ -39,8 +39,7 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
       final deliveryRes = await (shopId != null
               ? deliveryQuery.eq('shop_id', shopId)
               : deliveryQuery)
-          .count(CountOption.exact)
-          .timeout(const Duration(seconds: 20));
+          .count(CountOption.exact);
 
       final int deliveryToday = deliveryRes.count;
 
@@ -51,10 +50,10 @@ class DashboardStatsDataSourceImpl implements DashboardStatsDataSource {
           .gte('created_at', todayStart)
           .lte('created_at', todayEnd);
 
-      final List<dynamic> ordersTotal = await (shopId != null
+      final List<dynamic> ordersTotal =
+          await (shopId != null
               ? ordersTotalQuery.eq('shop_id', shopId)
-              : ordersTotalQuery)
-          .timeout(const Duration(seconds: 20));
+              : ordersTotalQuery);
 
       final int totalOrders = ordersTotal.length;
 

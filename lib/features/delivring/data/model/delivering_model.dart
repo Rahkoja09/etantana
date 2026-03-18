@@ -16,6 +16,8 @@ class DeliveringModel extends DeliveringEntity {
     super.status,
     super.userDetails,
     super.deliveringAdresse,
+    super.shopId,
+    super.userId,
   });
 
   factory DeliveringModel.fromMap(MapData data) {
@@ -44,6 +46,8 @@ class DeliveringModel extends DeliveringEntity {
       description: data['description'] as String?,
       status: _mapStringToStatus(data['status'] as String?),
       deliveringAdresse: data['delivering_adresse'] as String,
+      shopId: data["shop_id"],
+      userId: data["user_id"],
     );
   }
 
@@ -61,6 +65,8 @@ class DeliveringModel extends DeliveringEntity {
       'description': description,
       'status': status?.name,
       'delivering_adresse': deliveringAdresse,
+      'user_id': userId,
+      'shop_id': shopId,
     };
   }
 
@@ -78,6 +84,8 @@ class DeliveringModel extends DeliveringEntity {
       description: entity.description,
       status: entity.status,
       deliveringAdresse: entity.deliveringAdresse,
+      shopId: entity.shopId,
+      userId: entity.userId,
     );
   }
 

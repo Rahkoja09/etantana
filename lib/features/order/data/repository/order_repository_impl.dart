@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:e_tantana/core/error/exceptions.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/core/app/network/network_info.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/data/dataSource/order_data_source.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';

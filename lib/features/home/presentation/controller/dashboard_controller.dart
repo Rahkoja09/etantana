@@ -1,9 +1,8 @@
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/home/domain/usecases/dashboard_stats_usecase.dart';
 import 'package:e_tantana/features/home/presentation/states/dashboard_states.dart';
-import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:riverpod/riverpod.dart';
 
 class DashboardController extends StateNotifier<DashboardStates> {
@@ -15,9 +14,7 @@ class DashboardController extends StateNotifier<DashboardStates> {
 
   Future<void> getDashboardStats() async {
     _setLoadingState();
-    final shopId =
-        ref.read(activeShopIdProvider).id ??
-        ref.read(userControllerProvider).users?[0].id;
+    final shopId = ref.read(sessionProvider).activeShopId;
     final res = await _usecase.getDashboardStats(shopId!);
     res.fold(
       (error) => _setError(error),

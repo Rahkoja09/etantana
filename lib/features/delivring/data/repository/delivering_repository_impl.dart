@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:e_tantana/core/error/exceptions.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/core/app/network/network_info.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/delivring/data/source/delivering_remote_source.dart';
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';

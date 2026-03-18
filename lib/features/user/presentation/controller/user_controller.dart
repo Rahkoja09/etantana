@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
@@ -10,13 +9,13 @@ import 'package:e_tantana/features/user/presentation/states/user_states.dart';
 
 class UserController extends StateNotifier<UserStates> {
   final UserUsecases _userUsecases;
+  final Ref ref;
 
   int _currentPage = 0;
   final int _pageSize = 10;
   bool _isLastPage = false;
 
-  UserController(this._userUsecases) : super(const UserStates()) {
-    print("oui, je suis instancier et je recuperer les données user en plus");
+  UserController(this._userUsecases, this.ref) : super(const UserStates()) {
     searchUser(null);
   }
 
@@ -192,5 +191,5 @@ class UserController extends StateNotifier<UserStates> {
 // --- PROVIDER ---
 final userControllerProvider =
     StateNotifierProvider<UserController, UserStates>((ref) {
-      return UserController(sl<UserUsecases>());
+      return UserController(sl<UserUsecases>(), ref);
     });

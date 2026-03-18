@@ -1,4 +1,4 @@
-import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/core/app/network/network_info.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:e_tantana/features/delivring/data/repository/delivering_repository_impl.dart';
 import 'package:e_tantana/features/delivring/data/source/delivering_remote_source.dart';

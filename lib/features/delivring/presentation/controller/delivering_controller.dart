@@ -1,17 +1,20 @@
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/delivring/domain/entity/delivering_entity.dart';
 import 'package:e_tantana/features/delivring/domain/usecases/delivering_usecases.dart';
 import 'package:e_tantana/features/delivring/presentation/states/delivering_states.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DeliveringController extends StateNotifier<DeliveringStates> {
+  final DeliveringUsecases _usecases;
+  final Ref ref;
+
+  DeliveringController(this._usecases, this.ref) : super(DeliveringStates());
+
   int _currentPage = 0;
   final int _pageSize = 10;
   bool _isLastPage = false;
-
-  final DeliveringUsecases _usecases;
-  DeliveringController(this._usecases) : super(DeliveringStates());
 
   Future<void> addDelivering(DeliveringEntity entities) async {
     final action = deliveringAction.deliveringInsert;
@@ -78,6 +81,13 @@ class DeliveringController extends StateNotifier<DeliveringStates> {
   }
 
   Future<void> searchDelivering(DeliveringEntity? criterial) async {
+    final shopId = ref.read(sessionProvider).activeShopId;
+    if (shopId != null && shopId != "" && criterial != null) {
+      criterial = criterial.copyWith(shopId: shopId);
+    } else if (criterial == null) {
+      criterial = DeliveringEntity(shopId: shopId);
+    }
+
     final action = deliveringAction.deliveringSearch;
     _currentPage = 0;
     _isLastPage = false;
@@ -91,10 +101,8 @@ class DeliveringController extends StateNotifier<DeliveringStates> {
       action: action,
     );
 
-    final searchCriteria = criterial ?? DeliveringEntity();
-
     final res = await _usecases.searchDelivering(
-      searchCriteria,
+      criterial,
       start: 0,
       end: _pageSize - 1,
     );
@@ -168,5 +176,5 @@ class DeliveringController extends StateNotifier<DeliveringStates> {
 final deliveringControllerProvider =
     StateNotifierProvider<DeliveringController, DeliveringStates>((ref) {
       final deliveringUsecases = sl<DeliveringUsecases>();
-      return DeliveringController(deliveringUsecases);
+      return DeliveringController(deliveringUsecases, ref);
     });

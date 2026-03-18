@@ -16,7 +16,6 @@ class ProductUsecases {
     ProductEntities entities,
     File? productImage,
     String userId,
-    String shopName,
   ) async {
     try {
       String imageLink = "";
@@ -26,7 +25,7 @@ class ProductUsecases {
           file: productImage,
           uid: userId,
           type: AppMediaType.product,
-          internalPath: shopName,
+          internalPath: entities.shopId,
 
           bucketName: "product",
         );

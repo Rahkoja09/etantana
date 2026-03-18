@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
@@ -19,13 +19,11 @@ class ShopController extends StateNotifier<ShopStates> {
   bool _isLastPage = false;
 
   ShopController(this._shopUsecases, this.ref) : super(const ShopStates()) {
-    searchShop(null);
-    selectShop();
+    refreshShop(null);
   }
 
   Future<void> refreshShop(ShopEntity? criteria) async {
     await searchShop(criteria);
-    await selectShop();
   }
 
   // --- RÉCUPÉRATION / RECHERCHE ---
@@ -50,7 +48,6 @@ class ShopController extends StateNotifier<ShopStates> {
     );
 
     res.fold((error) => _setError(error: error, action: action), (success) {
-      print("hop: j'ai trouver un shop, le voici : $success");
       if (success.length < _pageSize) _isLastPage = true;
       state = state.copyWith(
         isLoading: false,
@@ -114,23 +111,6 @@ class ShopController extends StateNotifier<ShopStates> {
     });
   }
 
-  // selecte my SHOP -----
-  Future<void> selectShop() async {
-    final selectedShopId =
-        ref.read(activeShopIdProvider).id ??
-        ref.read(userControllerProvider).users?[0].selectedShop;
-    print("ooowwweeeee $selectedShopId");
-    if (selectedShopId != null && selectedShopId != "") {
-      state = state.copyWith(
-        selectedShop: state.shops?.firstWhere(
-          (shop) => shop.id == selectedShopId,
-        ),
-      );
-    } else {
-      state = state.copyWith(selectedShop: state.shops?[0]);
-    }
-  }
-
   // --- MISE À JOUR ---
   Future<void> updateShop(ShopEntity entity) async {
     final action = UpdateShopAction(entity.id ?? "inconnu");
@@ -179,7 +159,6 @@ class ShopController extends StateNotifier<ShopStates> {
   }
 
   void _setError({required Failure error, required ShopActions action}) {
-    print("nop: j'ai pas trouver un shop, le voici : $error");
     state = state.copyWith(
       isLoading: false,
       error: error,

@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/product/domain/action/product_actions.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/domain/usecases/product_usecases.dart';
 import 'package:e_tantana/features/product/presentation/states/product_state.dart';
-import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductController extends StateNotifier<ProductState> {
@@ -25,9 +24,8 @@ class ProductController extends StateNotifier<ProductState> {
     ProductEntities entities,
     File? productImage,
     String userId,
-    String shopName,
   ) async {
-    final shopId = ref.read(activeShopIdProvider).id;
+    final shopId = ref.watch(sessionProvider).activeShopId;
     entities = entities.copyWith(shopId: shopId);
     final action = InsertProductAction(entities.name!);
     _setLoadingState(action: action);
@@ -35,7 +33,6 @@ class ProductController extends StateNotifier<ProductState> {
       entities,
       productImage,
       userId,
-      shopName,
     );
     res.fold((error) => _setError(error: error, action: action), (success) {
       state = state.copyWith(
@@ -116,10 +113,7 @@ class ProductController extends StateNotifier<ProductState> {
   }
 
   Future<void> researchProduct(ProductEntities? criterial) async {
-    final shopId =
-        ref.watch(activeShopIdProvider).id ??
-        ref.read(userControllerProvider).users?[0].selectedShop ??
-        null;
+    final shopId = ref.read(sessionProvider).activeShopId;
     if (shopId != null && shopId != "" && criterial != null) {
       criterial = criterial.copyWith(shopId: shopId);
     } else if (criterial == null) {

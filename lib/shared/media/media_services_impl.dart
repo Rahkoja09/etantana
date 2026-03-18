@@ -18,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 
 import 'package:e_tantana/core/error/exceptions.dart';
-import 'package:e_tantana/core/network/network_info.dart';
+import 'package:e_tantana/core/app/network/network_info.dart';
 import 'package:e_tantana/core/utils/tools/isUrl.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 

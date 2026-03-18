@@ -5,7 +5,7 @@ import 'package:e_tantana/config/constants/mapBox_const.dart';
 import 'package:e_tantana/config/constants/supabase_api_constants.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart' as di;
-import 'package:e_tantana/core/mainErrorListener/app_shell.dart';
+import 'package:e_tantana/core/app/appShell/app_shell.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

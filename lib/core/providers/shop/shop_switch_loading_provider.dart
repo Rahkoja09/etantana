@@ -1,4 +1,4 @@
-import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
@@ -17,7 +17,7 @@ final shopSwitchLoadingProvider = Provider<bool>((ref) {
   final stockProdictionHome =
       ref.watch(stockPredictionControllerProvider).isHomeLoading;
   final dashboard = ref.watch(dashboardStatsControllerProvider).isLoading;
-  final isSwitching = ref.watch(activeShopIdProvider).isSwitching;
+  final isSwitching = ref.watch(sessionProvider).isSwitching;
   if (!isSwitching) return false;
 
   return products ||

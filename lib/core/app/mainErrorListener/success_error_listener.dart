@@ -8,7 +8,7 @@ import 'package:e_tantana/features/auth/presentation/controller/auth_controller.
 import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
 import 'package:e_tantana/core/error/error_manager.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/mainErrorListener/last_network_time_provider.dart';
+import 'package:e_tantana/core/app/mainErrorListener/last_network_time_provider.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
@@ -31,6 +31,7 @@ class SuccessErrorListener extends ConsumerWidget {
       required dynamic action,
       required String title,
     }) {
+      if (!context.mounted) return;
       final now = DateTime.now();
       final lastErrorTime = ref.read(lastNetworkErrorTimeProvider);
       final isNetworkError =

@@ -1,9 +1,7 @@
-import 'dart:ui';
-
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/providers/shop/active_shop_provider.dart';
 import 'package:e_tantana/core/providers/shop/shop_switch_loading_provider.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
@@ -18,7 +16,6 @@ import 'package:e_tantana/features/shop/presentation/widgets/shop_info_cards.dar
 import 'package:e_tantana/features/shop/presentation/widgets/shop_product_card.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/switch_shop_loading.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
-import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
@@ -64,10 +61,9 @@ class _ShopPageState extends ConsumerState<ShopPage> {
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
           ),
-          child: Icon(HugeIcons.strokeRoundedStoreAdd02),
+          child: const Icon(HugeIcons.strokeRoundedStoreAdd02),
         ),
       ),
-
       appBar: SimpleAppbar(onBack: () {}, title: "Ma boutique"),
       body: Stack(
         children: [
@@ -76,11 +72,8 @@ class _ShopPageState extends ConsumerState<ShopPage> {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    // Avatar avec glow
                     ShopAvatar(logoUrl: widget.shop.shopLogo),
                     SizedBox(height: 16.h),
-
-                    // Nom
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24.w),
                       child: Text(
@@ -91,7 +84,6 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                     ),
                     SizedBox(height: 8.h),
 
-                    // Badge slogan pulsant
                     if (widget.shop.slogan != null &&
                         widget.shop.slogan!.isNotEmpty)
                       Container(
@@ -103,27 +95,21 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                           color: primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              widget.shop.slogan!.toUpperCase(),
-                              style: TextStyles.bodySmall(
-                                context: context,
-                                fontWeight: FontWeight.w800,
-                                color:
-                                    isDark
-                                        ? primary
-                                        : primary.withValues(alpha: 0.85),
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          widget.shop.slogan!.toUpperCase(),
+                          style: TextStyles.bodySmall(
+                            context: context,
+                            fontWeight: FontWeight.w800,
+                            color:
+                                isDark
+                                    ? primary
+                                    : primary.withValues(alpha: 0.85),
+                          ),
                         ),
                       ),
 
                     SizedBox(height: 14.h),
 
-                    // Description
                     if (widget.shop.description != null &&
                         widget.shop.description!.isNotEmpty)
                       Padding(
@@ -182,7 +168,6 @@ class _ShopPageState extends ConsumerState<ShopPage> {
 
                     SizedBox(height: 20.h),
 
-                    // Boutons action
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: ShopActionButtons(
@@ -193,7 +178,6 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                     ),
                     SizedBox(height: 26.h),
 
-                    // Info cards contact
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: ShopInfoCards(shop: widget.shop),
@@ -203,7 +187,6 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                 ),
               ),
 
-              // Titre section produits
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 18.h),
@@ -258,7 +241,6 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                 ),
               ),
 
-              // Grille produits
               isLoading
                   ? SliverPadding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -327,7 +309,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
             ],
           ),
 
-          if (ref.watch(shopSwitchLoadingProvider) == true) ShopSwitchOverlay(),
+          if (ref.watch(shopSwitchLoadingProvider)) ShopSwitchOverlay(),
         ],
       ),
     );
@@ -336,20 +318,18 @@ class _ShopPageState extends ConsumerState<ShopPage> {
 
 void _showShopSwitcher(BuildContext context, WidgetRef ref) {
   final shops = ref.read(shopControllerProvider).shops ?? [];
-  final user = ref.watch(userControllerProvider).users?[0];
-  final activeId = ref.read(activeShopIdProvider).id;
 
-  Future<void> updateData() async {
-    await ref.read(productControllerProvider.notifier).researchProduct(null);
-    await ref.read(orderControllerProvider.notifier).researchOrder(null);
-    await ref
-        .read(deliveringControllerProvider.notifier)
-        .searchDelivering(null);
-    await ref
-        .read(dashboardStatsControllerProvider.notifier)
-        .getDashboardStats();
-    await ref.read(stockPredictionControllerProvider.notifier).refreshFull();
-    await ref.read(stockPredictionControllerProvider.notifier).refreshHome();
+  final activeId = ref.read(sessionProvider).activeShopId;
+
+  Future<void> _reloadAllData() async {
+    await Future.wait([
+      ref.read(productControllerProvider.notifier).researchProduct(null),
+      ref.read(orderControllerProvider.notifier).researchOrder(null),
+      ref.read(deliveringControllerProvider.notifier).searchDelivering(null),
+      ref.read(dashboardStatsControllerProvider.notifier).getDashboardStats(),
+      ref.read(stockPredictionControllerProvider.notifier).refreshFull(),
+      ref.read(stockPredictionControllerProvider.notifier).refreshHome(),
+    ]);
   }
 
   showModalBottomSheet(
@@ -365,7 +345,6 @@ void _showShopSwitcher(BuildContext context, WidgetRef ref) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle
               Center(
                 child: Container(
                   width: 36.w,
@@ -379,7 +358,6 @@ void _showShopSwitcher(BuildContext context, WidgetRef ref) {
                 ),
               ),
               SizedBox(height: 16.h),
-
               Text(
                 "Mes boutiques",
                 style: TextStyles.titleSmall(context: context),
@@ -390,20 +368,11 @@ void _showShopSwitcher(BuildContext context, WidgetRef ref) {
                 final isActive = shop.id == activeId;
                 return GestureDetector(
                   onTap: () async {
-                    ref.read(activeShopIdProvider.notifier).state = (
-                      id: shop.id,
-                      isSwitching: true,
-                    );
                     Navigator.pop(context);
-                    await ref
-                        .read(shopControllerProvider.notifier)
-                        .selectShop();
-                    final userEntity = user?.copyWith(selectedShop: shop.id);
-                    await ref
-                        .read(userControllerProvider.notifier)
-                        .switchShop(userEntity!, shop.shopName!);
-                    await updateData();
-                    Navigator.pop(context);
+
+                    // ── Une seule ligne remplace tout l'ancien bloc ──
+                    await ref.read(sessionProvider.notifier).switchShop(shop);
+                    await _reloadAllData();
                   },
                   child: Container(
                     margin: EdgeInsets.only(bottom: 10.h),
