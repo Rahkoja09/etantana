@@ -394,6 +394,7 @@ void _showShopSwitcher(BuildContext context, WidgetRef ref) {
                       id: shop.id,
                       isSwitching: true,
                     );
+                    Navigator.pop(context);
                     await ref
                         .read(shopControllerProvider.notifier)
                         .selectShop();
@@ -402,7 +403,6 @@ void _showShopSwitcher(BuildContext context, WidgetRef ref) {
                         .read(userControllerProvider.notifier)
                         .switchShop(userEntity!, shop.shopName!);
                     await updateData();
-                    Navigator.pop(context);
                     Navigator.pop(context);
                   },
                   child: Container(

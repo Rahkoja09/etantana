@@ -17,6 +17,7 @@ class OrderModel extends OrderEntities {
     super.deliveryCosts,
     super.deliveryDate,
     super.shopId,
+    super.userId,
   });
 
   factory OrderModel.fromEntity(OrderEntities entity) {
@@ -34,6 +35,7 @@ class OrderModel extends OrderEntities {
       deliveryCosts: entity.deliveryCosts,
       deliveryDate: entity.deliveryDate,
       shopId: entity.shopId,
+      userId: entity.userId,
     );
   }
 
@@ -60,6 +62,7 @@ class OrderModel extends OrderEntities {
               ? DateTime.parse(data["delivery_date"])
               : null,
       shopId: data["shop_id"],
+      userId: data["user_id"],
     );
   }
 
@@ -78,6 +81,7 @@ class OrderModel extends OrderEntities {
       'delivery_costs': deliveryCosts,
       'delivery_date': deliveryDate?.toIso8601String(),
       'shop_id': shopId,
+      'user_id': userId,
     };
   }
 
@@ -104,6 +108,7 @@ class OrderModel extends OrderEntities {
     double? deliveryCosts,
     DateTime? deliveryDate,
     String? shopId,
+    String? userId,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -121,6 +126,7 @@ class OrderModel extends OrderEntities {
       deliveryCosts: deliveryCosts ?? this.deliveryCosts,
       deliveryDate: deliveryDate ?? this.deliveryDate,
       shopId: shopId ?? this.shopId,
+      userId: userId ?? this.userId,
     );
   }
 }

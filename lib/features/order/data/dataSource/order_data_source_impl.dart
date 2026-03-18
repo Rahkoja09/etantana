@@ -50,6 +50,7 @@ class OrderDataSourceImpl implements OrderDataSource {
                 'delivery_costs': entity.deliveryCosts,
                 'delivery_date': entity.deliveryDate!.toIso8601String(),
                 'shop_id': entity.shopId,
+                'user_id': entity.userId,
               })
               .select()
               .single();
@@ -81,6 +82,7 @@ class OrderDataSourceImpl implements OrderDataSource {
         final clientAdrs = criterial.clientAdrs;
         final deliveryDate = criterial.deliveryDate;
         final shopId = criterial.shopId;
+        final userId = criterial.userId;
 
         if (status != null) query = query.eq("status", status);
         if (shopId != null) query = query.eq("shop_id", shopId);
@@ -97,6 +99,7 @@ class OrderDataSourceImpl implements OrderDataSource {
         if (clientAdrs != null) query = query.eq("client_adrs", clientAdrs);
         if (deliveryDate != null)
           query = query.eq('delivery_date', deliveryDate);
+        if (userId != null) query = query.eq("user_id", userId);
       }
 
       query = query.order("created_at", ascending: false);
@@ -143,6 +146,8 @@ class OrderDataSourceImpl implements OrderDataSource {
           'p_details': entity.details ?? "",
           'p_delivery_date': entity.deliveryDate?.toIso8601String(),
           'p_quantity': entity.quantity,
+          'p_shop_id': entity.shopId,
+          'p_user_id': entity.userId,
         },
       );
       return OrderModel.fromMap(res);

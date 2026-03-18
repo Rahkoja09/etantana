@@ -12,9 +12,19 @@ final shopSwitchLoadingProvider = Provider<bool>((ref) {
   final delivering = ref.watch(deliveringControllerProvider).isLoading;
   final stockProdiction =
       ref.watch(stockPredictionControllerProvider).isLoading;
+  final stockProdictionFull =
+      ref.watch(stockPredictionControllerProvider).isFullLoading;
+  final stockProdictionHome =
+      ref.watch(stockPredictionControllerProvider).isHomeLoading;
   final dashboard = ref.watch(dashboardStatsControllerProvider).isLoading;
   final isSwitching = ref.watch(activeShopIdProvider).isSwitching;
   if (!isSwitching) return false;
 
-  return products || orders || delivering || stockProdiction || dashboard;
+  return products ||
+      orders ||
+      delivering ||
+      stockProdictionFull ||
+      stockProdictionHome ||
+      stockProdiction ||
+      dashboard;
 });
