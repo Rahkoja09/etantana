@@ -1,18 +1,8 @@
-// lib/features/nav_bar/presentation/widgets/sidebar.dart
 import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
-import 'package:e_tantana/features/policies/presentation/pages/policies_page.dart';
-import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
-import 'package:e_tantana/features/shop/presentation/pages/shop_page.dart';
 import 'package:e_tantana/features/sideBar/presentation/widgets/logout_dialogue.dart';
-import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
-import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_pages.dart';
-import 'package:e_tantana/features/stockPrediction/presentation/widgets/stock_prediction_banner_card.dart';
-import 'package:e_tantana/features/user/presentation/pages/profil_page.dart';
 import 'package:e_tantana/shared/widget/banner/custom_simple_banner.dart';
-import 'package:e_tantana/shared/widget/iconCard/action_icon_box.dart';
 import 'package:e_tantana/shared/widget/input/list_item_action.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
@@ -20,7 +10,7 @@ import 'package:e_tantana/shared/widget/sizeBar/custom_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class SideBar extends ConsumerWidget {
@@ -29,9 +19,7 @@ class SideBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
-    final shopState = ref.watch(shopControllerProvider);
     final authAction = ref.read(authControllerProvider.notifier);
-    final stockPredictionState = ref.watch(stockPredictionControllerProvider);
     final user = authState.user;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -96,23 +84,13 @@ class SideBar extends ConsumerWidget {
                     ListItemAction(
                       icon: Icons.person_outline,
                       label: "Profil",
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const ProfilPage()),
-                        );
-                      },
+                      onTap: () {},
                       noIcon: true,
                     ),
                     ListItemAction(
                       icon: Icons.gavel_outlined,
                       label: "Politiques",
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const PoliciesPage(),
-                          ),
-                        );
-                      },
+                      onTap: () => context.push("/policies"),
                       noIcon: true,
                     ),
                     const Spacer(),
@@ -122,13 +100,7 @@ class SideBar extends ConsumerWidget {
                         title: "Smart Inventory Predictor",
                         subtitle:
                             "Anticipez les ruptures avant qu'elles arrivent.",
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const StockPredictionPage(),
-                              ),
-                            ),
+                        onTap: () => context.push("/stock-prediction"),
                       ),
                     ),
                     const Divider(),
@@ -148,9 +120,7 @@ class SideBar extends ConsumerWidget {
                           onTapRightBtn: () async {
                             await authAction.logout();
                             Scaffold.of(context).closeEndDrawer();
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const SignIn()),
-                            );
+                            context.go("/sign-in");
                           },
                           child: LogoutDialogue(),
 

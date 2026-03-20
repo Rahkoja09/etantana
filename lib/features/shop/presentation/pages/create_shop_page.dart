@@ -2,14 +2,17 @@ import 'dart:io';
 
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
 import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
+import 'package:e_tantana/features/shop/presentation/states/shop_states.dart';
 import 'package:e_tantana/features/user/presentation/widgets/profile_image_uploader.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
+import 'package:e_tantana/shared/widget/congratulation/congratulation_page.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/loading/loading.dart';
 import 'package:e_tantana/shared/widget/popup/transparent_background_pop_up.dart';
@@ -17,6 +20,7 @@ import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class CreateShopPage extends ConsumerStatefulWidget {
@@ -101,12 +105,35 @@ class _CreateShopPageState extends ConsumerState<CreateShopPage> {
     final shopState = ref.watch(shopControllerProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
+    ref.listen<ShopStates>(shopControllerProvider, (prev, next) async {
+      if (next.shops != null) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (_) => CongratulationPage(
+                  icon: Icons.verified_user,
+                  title: "Boutique créée !",
+                  subtitle:
+                      "Votre boutique est prête pour vos activités de ventes",
+                  note: "Vous pouvez modifier les informations à tout moment.",
+                  primaryLabel: "Voir ma boutique",
+                  onPrimary: () => context.push("/shop", extra: next.shops?[0]),
+                  secondaryLabel: "Plus tard",
+                  accentColor: Colors.deepPurpleAccent,
+                  onSecondary: () => Navigator.pop(context),
+                ),
+          ),
+        );
+        await ref.read(sessionProvider.notifier).refresh();
+      }
+    });
+
     return Stack(
       children: [
         Scaffold(
           backgroundColor: colorScheme.surface,
           appBar: SimpleAppbar(
-            onBack: () => Navigator.pop(context),
+            onBack: () => context.pop(),
             title: "Créer ma boutique",
           ),
           body: Form(

@@ -78,10 +78,9 @@ class ShopActionButtons extends StatelessWidget {
 
 class _IconBtn extends StatelessWidget {
   final IconData icon;
-  final Color? iconColor;
   final VoidCallback? onTap;
 
-  const _IconBtn({required this.icon, this.iconColor, this.onTap});
+  const _IconBtn({required this.icon, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -106,11 +105,7 @@ class _IconBtn extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
-          icon,
-          size: 19.sp,
-          color: iconColor ?? Theme.of(context).colorScheme.onSurface,
-        ),
+        child: Icon(icon, size: 19.sp),
       ),
     );
   }

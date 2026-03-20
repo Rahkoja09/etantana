@@ -3,7 +3,6 @@ import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/home/domain/entities/dashboard_stats_entities.dart';
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/home/presentation/states/dashboard_states.dart';
-import 'package:e_tantana/features/home/presentation/widgets/big_stat_view.dart';
 import 'package:e_tantana/features/home/presentation/widgets/income_stat.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stat_number_view.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';

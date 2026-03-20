@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -9,20 +8,10 @@ class CustomSimpleBanner extends StatelessWidget {
   final String subtitle;
   final String buttonLabel;
   final VoidCallback? onTap;
-
-  /// Couleurs du dégradé principal [debut, fin]
   final List<Color> gradientColors;
-
-  /// Couleur des formes géométriques en overlay
   final Color accentColor;
-
-  /// Couleur du texte titre
   final Color titleColor;
-
-  /// Couleur du texte subtitle
   final Color subtitleColor;
-
-  /// Couleur du bouton
   final Color buttonColor;
 
   const CustomSimpleBanner({

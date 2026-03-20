@@ -2,9 +2,7 @@ import 'package:e_tantana/config/constants/client_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
-import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
 import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/button/horizontal_social_button.dart';
 import 'package:e_tantana/shared/widget/input/Password_input.dart';
@@ -15,6 +13,7 @@ import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class SignUp extends ConsumerStatefulWidget {
@@ -42,10 +41,7 @@ class _SignUpState extends ConsumerState<SignUp> {
 
     ref.listen<AuthStates>(authControllerProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const NavBar()),
-        );
+        context.go("/nav-bar");
       }
     });
 
@@ -106,9 +102,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                         emailController.text.trim().toLowerCase(),
                         confirmPasswordController.text,
                       );
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const SignIn()),
-                      );
+                      context.go("/sign-in");
                     } else {
                       setState(() {
                         passwordMatch = false;
@@ -127,9 +121,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                 alignment: Alignment.center,
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const SignIn()),
-                    );
+                    context.go("/signIn");
                   },
                   child: Text(
                     "Déjà un compte? Se connecter",

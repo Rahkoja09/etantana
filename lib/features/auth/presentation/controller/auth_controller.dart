@@ -5,6 +5,8 @@
 // souhaitez pouvoir ajouter des fonctionnalites via la commande "cscm auth".
 // -----------------------------------------------------------------------------
 
+import 'package:e_tantana/core/app/initialiser/app_initiliser.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // {{auth_controller_imports_anchor}}
@@ -21,8 +23,9 @@ import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
 class AuthController extends StateNotifier<AuthStates> {
   final AuthUsecases _authUsecases;
   final StorageService _storageService;
+  final Ref ref;
 
-  AuthController(this._authUsecases, this._storageService)
+  AuthController(this._authUsecases, this._storageService, this.ref)
     : super(const AuthStates()) {
     checkCurrentUser();
   }
@@ -50,6 +53,10 @@ class AuthController extends StateNotifier<AuthStates> {
     );
   }
 
+  void reset() {
+    state = AuthStates();
+  }
+
   Future<void> checkCurrentUser() async {
     final res = await _authUsecases.getCurrentUser();
     res.fold((_) => null, (user) {
@@ -62,10 +69,11 @@ class AuthController extends StateNotifier<AuthStates> {
     _setLoadingState(action: action);
 
     final res = await _authUsecases.signOut();
+    await ref.read(appInitializerProvider).resetAllData();
 
     res.fold(
       (error) => _setError(error: error, action: action),
-      (_) => state = const AuthStates(),
+      (_) => reset(),
     );
   }
 
@@ -81,7 +89,9 @@ class AuthController extends StateNotifier<AuthStates> {
       webId: webId,
       iosId: iosId,
     );
+
     await checkAuthStatus();
+    await ref.read(sessionProvider.notifier).init();
 
     res.fold(
       (error) => _setError(error: error, action: action),
@@ -124,7 +134,9 @@ class AuthController extends StateNotifier<AuthStates> {
     _setLoadingState(action: action);
 
     final res = await _authUsecases.signInWithEmail(email, password);
+
     await checkAuthStatus();
+    await ref.read(sessionProvider.notifier).init();
     res.fold(
       (error) => _setError(error: error, action: action),
       (user) =>
@@ -205,5 +217,5 @@ class AuthController extends StateNotifier<AuthStates> {
 // --- PROVIDER ---
 final authControllerProvider =
     StateNotifierProvider<AuthController, AuthStates>((ref) {
-      return AuthController(sl<AuthUsecases>(), sl<StorageService>());
+      return AuthController(sl<AuthUsecases>(), sl<StorageService>(), ref);
     });

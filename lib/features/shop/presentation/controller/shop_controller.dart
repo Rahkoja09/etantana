@@ -1,7 +1,4 @@
 import 'dart:io';
-
-import 'package:e_tantana/core/app/session/session_controller.dart';
-import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/core/error/failures.dart';
@@ -57,6 +54,10 @@ class ShopController extends StateNotifier<ShopStates> {
         action: action,
       );
     });
+  }
+
+  void reset() {
+    state = const ShopStates();
   }
 
   // --- LAZY LOADING (PAGINATION) ---

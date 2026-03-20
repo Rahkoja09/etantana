@@ -1,7 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
@@ -23,6 +22,7 @@ import 'package:e_tantana/shared/widget/title/title_with_explaination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class AddProduct extends ConsumerStatefulWidget {
@@ -55,19 +55,23 @@ class _AddProductState extends ConsumerState<AddProduct> {
   void initState() {
     super.initState();
     isFutureProduct = widget.isFutureProduct;
-    if (widget.productToEdit != null) {
-      final p = widget.productToEdit!;
-      nomProduitInput.text = p.name ?? "";
-      codeProduitInput.text = p.eId ?? "";
-      descProduitInput.text = p.description ?? "";
-      purchasePriceInput.text = p.purchasePrice?.toString() ?? "";
-      sellingPriceInput.text = p.sellingPrice?.toString() ?? "";
-      qteProduit = p.quantity ?? 0;
-      selectedType = p.type;
-      isFutureProduct = p.futureProduct ?? false;
-      _productImage = p.images;
-      variantsForServer = p.details ?? "";
+    final productToEdit = widget.productToEdit;
+    if (productToEdit != null) {
+      fillAllInputControllerWhenEdit(productToEdit);
     }
+  }
+
+  void fillAllInputControllerWhenEdit(ProductEntities productToEdit) {
+    nomProduitInput.text = productToEdit.name ?? "";
+    codeProduitInput.text = productToEdit.eId ?? "";
+    descProduitInput.text = productToEdit.description ?? "";
+    purchasePriceInput.text = productToEdit.purchasePrice?.toString() ?? "";
+    sellingPriceInput.text = productToEdit.sellingPrice?.toString() ?? "";
+    qteProduit = productToEdit.quantity ?? 0;
+    selectedType = productToEdit.type;
+    isFutureProduct = productToEdit.futureProduct ?? false;
+    _productImage = productToEdit.images;
+    variantsForServer = productToEdit.details ?? "";
   }
 
   final _mediaService = sl<MediaServices>();
@@ -125,9 +129,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     ? "Modifier produit"
                     : "Ajout produit",
             onBack: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 0)),
-              );
+              context.go("/nav-bar/:0");
             },
           ),
           body: SingleChildScrollView(
@@ -346,9 +348,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
               nextBtnText:
                   widget.productToEdit != null ? "Modifier" : "Ajouter",
               onBack: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 0)),
-                );
+                context.go("/nav-bar/:0");
               },
               onValidate: () {
                 if (_validateFields()) {

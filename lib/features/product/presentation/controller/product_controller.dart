@@ -180,6 +180,10 @@ class ProductController extends StateNotifier<ProductState> {
     });
   }
 
+  void reset() {
+    state = const ProductState();
+  }
+
   void updateCriterial(ProductEntities updateCriterial) {
     state = state.copyWith(currentCriteria: updateCriterial);
   }

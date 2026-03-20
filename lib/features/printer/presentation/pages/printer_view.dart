@@ -1,7 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/printer/presentation/models/message_template.dart';
@@ -18,6 +17,7 @@ import 'package:e_tantana/shared/widget/text/vertical_custom_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -49,9 +49,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
       appBar: SimpleAppbar(
         title: "Facturation commande",
         onBack: () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const NavBar(selectedIndex: 2)),
-          );
+          context.go("/nav-bar/:2");
         },
       ),
       body: Stack(

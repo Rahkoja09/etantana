@@ -167,6 +167,10 @@ class OrderController extends StateNotifier<OrderStates> {
     });
   }
 
+  void reset() {
+    state = const OrderStates();
+  }
+
   // --- UTILITAIRES ---
   void updateCriteria(OrderEntities criteria) {
     state = state.copyWith(currentCriteria: criteria);

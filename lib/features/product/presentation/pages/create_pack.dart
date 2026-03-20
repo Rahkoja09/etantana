@@ -4,9 +4,9 @@ import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/home/presentation/widgets/big_stat_view.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stat_number_view.dart';
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
+import 'package:e_tantana/features/product/presentation/controller/product_list_page_controller.dart';
 import 'package:e_tantana/features/product/presentation/widgets/selected_products_preview.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
@@ -18,11 +18,11 @@ import 'package:e_tantana/shared/widget/popup/show_toast.dart';
 import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class CreatePack extends ConsumerStatefulWidget {
-  final List<MapData> packComposition;
-  const CreatePack({super.key, required this.packComposition});
+  const CreatePack({super.key});
 
   @override
   ConsumerState<CreatePack> createState() => _CreatePackState();
@@ -41,6 +41,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
   Widget build(BuildContext context) {
     final productAction = ref.read(productControllerProvider.notifier);
     final productStates = ref.watch(productControllerProvider);
+    final productListPageStates = ref.watch(productListPageControllerProvider);
     final authState = ref.watch(authControllerProvider);
     return Stack(
       children: [
@@ -60,7 +61,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                   ),
 
                   SelectedProductsPreview(
-                    packComposition: widget.packComposition,
+                    packComposition: productListPageStates.packComposition!,
                   ),
                   SizedBox(height: 40),
                   MediumTitleWithDegree(
@@ -139,7 +140,9 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                               setState(() {
                                 calculeResult =
                                     calculateTotalIncomeAndPercentage(
-                                      products: widget.packComposition,
+                                      products:
+                                          productListPageStates
+                                              .packComposition!,
                                       margin: marginPercentage,
                                       userDefinedPrice: double.tryParse(
                                         priceOfOnePackByUserController.text,
@@ -226,9 +229,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
             child: BottomContainerButton(
               nextBtnText: "Créer le Pack",
               onBack: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 1)),
-                );
+                context.go("/nav-bar/:1");
               },
               onValidate: () {
                 if (packNameController.text != "" &&
@@ -236,10 +237,10 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                   ProductEntities myPack = ProductEntities(
                     name: packNameController.text.trim(),
                     isPack: true,
-                    packComposition: widget.packComposition,
+                    packComposition: productListPageStates.packComposition!,
                     quantity: maxPacksCompletable,
                     futureProduct: false,
-                    images: widget.packComposition[0]["image"],
+                    images: productListPageStates.packComposition![0]["image"],
                     sellingPrice: double.tryParse(
                       priceOfOnePackByUserController.text,
                     ),

@@ -2,7 +2,6 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/auth/presentation/controller/forgot_password_controller.dart';
-import 'package:e_tantana/features/auth/presentation/pages/reset_password.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/text/show_input_error.dart';
@@ -10,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ConfirmeOtp extends ConsumerStatefulWidget {
@@ -168,11 +168,7 @@ class _ConfirmeOtpState extends ConsumerState<ConfirmeOtp> {
                         OtpType.recovery,
                       );
                       forgotPasswordAction.setOtpCode(int.parse(_currentOtp));
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (_) => const ResetPassword(),
-                        ),
-                      );
+                      context.go("/reset-password");
                     } else {
                       setState(() => valideInputs = false);
                     }

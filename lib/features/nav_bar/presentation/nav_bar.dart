@@ -1,13 +1,12 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/app/guard/action_guard.dart';
 import 'package:e_tantana/features/appBar/presentation/app_bar_custom.dart';
 import 'package:e_tantana/features/delivring/presentation/pages/delivery.dart';
 import 'package:e_tantana/features/home/presentation/pages/home.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
-import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/order/presentation/pages/order.dart';
-import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
 import 'package:e_tantana/features/product/presentation/pages/product.dart';
 import 'package:e_tantana/features/sideBar/presentation/pages/side_bar.dart';
 import 'package:e_tantana/shared/widget/popup/show_toast.dart';
@@ -18,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:go_router/go_router.dart';
 
 class NavBar extends ConsumerStatefulWidget {
   final int selectedIndex;
@@ -132,7 +132,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
               color: Colors.white,
             ),
             onPressed: () {
-              _showEditOptionsDialog(context);
+              _showEditOptionsDialog(context, ref);
             },
           ),
         ),
@@ -199,7 +199,7 @@ class _NavBarState extends ConsumerState<NavBar> with TickerProviderStateMixin {
   }
 }
 
-void _showEditOptionsDialog(BuildContext context) {
+void _showEditOptionsDialog(BuildContext context, WidgetRef ref) {
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
@@ -252,12 +252,13 @@ void _showEditOptionsDialog(BuildContext context) {
                   icon: HugeIcons.strokeRoundedInvoice03,
                   title: 'Passer une commande',
                   subtitle: 'Passer la commande d\'un Client',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (_) => AddOrder()));
-                  },
+                  onTap:
+                      () => ActionGuard.check(
+                        context: context,
+                        ref: ref,
+                        requireShop: true,
+                        onAllowed: () => context.push('/order/add'),
+                      ),
                   isActive: true,
                 ),
                 SizedBox(height: 12.h),
@@ -267,14 +268,14 @@ void _showEditOptionsDialog(BuildContext context) {
                   icon: HugeIcons.strokeRoundedGarage,
                   title: 'Ajouter produit',
                   subtitle: 'Le produit est déjà en arrivé',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => AddProduct(isFutureProduct: false),
+                  onTap:
+                      () => ActionGuard.check(
+                        context: context,
+                        ref: ref,
+                        requireUser: true,
+                        requireShop: true,
+                        onAllowed: () => context.push("product/add/false"),
                       ),
-                    );
-                  },
                   isActive: true,
                 ),
                 SizedBox(height: 12.h),
@@ -284,14 +285,14 @@ void _showEditOptionsDialog(BuildContext context) {
                   icon: HugeIcons.strokeRoundedCargoShip,
                   title: 'Ajouter future produit',
                   subtitle: 'Le produit est encore en transit',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => AddProduct(isFutureProduct: true),
+                  onTap:
+                      () => ActionGuard.check(
+                        context: context,
+                        ref: ref,
+                        requireUser: true,
+                        requireShop: true,
+                        onAllowed: () => context.push('/product/add/true'),
                       ),
-                    );
-                  },
                   isActive: true,
                 ),
 
@@ -301,4 +302,8 @@ void _showEditOptionsDialog(BuildContext context) {
           ),
         ),
   );
+}
+
+class AddProductPage {
+  const AddProductPage();
 }

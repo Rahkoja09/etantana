@@ -6,7 +6,6 @@ import 'package:e_tantana/features/home/presentation/controller/dashboard_contro
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/widget/minimal_order_display.dart';
-import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/features/printer/presentation/providers/interaction_invoice_data_provider.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
@@ -21,6 +20,7 @@ import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -225,13 +225,9 @@ class _OrderState extends ConsumerState<Order> {
                                                       .notifier,
                                                 )
                                                 .initOrder(item);
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (_) => PrinterView(
-                                                      order: displayData[index],
-                                                    ),
-                                              ),
+                                            context.push(
+                                              "/printer",
+                                              extra: displayData[index],
                                             );
                                           },
                                           swipeAction: (value) {

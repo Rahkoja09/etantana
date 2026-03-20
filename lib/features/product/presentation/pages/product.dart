@@ -4,12 +4,9 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
-import 'package:e_tantana/features/order/presentation/pages/add_order.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_list_page_controller.dart';
-import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
-import 'package:e_tantana/features/product/presentation/pages/create_pack.dart';
 import 'package:e_tantana/features/product/presentation/widgets/create_pack_summary_floating.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
 import 'package:e_tantana/features/product/presentation/widgets/order_summary_floating_bar.dart';
@@ -23,6 +20,7 @@ import 'package:e_tantana/shared/widget/selectableOption/flat_chip_selector.dart
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -126,15 +124,7 @@ class _ProductState extends ConsumerState<Product> {
                       });
                     },
                     onValidate: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (_) => CreatePack(
-                                packComposition:
-                                    ProductListPageState.packComposition!,
-                              ),
-                        ),
-                      );
+                      context.push("/product/create-pack");
                     },
                     packCompositionLenght:
                         ProductListPageState.packComposition?.length ?? 0,
@@ -148,19 +138,7 @@ class _ProductState extends ConsumerState<Product> {
                     },
                     onRestore: () {},
                     onValidate: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (_) => AddOrder(
-                                productToOrder:
-                                    ProductListPageState
-                                        .productEntititesToOrder,
-                                orderListToOrderWithQuantity:
-                                    ProductListPageState
-                                        .productDataListToOrder!,
-                              ),
-                        ),
-                      );
+                      context.push("/order/add");
                     },
                     totalAmount: calculateTotal(
                       actualProducts,
@@ -442,19 +420,10 @@ class _ProductState extends ConsumerState<Product> {
                                                 );
                                               },
                                               product: item,
-                                              onEdit: () async {
-                                                ProductListPageAction.selectedProduct(
-                                                  item,
-                                                );
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder:
-                                                        (_) => AddProduct(
-                                                          isFutureProduct:
-                                                              false,
-                                                          productToEdit: item,
-                                                        ),
-                                                  ),
+                                              onEdit: () {
+                                                context.push(
+                                                  "/product/add/false",
+                                                  extra: item,
                                                 );
                                               },
                                             ),

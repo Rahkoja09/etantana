@@ -34,6 +34,18 @@ class AppInitializer {
       ref.read(stockPredictionControllerProvider.notifier).refreshFull(),
     ]);
   }
+
+  Future<void> resetAllData() async {
+    ref.read(authControllerProvider.notifier).reset();
+    ref.read(userControllerProvider.notifier).reset();
+    ref.read(shopControllerProvider.notifier).searchShop(null);
+    ref.read(sessionProvider.notifier).reset();
+    ref.read(dashboardStatsControllerProvider.notifier).reset();
+    ref.read(productControllerProvider.notifier).reset();
+    ref.read(orderControllerProvider.notifier).reset();
+    ref.read(deliveringControllerProvider.notifier).reset();
+    ref.read(stockPredictionControllerProvider.notifier).reset();
+  }
 }
 
 final appInitializerProvider = Provider<AppInitializer>((ref) {

@@ -1,13 +1,13 @@
 import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
-import 'package:e_tantana/features/auth/presentation/pages/sign_up.dart';
 import 'package:e_tantana/shared/widget/input/custom_swipe_button.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:e_tantana/shared/widget/others/system_overlay_task_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -72,9 +72,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             right: 20.w,
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const SignUp()),
-                );
+                context.go("/sign-up");
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(
@@ -170,9 +168,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                           await ref
                               .read(storageServiceProvider)
                               .setOnboardingSeen();
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const SignUp()),
-                          );
+                          context.go("/sign-up");
                         } else {
                           _pageController.nextPage(
                             duration: const Duration(milliseconds: 500),

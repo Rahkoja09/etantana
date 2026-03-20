@@ -3,14 +3,7 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
-import 'package:e_tantana/features/feedback/presentation/pages/feedback_page.dart';
-import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
-import 'package:e_tantana/features/shop/presentation/pages/create_shop_page.dart';
-import 'package:e_tantana/features/shop/presentation/pages/shop_page.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/create_shop_card.dart';
-import 'package:e_tantana/features/user/domain/entity/user_entity.dart';
-import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
-import 'package:e_tantana/features/user/presentation/pages/create_user_profil.dart';
 import 'package:e_tantana/features/user/presentation/widgets/item_action_list.dart';
 import 'package:e_tantana/features/user/presentation/widgets/profil_header_preview.dart';
 import 'package:e_tantana/features/user/presentation/widgets/register_placehorlder.dart';
@@ -20,6 +13,8 @@ import 'package:e_tantana/shared/widget/others/separator_background.dart';
 import 'package:e_tantana/shared/widget/share/share_qr_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -128,16 +123,14 @@ class ProfilPage extends ConsumerWidget {
                       ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (!hasShop)
+                          if (!hasShop) ...[
                             CreateShopCard(
                               onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const CreateShopPage(),
-                                  ),
-                                );
+                                context.push("/shop/create");
                               },
                             ),
+                            SizedBox(height: 10.h),
+                          ],
                           SeparatorBackground(
                             child: Column(
                               children: [
@@ -145,12 +138,7 @@ class ProfilPage extends ConsumerWidget {
                                   ItemActionList(
                                     leadingIcon: HugeIcons.strokeRoundedStore02,
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => ShopPage(shop: activeShop),
-                                        ),
-                                      );
+                                      context.push("/shop", extra: activeShop);
                                     },
                                     title: "Mes Boutiques",
                                   ),
@@ -158,11 +146,7 @@ class ProfilPage extends ConsumerWidget {
                                   leadingIcon:
                                       HugeIcons.strokeRoundedMessageEdit02,
                                   onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => const FeedbackPage(),
-                                      ),
-                                    );
+                                    context.push("/feedback");
                                   },
                                   title: "FeedBack",
                                 ),
@@ -173,11 +157,7 @@ class ProfilPage extends ConsumerWidget {
                       )
                       : RegisterPlaceholder(
                         onRegisterTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const CreateUserProfil(),
-                            ),
-                          );
+                          context.push("/profil/create");
                         },
                       ),
                 ],

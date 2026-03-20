@@ -3,7 +3,6 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/stockPrediction/domain/entity/stock_prediction_entity.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
-import 'package:e_tantana/features/stockPrediction/presentation/pages/stock_prediction_settings_page.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/widgets/stock_prediction_card.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
@@ -11,6 +10,7 @@ import 'package:e_tantana/shared/widget/others/empty_content_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -117,7 +117,7 @@ class _StockPredictionPageState extends ConsumerState<StockPredictionPage> {
                   effect: LoadingEffect.getCommonEffect(context),
                   ignoreContainers: true,
                   child:
-                      predictions!.isEmpty && !isLoading
+                      predictions.isEmpty && !isLoading
                           ? EmptyContentView(
                             icon: HugeIcons.strokeRoundedChartBubble01,
                             text: "Aucune prédiction disponible.",
@@ -188,12 +188,7 @@ class _StockPredictionPageState extends ConsumerState<StockPredictionPage> {
               // Bouton settings
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const StockPredictionSettingsPage(),
-                    ),
-                  );
+                  context.push("/stock-prediction/settings");
                 },
                 child: Container(
                   width: 32.r,

@@ -23,6 +23,10 @@ class StockPredictionController extends StateNotifier<StockPredictionState> {
     fetchStockPredictions();
   }
 
+  void reset() {
+    state = const StockPredictionState();
+  }
+
   // ---- HOME PREVIEW ----
   Future<void> fetchStockPredictionsForHome({
     int previewCount = 3,

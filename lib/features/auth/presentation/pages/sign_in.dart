@@ -2,10 +2,7 @@ import 'package:e_tantana/config/constants/client_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
-import 'package:e_tantana/features/auth/presentation/pages/forgot_password.dart';
-import 'package:e_tantana/features/auth/presentation/pages/sign_up.dart';
 import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/button/horizontal_social_button.dart';
 import 'package:e_tantana/shared/widget/input/Password_input.dart';
@@ -15,6 +12,7 @@ import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class SignIn extends ConsumerStatefulWidget {
@@ -37,10 +35,7 @@ class _SignInState extends ConsumerState<SignIn> {
 
     ref.listen<AuthStates>(authControllerProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const NavBar()),
-        );
+        context.go('/nav-bar');
       }
     });
 
@@ -79,9 +74,7 @@ class _SignInState extends ConsumerState<SignIn> {
                 alignment: Alignment.centerRight,
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const ForgotPassword()),
-                    );
+                    context.go("/forgot-password");
                   },
                   child: Text(
                     "Mot de passe oublier",
@@ -161,9 +154,7 @@ class _SignInState extends ConsumerState<SignIn> {
               SizedBox(height: 30),
               HorizontalSocialButton(
                 onTap: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SignUp()),
-                  );
+                  context.go("/sign-up");
                 },
                 socialIconLinkOrAsset: "assets/medias/icons/gmail.png",
                 title: "Créer un compte avec Gmail",

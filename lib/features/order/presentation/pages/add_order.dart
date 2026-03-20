@@ -2,6 +2,7 @@ import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
+import 'package:e_tantana/features/product/presentation/controller/product_list_page_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
 import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
@@ -13,12 +14,12 @@ import 'package:e_tantana/shared/widget/title/title_with_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
-import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/widget/multiple_product_view_order.dart';
@@ -36,9 +37,7 @@ import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 
 // ignore: must_be_immutable
 class AddOrder extends ConsumerStatefulWidget {
-  List<MapData>? orderListToOrderWithQuantity;
-  final List<ProductEntities?>? productToOrder;
-  AddOrder({super.key, this.productToOrder, this.orderListToOrderWithQuantity});
+  AddOrder({super.key});
 
   @override
   ConsumerState<AddOrder> createState() => _AddOrderState();
@@ -60,15 +59,20 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   @override
   void initState() {
     super.initState();
-    if (widget.productToOrder != null) {
-      setState(() {
-        selectedProductEntity = widget.productToOrder;
-      });
-    }
-    if (widget.productToOrder?.length == 1) {
-      setState(() {
-        qteProduit = widget.orderListToOrderWithQuantity?[0]["quantity"] ?? 1;
-      });
+    if (ref.read(productListPageControllerProvider).productEntititesToOrder !=
+            null &&
+        ref
+                .read(productListPageControllerProvider)
+                .productEntititesToOrder
+                ?.length ==
+            1) {
+      selectedProductEntity =
+          ref.read(productListPageControllerProvider).productEntititesToOrder;
+      qteProduit =
+          ref
+              .read(productListPageControllerProvider)
+              .productDataListToOrder?[0]["quantity"] ??
+          1;
     }
   }
 
@@ -148,6 +152,10 @@ class _AddOrderState extends ConsumerState<AddOrder> {
     final deliveryAction = ref.read(deliveringControllerProvider.notifier);
     final authState = ref.watch(authControllerProvider);
     final shopId = ref.watch(sessionProvider).activeShopId;
+    final productListPageStates = ref.watch(productListPageControllerProvider);
+    final productListPageAction = ref.read(
+      productListPageControllerProvider.notifier,
+    );
     final stockPredictionAction = ref.read(
       stockPredictionControllerProvider.notifier,
     );
@@ -157,9 +165,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
       appBar: SimpleAppbar(
         title: "Créer une commande",
         onBack: () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 1)),
-          );
+          context.go("/nav-bar/:1");
         },
       ),
       body: Stack(
@@ -175,19 +181,13 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                     SeparatorBackground(
                       child: SelectProduct(
                         selectedProduct: selectedProductEntity?[0],
-                        onChanged: (selectionProduct) {
+                        onChanged: (selectedProduct) {
                           setState(() {
-                            selectedProductEntity = [selectionProduct];
-                            widget.orderListToOrderWithQuantity = [
-                              {
-                                "id": selectionProduct!.id,
-                                "quantity": qteProduit,
-                                "unit_price": selectionProduct.sellingPrice,
-                                "product_name": selectionProduct.name,
-                                "purchase_price":
-                                    selectionProduct.purchasePrice,
-                              },
-                            ];
+                            selectedProductEntity = [selectedProduct];
+                            productListPageAction.updateProductOrder(
+                              selectedProduct!,
+                              qteProduit,
+                            );
                           });
                         },
                       ),
@@ -234,13 +234,13 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                             children: [
                               MiniTextCard(
                                 text:
-                                    "${calculateTotal(selectedProductEntity!, widget.orderListToOrderWithQuantity!)} Ar",
+                                    "${calculateTotal(selectedProductEntity!, productListPageStates.productDataListToOrder!)} Ar",
                                 icon: HugeIcons.strokeRoundedMoney03,
                               ),
                               SizedBox(width: 5),
                               MiniTextCard(
                                 text:
-                                    "${widget.productToOrder!.length} Articles",
+                                    "${productListPageStates.productEntititesToOrder?.length} Articles",
                                 icon: HugeIcons.strokeRoundedShoppingCart01,
                               ),
                             ],
@@ -274,31 +274,21 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                         ),
                         SizedBox(height: 20.h),
 
-                        if (widget.productToOrder == null ||
-                            widget.productToOrder!.length == 1)
+                        if (productListPageStates.productEntititesToOrder ==
+                                null ||
+                            productListPageStates.productEntititesToOrder == 1)
                           Row(
                             children: [
                               Expanded(
                                 child: InputNumberOnlyMinus(
                                   minimumValue: 0,
-                                  onValueChanged: (newValue) {
-                                    setState(() {
-                                      qteProduit = newValue;
-                                      widget.orderListToOrderWithQuantity = [
-                                        {
-                                          "id": selectedProductEntity?[0]?.id,
-                                          "quantity": newValue,
-                                          "unit_price":
-                                              selectedProductEntity?[0]
-                                                  ?.sellingPrice,
-                                          "product_name":
-                                              selectedProductEntity?[0]?.name,
-                                          "purchase_price":
-                                              selectedProductEntity?[0]
-                                                  ?.purchasePrice,
-                                        },
-                                      ];
-                                    });
+                                  onValueChanged: (newQuantity) {
+                                    qteProduit = newQuantity;
+                                    productListPageAction.updateProductOrder(
+                                      productListPageStates
+                                          .productEntititesToOrder![0],
+                                      newQuantity,
+                                    );
                                   },
                                   title: "Quantité(s)",
                                   showDegree: false,
@@ -523,14 +513,9 @@ class _AddOrderState extends ConsumerState<AddOrder> {
 
       bottomNavigationBar: BottomContainerButton(
         nextBtnText: "Créer",
-        onBack: () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => NavBar(selectedIndex: 0)),
-          );
-        },
+        onBack: () => context.go("/nav-bar/:1"),
         onValidate: () async {
           if (_validateFields()) {
-            print("entré ici");
             final firstProduct = selectedProductEntity?.firstOrNull;
 
             if (firstProduct == null) {
@@ -538,10 +523,10 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               return;
             }
 
-            if (widget.orderListToOrderWithQuantity != null &&
-                widget.orderListToOrderWithQuantity!.length > 1) {
+            if (productListPageStates.productDataListToOrder != null &&
+                productListPageStates.productDataListToOrder!.length > 1) {
               qteProduit = 0;
-              for (var order in widget.orderListToOrderWithQuantity!) {
+              for (var order in productListPageStates.productDataListToOrder!) {
                 qteProduit += (order["quantity"] as num).toInt();
               }
             }
@@ -554,7 +539,8 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               shopId: shopId,
               userId: authState.user?.id,
               details: variantsForServer,
-              productsAndQuantities: widget.orderListToOrderWithQuantity,
+              productsAndQuantities:
+                  productListPageStates.productDataListToOrder,
               quantity: qteProduit,
               status: selectedStatus,
               deliveryDate: deliveryDate,

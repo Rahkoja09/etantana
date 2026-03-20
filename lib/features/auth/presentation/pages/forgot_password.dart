@@ -2,7 +2,6 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/auth/presentation/controller/forgot_password_controller.dart';
-import 'package:e_tantana/features/auth/presentation/pages/confirme_otp.dart';
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:e_tantana/shared/widget/button/button.dart';
 import 'package:e_tantana/shared/widget/input/simple_input.dart';
@@ -10,6 +9,7 @@ import 'package:e_tantana/shared/widget/text/show_input_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class ForgotPassword extends ConsumerStatefulWidget {
@@ -100,9 +100,7 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
                       forgotPasswordAction.setEmail(
                         emailController.text.trim().toLowerCase(),
                       );
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const ConfirmeOtp()),
-                      );
+                      context.go("/confirm-otp");
                     } else {
                       setState(() {
                         valideInputs = false;

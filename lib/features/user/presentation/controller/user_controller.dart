@@ -52,6 +52,10 @@ class UserController extends StateNotifier<UserStates> {
     });
   }
 
+  void reset() {
+    state = const UserStates();
+  }
+
   // --- LAZY LOADING (PAGINATION) ---
   Future<void> loadNextPage() async {
     if (state.isLoading || _isLastPage) return;

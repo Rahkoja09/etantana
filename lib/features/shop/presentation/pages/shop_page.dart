@@ -9,7 +9,6 @@ import 'package:e_tantana/features/product/domain/entities/product_entities.dart
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
 import 'package:e_tantana/features/shop/presentation/controller/shop_controller.dart';
-import 'package:e_tantana/features/shop/presentation/pages/create_shop_page.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_action_buttons.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_avatar.dart';
 import 'package:e_tantana/features/shop/presentation/widgets/shop_info_cards.dart';
@@ -22,6 +21,7 @@ import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -52,9 +52,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         elevation: 2,
         onPressed: () {
-          Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const CreateShopPage()));
+          context.push("/shop/create-shop");
         },
         child: Container(
           decoration: BoxDecoration(
@@ -369,10 +367,9 @@ void _showShopSwitcher(BuildContext context, WidgetRef ref) {
                 return GestureDetector(
                   onTap: () async {
                     Navigator.pop(context);
-
-                    // ── Une seule ligne remplace tout l'ancien bloc ──
                     await ref.read(sessionProvider.notifier).switchShop(shop);
                     await _reloadAllData();
+                    Navigator.pop(context);
                   },
                   child: Container(
                     margin: EdgeInsets.only(bottom: 10.h),

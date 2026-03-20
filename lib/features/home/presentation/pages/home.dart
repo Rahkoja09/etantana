@@ -1,6 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
 import 'package:e_tantana/features/home/presentation/widgets/main_action_section.dart';
 import 'package:e_tantana/features/home/presentation/widgets/stats_section.dart';

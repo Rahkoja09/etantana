@@ -28,6 +28,10 @@ class DashboardController extends StateNotifier<DashboardStates> {
     );
   }
 
+  void reset() {
+    state = const DashboardStates();
+  }
+
   // set loading state ----------
   void _setLoadingState() {
     state = state.copyWith(isLoading: true);

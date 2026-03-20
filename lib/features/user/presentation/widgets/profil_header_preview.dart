@@ -1,4 +1,3 @@
-import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,7 +33,6 @@ class ProfilHeaderPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final primary = Theme.of(context).colorScheme.primary;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(

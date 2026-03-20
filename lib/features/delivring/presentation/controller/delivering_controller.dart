@@ -150,6 +150,10 @@ class DeliveringController extends StateNotifier<DeliveringStates> {
     });
   }
 
+  void reset() {
+    state = DeliveringStates();
+  }
+
   void updateCriterial(DeliveringEntity updateCriterial) {
     state = state.copyWith(currentCriteria: updateCriterial);
   }
