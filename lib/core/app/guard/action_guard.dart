@@ -11,9 +11,13 @@ class ActionGuard {
     required WidgetRef ref,
     bool requireUser = false,
     bool requireShop = false,
+    bool requiredPremium = false,
     VoidCallback? onAllowed,
   }) {
     final session = ref.read(sessionProvider);
+    final user = ref.read(sessionProvider).user;
+
+    if (requiredPremium && user?.userPlan == "free") {}
 
     if (requireUser && !session.hasUser) {
       GuardPopup.show(

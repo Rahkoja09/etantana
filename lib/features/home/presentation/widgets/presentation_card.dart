@@ -30,6 +30,7 @@ class PresentationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = Theme.of(context).colorScheme.onSurface;
     return InkWell(
       onTap: onTap,
       child: ClipRRect(
@@ -41,12 +42,6 @@ class PresentationCard extends StatelessWidget {
               width: 300.w,
               padding: EdgeInsets.all(15),
               decoration: BoxDecoration(
-                border: Border.all(
-                  width: 0.2,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
-                ),
                 borderRadius: BorderRadius.circular(
                   StylesConstants.borderRadius,
                 ),
@@ -66,7 +61,7 @@ class PresentationCard extends StatelessWidget {
                             context: context,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: textColor,
                           ),
                           children: [
                             TextSpan(
@@ -74,7 +69,7 @@ class PresentationCard extends StatelessWidget {
                               style: TextStyles.titleMedium(
                                 context: context,
                                 fontSize: 20,
-                                color: Colors.white,
+                                color: textColor,
                               ),
                             ),
                           ],
@@ -87,7 +82,7 @@ class PresentationCard extends StatelessWidget {
                           commenteText,
                           style: TextStyles.bodyMedium(
                             context: context,
-                            color: Colors.white.withValues(alpha: 0.6),
+                            color: textColor.withValues(alpha: 0.6),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -97,22 +92,18 @@ class PresentationCard extends StatelessWidget {
                         padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
+                          color: textColor.withValues(alpha: 0.2),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              valueOfCardIcon,
-                              size: 15,
-                              color: Colors.black,
-                            ),
+                            Icon(valueOfCardIcon, size: 15, color: textColor),
                             SizedBox(width: 5),
                             Text(
                               valueOfCardText,
                               style: TextStyles.bodyMedium(
                                 context: context,
-                                color: Colors.black,
+                                color: textColor,
                               ),
                             ),
                           ],
@@ -124,13 +115,13 @@ class PresentationCard extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(3),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: textColor,
                         shape: BoxShape.circle,
                       ),
                       child: HugeIcon(
                         icon: HugeIcons.strokeRoundedArrowRight01,
                         size: 15,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.surface,
                       ),
                     ),
                   ),

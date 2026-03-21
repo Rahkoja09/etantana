@@ -45,7 +45,7 @@ class AddOrder extends ConsumerStatefulWidget {
 
 class _AddOrderState extends ConsumerState<AddOrder> {
   int qteProduit = 1;
-  String? variantsForServer;
+  List<Map<String, dynamic>> _variants = [];
   DeliveryStatus? selectedStatus;
   List<ProductEntities?>? selectedProductEntity;
   String deliveryCity = "Antananarivo";
@@ -60,14 +60,15 @@ class _AddOrderState extends ConsumerState<AddOrder> {
   void initState() {
     super.initState();
     if (ref.read(productListPageControllerProvider).productEntititesToOrder !=
-            null &&
-        ref
-                .read(productListPageControllerProvider)
-                .productEntititesToOrder
-                ?.length ==
-            1) {
+        null) {
       selectedProductEntity =
           ref.read(productListPageControllerProvider).productEntititesToOrder;
+    }
+    if (ref
+            .read(productListPageControllerProvider)
+            .productEntititesToOrder
+            ?.length ==
+        1) {
       qteProduit =
           ref
               .read(productListPageControllerProvider)
@@ -176,11 +177,15 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (selectedProductEntity == null ||
+                  if (selectedProductEntity != null &&
+                          selectedProductEntity!.isEmpty ||
                       selectedProductEntity!.length == 1)
                     SeparatorBackground(
                       child: SelectProduct(
-                        selectedProduct: selectedProductEntity?[0],
+                        selectedProduct:
+                            selectedProductEntity?.length == 1
+                                ? selectedProductEntity![0]
+                                : null,
                         onChanged: (selectedProduct) {
                           setState(() {
                             selectedProductEntity = [selectedProduct];
@@ -340,9 +345,9 @@ class _AddOrderState extends ConsumerState<AddOrder> {
                           title: "Détails",
                         ),
                         ItemManagerSection(
-                          onChanged: (variante) {
+                          onChanged: (variants, images) {
                             setState(() {
-                              variantsForServer = variante;
+                              _variants = variants;
                             });
                           },
                         ),
@@ -538,7 +543,9 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               deliveryCosts: double.tryParse(fraisDeLiv.text.trim()),
               shopId: shopId,
               userId: authState.user?.id,
-              details: variantsForServer,
+              details: "",
+
+              /// mdofier ici pour pouvoir accepter variants
               productsAndQuantities:
                   productListPageStates.productDataListToOrder,
               quantity: qteProduit,
@@ -547,13 +554,14 @@ class _AddOrderState extends ConsumerState<AddOrder> {
             );
 
             await orderAction.placeCompleteOrder(orderData);
+            productListPageAction.emptyProductDataToOrder();
             await productAction.researchProduct(null);
             await deliveryAction.searchDelivering(null);
             await stockPredictionAction.refreshHome();
 
             // réinitialiser les inputs -------------
             qteProduit = 0;
-            variantsForServer = null;
+            _variants = [];
             selectedStatus = null;
             selectedProductEntity;
             clientName.text = "";

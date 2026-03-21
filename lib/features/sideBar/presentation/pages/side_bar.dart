@@ -1,15 +1,17 @@
 import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/sideBar/presentation/widgets/logout_dialogue.dart';
 import 'package:e_tantana/shared/widget/banner/custom_simple_banner.dart';
 import 'package:e_tantana/shared/widget/input/list_item_action.dart';
 import 'package:e_tantana/shared/widget/loading/loading_effect.dart';
+import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
-import 'package:e_tantana/shared/widget/sizeBar/custom_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -21,6 +23,7 @@ class SideBar extends ConsumerWidget {
     final authState = ref.watch(authControllerProvider);
     final authAction = ref.read(authControllerProvider.notifier);
     final user = authState.user;
+    final sessionStates = ref.watch(sessionProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Skeletonizer(
@@ -42,29 +45,45 @@ class SideBar extends ConsumerWidget {
                   children: [
                     Row(
                       children: [
-                        CustomAvatar(
-                          imageUrlOrAssets:
-                              authState.user?.photoUrl ?? AppConst.defaultImage,
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
                           children: [
-                            Text(
-                              user?.email?.split('@')[0] ?? "Utilisateur",
-                              style: TextStyles.bodyText(
-                                context: context,
-                                fontWeight: FontWeight.bold,
+                            SizedBox(
+                              height: 40.h,
+                              width: 40.w,
+                              child: ImageViewer(
+                                imageFileOrLink:
+                                    sessionStates.hasShop
+                                        ? sessionStates.activeShop?.shopLogo
+                                        : authState.user?.photoUrl ??
+                                            AppConst.defaultImage,
+                                borderRadius: 100,
                               ),
                             ),
-                            Text(
-                              user?.email ?? "email@example.com",
-                              style: TextStyles.bodySmall(
-                                context: context,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.5),
-                              ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  sessionStates.hasShop
+                                      ? sessionStates.activeShop!.shopName!
+                                      : user?.email?.split('@')[0] ??
+                                          "Utilisateur",
+                                  style: TextStyles.bodyText(
+                                    context: context,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  user?.email ?? "email@example.com",
+                                  style: TextStyles.bodySmall(
+                                    context: context,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -84,7 +103,7 @@ class SideBar extends ConsumerWidget {
                     ListItemAction(
                       icon: Icons.person_outline,
                       label: "Profil",
-                      onTap: () {},
+                      onTap: () => context.push("/user/profil"),
                       noIcon: true,
                     ),
                     ListItemAction(

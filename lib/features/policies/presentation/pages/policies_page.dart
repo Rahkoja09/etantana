@@ -4,6 +4,7 @@ import 'package:e_tantana/features/policies/presentation/widgets/policy_detail_p
 import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class PoliciesPage extends StatelessWidget {
@@ -79,13 +80,7 @@ class PoliciesPage extends StatelessWidget {
 
   Widget _buildPolicyCard(BuildContext context, _PolicyCard card) {
     return GestureDetector(
-      onTap:
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PolicyDetailPage(policyType: card.type),
-            ),
-          ),
+      onTap: () => context.push("/policies/details", extra: card.type),
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),

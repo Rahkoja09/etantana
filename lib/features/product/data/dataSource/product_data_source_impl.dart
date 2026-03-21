@@ -12,12 +12,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   @override
   Future<void> deleteProductById(String productId) async {
     try {
-      final res = await _client.from("product").delete().eq("id", productId);
-      if (res == null) {
-        throw ApiException(
-          message: "Erreur de suppression du produit : $productId",
-        );
-      }
+      await _client.from("product").delete().eq("id", productId);
     } on PostgrestException catch (e) {
       throw ApiException(message: e.message, code: e.code ?? "000");
     } catch (e) {
@@ -50,7 +45,7 @@ class ProductDataSourceImpl implements ProductDataSource {
                 'quantity': entities.quantity,
                 'description': entities.description,
                 'type': entities.type,
-                'details': entities.details,
+                'variant': entities.variant,
                 'images': entities.images,
                 'e_id': entities.eId,
                 'purchase_price': entities.purchasePrice,
@@ -86,7 +81,7 @@ class ProductDataSourceImpl implements ProductDataSource {
         final quantity = criterial.quantity;
         final description = criterial.description;
         final type = criterial.type;
-        final details = criterial.details;
+        final variant = criterial.variant;
         final purchasePrice = criterial.purchasePrice;
         final sellingPrice = criterial.sellingPrice;
         final futureProduct = criterial.futureProduct;
@@ -100,7 +95,7 @@ class ProductDataSourceImpl implements ProductDataSource {
         if (quantity != null) query = query.eq("quantity", quantity);
         if (description != null) query = query.eq("description", description);
         if (type != null) query = query.eq("type", type);
-        if (details != null) query = query.eq("details", details);
+        if (variant != null) query = query.eq("variant", variant);
         if (isPack != null) query = query.eq("is_pack", isPack);
         if (futureProduct != null) {
           query = query.eq("future_product", futureProduct);

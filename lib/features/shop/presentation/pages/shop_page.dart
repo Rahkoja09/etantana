@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/app/guard/action_guard.dart';
 import 'package:e_tantana/core/providers/shop/shop_switch_loading_provider.dart';
 import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
@@ -52,7 +53,13 @@ class _ShopPageState extends ConsumerState<ShopPage> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         elevation: 2,
         onPressed: () {
-          context.push("/shop/create-shop");
+          ActionGuard.check(
+            context: context,
+            ref: ref,
+            requireUser: true,
+            requireShop: true,
+            onAllowed: () => context.push("/shop/create"),
+          );
         },
         child: Container(
           decoration: BoxDecoration(

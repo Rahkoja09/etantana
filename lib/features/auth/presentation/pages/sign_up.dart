@@ -121,7 +121,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                 alignment: Alignment.center,
                 child: InkWell(
                   onTap: () {
-                    context.go("/signIn");
+                    context.go("/sign-in");
                   },
                   child: Text(
                     "Déjà un compte? Se connecter",

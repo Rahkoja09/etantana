@@ -274,7 +274,7 @@ void _showEditOptionsDialog(BuildContext context, WidgetRef ref) {
                         ref: ref,
                         requireUser: true,
                         requireShop: true,
-                        onAllowed: () => context.push("product/add/false"),
+                        onAllowed: () => context.push("/product/add/false"),
                       ),
                   isActive: true,
                 ),

@@ -35,7 +35,7 @@ class _SignInState extends ConsumerState<SignIn> {
 
     ref.listen<AuthStates>(authControllerProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        context.go('/nav-bar');
+        context.go('/nav-bar/0');
       }
     });
 

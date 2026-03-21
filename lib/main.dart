@@ -5,7 +5,7 @@ import 'package:e_tantana/config/constants/mapBox_const.dart';
 import 'package:e_tantana/config/constants/supabase_api_constants.dart';
 import 'package:e_tantana/config/theme/theme_provider.dart';
 import 'package:e_tantana/core/di/injection_container.dart' as di;
-import 'package:e_tantana/core/app/appShell/app_shell.dart';
+import 'package:e_tantana/core/router/app_router.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -71,16 +71,17 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeProvider);
+    final router = ref.watch(appRouterProvider);
     return ScreenUtilInit(
       designSize: const Size(390, 844), // iphone 13 ----
       minTextAdapt: true,
       builder: (context, child) {
         return ToastificationWrapper(
-          child: MaterialApp(
+          child: MaterialApp.router(
+            routerConfig: router,
             theme: theme,
             debugShowCheckedModeBanner: false,
             title: AppConst.appName,
-            home: AppShell(),
           ),
         );
       },

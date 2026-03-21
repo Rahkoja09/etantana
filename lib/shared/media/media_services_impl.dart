@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/shared/domain/format_media_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -104,7 +105,10 @@ class MediaServiceImpl implements MediaServices {
     }
 
     // Validation Taille (5MB image / 50MB video) -------
-    final int maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+    final int maxSize =
+        isVideo
+            ? AppConst.maxVideoSize * 1024 * 1024
+            : AppConst.maxImageSize * 1024 * 1024;
     if (fileSize > maxSize) {
       throw ApiException(
         message: "Fichier trop lourd. Max: ${maxSize ~/ (1024 * 1024)}MB",

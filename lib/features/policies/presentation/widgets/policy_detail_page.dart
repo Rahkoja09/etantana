@@ -4,8 +4,6 @@ import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// import 'package:your_app/shared/widget/appbar/simple_appbar.dart';
-
 class PolicyDetailPage extends StatelessWidget {
   final PolicyType policyType;
 

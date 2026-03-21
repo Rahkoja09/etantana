@@ -390,9 +390,7 @@ class _ProductState extends ConsumerState<Product> {
                                                         .deleteProductById(
                                                           item.id!,
                                                           productName:
-                                                              ProductListPageState
-                                                                  .selectedProduct!
-                                                                  .name!,
+                                                              item.name!,
                                                         );
                                                     await ref
                                                         .read(

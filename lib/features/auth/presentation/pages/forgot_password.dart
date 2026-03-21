@@ -72,14 +72,17 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
               SizedBox(height: 25),
               Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  "Revenir à le connexion",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontFamily: "Nonito",
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
+                child: InkWell(
+                  onTap: () => context.go("/sign-in"),
+                  child: Text(
+                    "Revenir à le connexion",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontFamily: "Nonito",
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),

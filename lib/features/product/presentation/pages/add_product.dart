@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
@@ -48,7 +50,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
   TextEditingController sellingPriceInput = TextEditingController();
   int qteProduit = 0;
   String? selectedType;
-  String variantsForServer = "";
+  List<Map<String, dynamic>> _variants = [];
+  List<File?> _variantImages = [];
   bool? isFutureProduct;
 
   @override
@@ -71,7 +74,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
     selectedType = productToEdit.type;
     isFutureProduct = productToEdit.futureProduct ?? false;
     _productImage = productToEdit.images;
-    variantsForServer = productToEdit.details ?? "";
+    _variants = productToEdit.variant ?? [];
   }
 
   final _mediaService = sl<MediaServices>();
@@ -304,10 +307,11 @@ class _AddProductState extends ConsumerState<AddProduct> {
                           degree: 2,
                         ),
                         ItemManagerSection(
-                          varianteInString: variantsForServer,
-                          onChanged: (variante) {
+                          initialVariants: widget.productToEdit?.variant ?? [],
+                          onChanged: (variants, images) {
                             setState(() {
-                              variantsForServer = variante;
+                              _variants = variants;
+                              _variantImages = images;
                             });
                           },
                         ),
@@ -390,7 +394,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     name: nomProduitInput.text.trim(),
                     quantity: qteProduit,
                     description: descProduitInput.text,
-                    details: variantsForServer,
+                    variant: _variants,
                     eId: codeProduitInput.text,
                     type: selectedType,
                     futureProduct: isFutureProduct,
@@ -403,7 +407,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     name: nomProduitInput.text.trim(),
                     quantity: qteProduit,
                     description: descProduitInput.text,
-                    details: variantsForServer,
+                    variant: _variants,
                     eId: codeProduitInput.text,
                     type: selectedType,
                     futureProduct: isFutureProduct,
@@ -426,7 +430,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                 descProduitInput.text = "";
                 qteProduit = 0;
                 selectedType = null;
-                variantsForServer = "";
+                _variants = [];
                 purchasePriceInput.text = "";
                 sellingPriceInput.text = "";
               },

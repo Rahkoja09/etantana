@@ -226,7 +226,7 @@ class _OrderState extends ConsumerState<Order> {
                                                 )
                                                 .initOrder(item);
                                             context.push(
-                                              "/printer",
+                                              "/printer/",
                                               extra: displayData[index],
                                             );
                                           },

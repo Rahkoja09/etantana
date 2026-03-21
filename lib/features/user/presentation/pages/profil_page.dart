@@ -138,7 +138,10 @@ class ProfilPage extends ConsumerWidget {
                                   ItemActionList(
                                     leadingIcon: HugeIcons.strokeRoundedStore02,
                                     onTap: () {
-                                      context.push("/shop", extra: activeShop);
+                                      context.push(
+                                        "/shop/view",
+                                        extra: activeShop,
+                                      );
                                     },
                                     title: "Mes Boutiques",
                                   ),
@@ -157,7 +160,7 @@ class ProfilPage extends ConsumerWidget {
                       )
                       : RegisterPlaceholder(
                         onRegisterTap: () {
-                          context.push("/profil/create");
+                          context.push("user/profil/create");
                         },
                       ),
                 ],

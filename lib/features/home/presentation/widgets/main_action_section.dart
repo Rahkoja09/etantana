@@ -37,9 +37,7 @@ class MainActionsSection extends StatelessWidget {
                 color: Colors.blue[900]!,
                 icon: HugeIcons.strokeRoundedMoneyAdd01,
                 label: "Nouvelle\nvente",
-                onTap: () {
-                  context.push("order/add");
-                },
+                onTap: () => context.push('/order/add'),
               ),
             ),
             SizedBox(width: 12.w),
@@ -70,7 +68,7 @@ class MainActionsSection extends StatelessWidget {
                 color: Colors.deepOrange[300]!,
                 icon: HugeIcons.strokeRoundedInvoice,
                 label: "Gerer\nmes commandes",
-                onTap: () => context.go("/nav-bar/:2"),
+                onTap: () => context.push("/nav-bar/2"),
               ),
             ),
           ],

@@ -16,6 +16,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
     with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: 165.h,
       child: ListView(
@@ -28,7 +29,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
             headText: "Je",
             bodyText: "Gère",
             commenteText: "Mes Produits, commandes et factures",
-            themeColor: const Color.fromARGB(255, 142, 124, 102),
+            themeColor: colorScheme.surfaceContainerHigh,
             valueOfCardText: "Je gagne du temps",
             valueOfCardIcon: HugeIcons.strokeRoundedTimeHalfPass,
             image3DStyleAssetsOrLink: "assets/medias/logos/package_3D.png",
@@ -40,7 +41,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
             headText: "Je",
             bodyText: "Révise",
             commenteText: "Mes Statistiques, Recettes et inventaires",
-            themeColor: Colors.green,
+            themeColor: colorScheme.surfaceContainerHigh,
             valueOfCardText: "Je maîtrise ma routine",
             valueOfCardIcon: HugeIcons.strokeRoundedChart,
             image3DStyleAssetsOrLink: "assets/medias/logos/chart_3D_2.png",
@@ -52,7 +53,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
             headText: "Je",
             bodyText: "Dirige",
             commenteText: "Mes boutiques en un seul endroit",
-            themeColor: Colors.red,
+            themeColor: colorScheme.surfaceContainerHigh,
             valueOfCardText: "Je pilote facilement",
             valueOfCardIcon: HugeIcons.strokeRoundedStore02,
             image3DStyleAssetsOrLink: "assets/medias/logos/store.png",

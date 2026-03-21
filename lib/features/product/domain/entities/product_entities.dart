@@ -10,7 +10,7 @@ class ProductEntities extends Equatable {
   final int? quantity;
   final String? description;
   final String? type;
-  final String? details;
+  final List<Map<String, dynamic>>? variant;
   final String? images;
   final double? purchasePrice;
   final double? sellingPrice;
@@ -27,7 +27,7 @@ class ProductEntities extends Equatable {
     this.name,
     this.quantity,
     this.description,
-    this.details,
+    this.variant,
     this.images,
     this.type,
     this.purchasePrice,
@@ -47,7 +47,7 @@ class ProductEntities extends Equatable {
     int? quantity,
     String? description,
     String? type,
-    String? details,
+    List<Map<String, dynamic>>? variant,
     String? images,
     double? purchasePrice,
     double? sellingPrice,
@@ -62,7 +62,7 @@ class ProductEntities extends Equatable {
       quantity: quantity ?? this.quantity,
       createdAt: createdAt ?? this.createdAt,
       description: description ?? this.description,
-      details: details ?? this.details,
+      variant: variant ?? this.variant,
       eId: eId ?? this.eId,
       id: id ?? this.id,
       images: images ?? this.images,
@@ -74,6 +74,28 @@ class ProductEntities extends Equatable {
       packComposition: packComposition ?? this.packComposition,
       shopId: shopId ?? this.shopId,
     );
+  }
+
+  MapData toProductVariant({
+    required String productId,
+    required String variantName,
+    required String variantType,
+    required String property,
+    required String propertyType,
+    String? variantImageLink,
+    required int variantQuantity,
+    double? variantPrice,
+  }) {
+    return {
+      "product_id": productId,
+      "name": variantName,
+      "variant_type": variantType,
+      "property": property,
+      "property_type": propertyType,
+      "quantity": variantQuantity,
+      "image": variantImageLink ?? "",
+      "price": variantPrice,
+    };
   }
 
   MapData toOrderDataFormat({
@@ -112,7 +134,7 @@ class ProductEntities extends Equatable {
     quantity,
     description,
     type,
-    details,
+    variant,
     images,
     purchasePrice,
     sellingPrice,
