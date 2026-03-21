@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
+import 'package:e_tantana/features/product/presentation/pages/add_variant_page.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/input/price_input.dart';
@@ -11,6 +12,7 @@ import 'package:e_tantana/shared/widget/mediaView/image_picker_display.dart';
 import 'package:e_tantana/shared/widget/popup/show_custom_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class ItemManagerSection extends StatefulWidget {
@@ -47,189 +49,30 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
     widget.onChanged(_variants, _variantImages);
   }
 
-  void _openPopup({int? editIndex}) {
-    final existing =
-        editIndex != null
-            ? Map<String, dynamic>.from(_variants[editIndex])
-            : null;
-
-    final nameCtrl = TextEditingController(
-      text: existing?['name']?.toString() ?? '',
+  void _openAddOrEdit({int? editIndex}) async {
+    final result = await context.push<AddVariantResult>(
+      '/product/add-variant',
+      extra:
+          editIndex != null
+              ? {
+                'variant': _variants[editIndex],
+                'image': _variantImages[editIndex],
+              }
+              : null,
     );
-    final typeCtrl = TextEditingController(
-      text: existing?['variant_type']?.toString() ?? '',
-    );
-    final propertyCtrl = TextEditingController(
-      text: existing?['property']?.toString() ?? '',
-    );
-    final propertyTypeCtrl = TextEditingController(
-      text: existing?['property_type']?.toString() ?? '',
-    );
-    final priceCtrl = TextEditingController(
-      text: existing?['price'] != null ? existing!['price'].toString() : '',
-    );
-    int qty = existing?['quantity'] as int? ?? 1;
-    File? selectedImage = editIndex != null ? _variantImages[editIndex] : null;
 
-    showCustomPopup(
-      context: context,
-      title: editIndex != null ? "MODIFIER LE VARIANT" : "AJOUTER UN VARIANT",
-      description: "Remplissez les détails du variant",
-      isError: false,
-      child: StatefulBuilder(
-        builder: (context, setPopupState) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: SimpleInput(
-                      textHint: "Nom  (ex: Rouge)",
-                      iconData: HugeIcons.strokeRoundedTag01,
-                      textEditControlleur: nameCtrl,
-                      maxLines: 1,
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: SimpleInput(
-                      textHint: "Type  (ex: Couleur)",
-                      iconData: HugeIcons.strokeRoundedColors,
-                      textEditControlleur: typeCtrl,
-                      maxLines: 1,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10.h),
+    if (result == null) return;
 
-              Row(
-                children: [
-                  Expanded(
-                    child: SimpleInput(
-                      textHint: "Propriété  (ex: 16cm)",
-                      iconData: HugeIcons.strokeRoundedInformationCircle,
-                      textEditControlleur: propertyCtrl,
-                      maxLines: 1,
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: SimpleInput(
-                      textHint: "Type prop.  (ex: Taille)",
-                      iconData: HugeIcons.strokeRoundedPackageDimensions01,
-                      textEditControlleur: propertyTypeCtrl,
-                      maxLines: 1,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10.h),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: NumberInput(
-                      title: "Quantité",
-                      value: qty,
-                      onValueChanged: (val) => qty = val,
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: SimpleInput(
-                      textHint: "Prix spécifique (Ar)",
-                      iconData: HugeIcons.strokeRoundedMoney01,
-                      textEditControlleur: priceCtrl,
-                      maxLines: 1,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10.h),
-
-              Text(
-                "Image du variant (optionnel)",
-                style: TextStyles.bodySmall(
-                  context: context,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
-                ),
-              ),
-              SizedBox(height: 6.h),
-              ImagePickerDisplay(
-                imageFile: selectedImage ?? existing?['image'],
-                onPickImage: () async {
-                  final image = await _mediaService.pickImage(
-                    fromGallery: true,
-                  );
-                  if (image != null) {
-                    setPopupState(() => selectedImage = image);
-                  }
-                },
-                onRemoveImage: () => setPopupState(() => selectedImage = null),
-              ),
-              SizedBox(height: 20.h),
-
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 14.h),
-                  ),
-                  onPressed: () {
-                    final variant = {
-                      "name": nameCtrl.text.isEmpty ? "-" : nameCtrl.text,
-                      "variant_type":
-                          typeCtrl.text.isEmpty ? "-" : typeCtrl.text,
-                      "property":
-                          propertyCtrl.text.isEmpty ? "-" : propertyCtrl.text,
-                      "property_type":
-                          propertyTypeCtrl.text.isEmpty
-                              ? "-"
-                              : propertyTypeCtrl.text,
-                      "quantity": qty,
-                      "price": double.tryParse(priceCtrl.text),
-                      "image":
-                          selectedImage == null
-                              ? (existing?['image'] ?? "")
-                              : "",
-                    };
-
-                    setState(() {
-                      if (editIndex != null) {
-                        _variants[editIndex] = variant;
-                        _variantImages[editIndex] = selectedImage;
-                      } else {
-                        _variants.add(variant);
-                        _variantImages.add(selectedImage);
-                      }
-                    });
-
-                    _notify();
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    editIndex != null ? "MODIFIER" : "VALIDER",
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+    setState(() {
+      if (editIndex != null) {
+        _variants[editIndex] = result.variant;
+        _variantImages[editIndex] = result.image;
+      } else {
+        _variants.add(result.variant);
+        _variantImages.add(result.image);
+      }
+    });
+    _notify();
   }
 
   @override
@@ -241,7 +84,7 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
-          onTap: () => _openPopup(),
+          onTap: () => _openAddOrEdit(),
           borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
@@ -367,7 +210,7 @@ class _ItemManagerSectionState extends State<ItemManagerSection> {
                             color: onSurface.withValues(alpha: 0.4),
                             size: 18,
                           ),
-                          onPressed: () => _openPopup(editIndex: index),
+                          onPressed: () => _openAddOrEdit(editIndex: index),
                         ),
                         IconButton(
                           icon: const HugeIcon(

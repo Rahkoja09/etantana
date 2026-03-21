@@ -16,6 +16,7 @@ import 'package:e_tantana/features/policies/presentation/widgets/policy_detail_p
 import 'package:e_tantana/features/printer/presentation/pages/printer_view.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/pages/add_product.dart';
+import 'package:e_tantana/features/product/presentation/pages/add_variant_page.dart';
 import 'package:e_tantana/features/product/presentation/pages/create_pack.dart';
 import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
 import 'package:e_tantana/features/shop/presentation/pages/create_shop_page.dart';
@@ -82,6 +83,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               return AddProduct(
                 isFutureProduct: isFuture,
                 productToEdit: extra,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'product/add-variant',
+            builder: (_, state) {
+              final args = state.extra as Map<String, dynamic>?;
+              return AddVariantPage(
+                existingVariant: args?['variant'],
+                existingImage: args?['image'],
               );
             },
           ),
