@@ -30,7 +30,14 @@ class ProductModel extends ProductEntities {
       quantity: data["quantity"],
       createdAt: DateTime.parse(data['created_at']),
       description: data['description'],
-      variant: data['variant'],
+      variant:
+          data['variant'] != null
+              ? List<Map<String, dynamic>>.from(
+                (data['variant'] as List).map(
+                  (e) => Map<String, dynamic>.from(e),
+                ),
+              )
+              : null,
       eId: data['e_id'],
       images: data['images'],
       type: data['type'],

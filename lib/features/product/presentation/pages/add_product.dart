@@ -417,6 +417,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   await productAction.addProduct(
                     addMe,
                     _productImage,
+                    _variantImages,
                     authState.user!.id!,
                   );
                 }

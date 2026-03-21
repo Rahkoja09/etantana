@@ -46,7 +46,7 @@ class OrderDataSourceImpl implements OrderDataSource {
                 'client_name': entity.clientName,
                 'client_tel': entity.clientTel,
                 'client_adrs': entity.clientAdrs,
-                'details': entity.details,
+                'variant': entity.variant,
                 'delivery_costs': entity.deliveryCosts,
                 'delivery_date': entity.deliveryDate!.toIso8601String(),
                 'shop_id': entity.shopId,
@@ -76,7 +76,7 @@ class OrderDataSourceImpl implements OrderDataSource {
         final invoiceLink = criterial.invoiceLink;
         final productsAndQuantities = criterial.productsAndQuantities;
         final quantity = criterial.quantity;
-        final details = criterial.details;
+        final variant = criterial.variant;
         final clientName = criterial.clientName;
         final clientTel = criterial.clientTel;
         final clientAdrs = criterial.clientAdrs;
@@ -91,7 +91,7 @@ class OrderDataSourceImpl implements OrderDataSource {
           query = query.eq("products_and_quantities", productsAndQuantities);
         }
         if (quantity != null) query = query.eq("quantity", quantity);
-        if (details != null) query = query.eq("details", details);
+        if (variant != null) query = query.eq("variant", variant);
         if (clientName != null) {
           query = query.ilike("client_name", '%$clientName%');
         }
@@ -143,7 +143,7 @@ class OrderDataSourceImpl implements OrderDataSource {
           'p_client_adrs': entity.clientAdrs,
           'p_products_json': entity.productsAndQuantities,
           'p_delivery_costs': entity.deliveryCosts ?? 0.0,
-          'p_details': entity.details ?? "",
+          'p_variant': entity.variant ?? "",
           'p_delivery_date': entity.deliveryDate?.toIso8601String(),
           'p_quantity': entity.quantity,
           'p_shop_id': entity.shopId,

@@ -79,10 +79,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'product/add/:isFuture',
             builder: (_, state) {
               final isFuture = state.pathParameters['isFuture'] == 'true';
-              final extra = state.extra as ProductEntities;
+              final productToEdit = state.extra;
+
               return AddProduct(
                 isFutureProduct: isFuture,
-                productToEdit: extra,
+                productToEdit:
+                    productToEdit != null
+                        ? productToEdit as ProductEntities
+                        : null,
               );
             },
           ),

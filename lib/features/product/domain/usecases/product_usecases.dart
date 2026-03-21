@@ -15,10 +15,51 @@ class ProductUsecases {
   ResultFuture<ProductEntities> insertProduct(
     ProductEntities entities,
     File? productImage,
+    List<File?>? variantImages,
     String userId,
   ) async {
     try {
       String imageLink = "";
+      List<String> variantImageLinks = [];
+
+      if (variantImages != null && variantImages.isNotEmpty) {
+        final nonNullImages = variantImages.whereType<File>().toList();
+
+        if (nonNullImages.isNotEmpty) {
+          variantImageLinks = await _mediaServices.uploadMultipleMedia(
+            files: nonNullImages,
+            type: AppMediaType.variantProduct,
+            uid: entities.shopId!,
+            bucketName: "product",
+            internalPath: "variants",
+          );
+        }
+      }
+
+      // Mapper les liens dans les variants ----
+      List<Map<String, dynamic>>? variantsWithImages;
+      if (entities.variant != null && entities.variant!.isNotEmpty) {
+        int uploadIndex = 0;
+        variantsWithImages =
+            entities.variant!.asMap().entries.map((entry) {
+              final i = entry.key;
+              final variant = Map<String, dynamic>.from(entry.value);
+
+              // Si ce variant avait une nouvelle image uploadée ------
+              final hasNewImage =
+                  variantImages != null &&
+                  i < variantImages.length &&
+                  variantImages[i] != null;
+
+              if (hasNewImage && uploadIndex < variantImageLinks.length) {
+                variant['image'] = variantImageLinks[uploadIndex];
+                uploadIndex++;
+              }
+
+              return variant;
+            }).toList();
+      }
+
       if (productImage != null) {
         _mediaServices.validateMedia(productImage, AppMediaType.product);
         imageLink = await _mediaServices.uploadMedia(
@@ -26,17 +67,17 @@ class ProductUsecases {
           uid: userId,
           type: AppMediaType.product,
           internalPath: entities.shopId,
-
           bucketName: "product",
         );
-
-        final entitiesWithImageLink = entities.copyWith(
-          images: imageLink,
-          userId: userId,
-        );
-        return _productRepository.insertProduct(entitiesWithImageLink);
       }
-      return _productRepository.insertProduct(entities);
+
+      final entitiesWithLinks = entities.copyWith(
+        images: imageLink.isNotEmpty ? imageLink : entities.images,
+        userId: userId,
+        variant: variantsWithImages ?? entities.variant,
+      );
+
+      return _productRepository.insertProduct(entitiesWithLinks);
     } catch (e) {
       return Left(UnexceptedFailure(e.toString(), "000"));
     }

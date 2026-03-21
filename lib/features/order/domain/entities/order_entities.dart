@@ -9,7 +9,7 @@ class OrderEntities extends Equatable {
   final String? invoiceLink;
   final List<MapData>? productsAndQuantities;
   final int? quantity;
-  final String? details;
+  final List<Map<String, dynamic>>? variant;
   final String? clientName;
   final String? clientTel;
   final String? clientAdrs;
@@ -25,7 +25,7 @@ class OrderEntities extends Equatable {
     this.invoiceLink,
     this.productsAndQuantities,
     this.quantity,
-    this.details,
+    this.variant,
     this.clientName,
     this.clientTel,
     this.clientAdrs,
@@ -42,7 +42,7 @@ class OrderEntities extends Equatable {
     String? invoiceLink,
     List<MapData>? productsAndQuantities,
     int? quantity,
-    String? details,
+    List<Map<String, dynamic>>? variant,
     String? clientName,
     String? clientTel,
     String? clientAdrs,
@@ -58,7 +58,7 @@ class OrderEntities extends Equatable {
       clientTel: clientTel ?? this.clientTel,
       createdAt: createdAt ?? this.createdAt,
       deliveryCosts: deliveryCosts ?? this.deliveryCosts,
-      details: details ?? this.details,
+      variant: variant ?? this.variant,
       invoiceLink: invoiceLink ?? this.invoiceLink,
       productsAndQuantities:
           productsAndQuantities ?? this.productsAndQuantities,
@@ -78,7 +78,7 @@ class OrderEntities extends Equatable {
     invoiceLink,
     productsAndQuantities,
     quantity,
-    details,
+    variant,
     clientName,
     clientTel,
     clientAdrs,

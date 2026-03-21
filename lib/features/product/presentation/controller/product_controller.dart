@@ -23,6 +23,7 @@ class ProductController extends StateNotifier<ProductState> {
   Future<void> addProduct(
     ProductEntities entities,
     File? productImage,
+    List<File?>? variantImages,
     String userId,
   ) async {
     final shopId = ref.watch(sessionProvider).activeShopId;
@@ -32,6 +33,7 @@ class ProductController extends StateNotifier<ProductState> {
     final res = await _productUsecases.insertProduct(
       entities,
       productImage,
+      variantImages,
       userId,
     );
     res.fold((error) => _setError(error: error, action: action), (success) {

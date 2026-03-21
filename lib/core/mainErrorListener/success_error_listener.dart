@@ -1,3 +1,5 @@
+import 'package:e_tantana/features/cart/presentation/controller/cart_controller.dart';
+import 'package:e_tantana/features/cart/presentation/states/cart_states.dart';
 import 'package:e_tantana/features/feedback/presentation/controller/feedback_controller.dart';
 import 'package:e_tantana/features/feedback/presentation/states/feedback_states.dart';
 import 'package:e_tantana/features/user/presentation/controller/user_controller.dart';
@@ -8,7 +10,7 @@ import 'package:e_tantana/features/auth/presentation/controller/auth_controller.
 import 'package:e_tantana/features/auth/presentation/states/auth_states.dart';
 import 'package:e_tantana/core/error/error_manager.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/app/mainErrorListener/last_network_time_provider.dart';
+import 'package:e_tantana/core/mainErrorListener/last_network_time_provider.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
 import 'package:e_tantana/features/order/presentation/states/order_states.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
@@ -204,6 +206,31 @@ class SuccessErrorListener extends ConsumerWidget {
             description: next.action!.successMessage,
             isError: false,
             title: "Succès Feedback",
+          );
+        }
+      }
+    });
+
+    ref.listen<CartStates>(cartControllerProvider, (prev, next) {
+      if (next.error != null && next.error != prev?.error) {
+        _showFilteredError(
+          context: context,
+          ref: ref,
+          failure: next.error!,
+          action: next.action,
+          title: "Erreur Cart",
+        );
+      }
+
+      if (prev?.isLoading == true &&
+          next.isLoading == false &&
+          next.error == null) {
+        if (next.action?.isWriteAction == true) {
+          showToast(
+            context,
+            description: next.action!.successMessage,
+            isError: false,
+            title: "Succès Cart",
           );
         }
       }

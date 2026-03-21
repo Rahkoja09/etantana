@@ -10,7 +10,7 @@ class OrderModel extends OrderEntities {
     super.status,
     super.invoiceLink,
     super.productsAndQuantities,
-    super.details,
+    super.variant,
     super.clientName,
     super.clientTel,
     super.clientAdrs,
@@ -23,7 +23,7 @@ class OrderModel extends OrderEntities {
   factory OrderModel.fromEntity(OrderEntities entity) {
     return OrderModel(
       id: entity.id,
-      details: entity.details,
+      variant: entity.variant,
       quantity: entity.quantity,
       createdAt: entity.createdAt,
       status: entity.status,
@@ -55,7 +55,14 @@ class OrderModel extends OrderEntities {
       clientName: data['client_name'],
       clientTel: data['client_tel'],
       clientAdrs: data['client_adrs'],
-      details: data['details'],
+      variant:
+          data['variant'] != null
+              ? List<Map<String, dynamic>>.from(
+                (data['variant'] as List).map(
+                  (e) => Map<String, dynamic>.from(e),
+                ),
+              )
+              : null,
       deliveryCosts: data['delivery_costs'].toDouble(),
       deliveryDate:
           data["delivery_date"] != null
@@ -77,7 +84,7 @@ class OrderModel extends OrderEntities {
       'client_name': clientName,
       'client_tel': clientTel,
       'client_adrs': clientAdrs,
-      'details': details,
+      'details': variant,
       'delivery_costs': deliveryCosts,
       'delivery_date': deliveryDate?.toIso8601String(),
       'shop_id': shopId,
@@ -101,7 +108,7 @@ class OrderModel extends OrderEntities {
     String? invoiceLink,
     List<MapData>? productsAndQuantities,
     int? quantity,
-    String? details,
+    List<Map<String, dynamic>>? variant,
     String? clientName,
     String? clientTel,
     String? clientAdrs,
@@ -118,7 +125,7 @@ class OrderModel extends OrderEntities {
       clientName: clientName ?? this.clientName,
       clientTel: clientTel ?? this.clientTel,
       createdAt: createdAt ?? this.createdAt,
-      details: details ?? this.details,
+      variant: variant ?? this.variant,
       invoiceLink: invoiceLink ?? this.invoiceLink,
       productsAndQuantities:
           productsAndQuantities ?? this.productsAndQuantities,

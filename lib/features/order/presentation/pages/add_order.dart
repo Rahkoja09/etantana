@@ -543,7 +543,9 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               deliveryCosts: double.tryParse(fraisDeLiv.text.trim()),
               shopId: shopId,
               userId: authState.user?.id,
-              details: "",
+              variant: [],
+
+              /// modifier ici apres ------
 
               /// mdofier ici pour pouvoir accepter variants
               productsAndQuantities:

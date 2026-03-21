@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 
-enum AppMediaType { product, invoice, userProfil, shop }
+enum AppMediaType { product, invoice, userProfil, shop, variantProduct }
 
 abstract class MediaServices {
   // --- PICKING ---
@@ -28,7 +28,7 @@ abstract class MediaServices {
     String bucketName = 'product',
   });
 
-  Future<String> uploadMultipleMedia({
+  Future<List<String>> uploadMultipleMedia({
     required List<File> files,
     required String uid,
     required AppMediaType type,

@@ -1,4 +1,5 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
@@ -42,6 +43,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
     final productAction = ref.read(productControllerProvider.notifier);
     final productStates = ref.watch(productControllerProvider);
     final productListPageStates = ref.watch(productListPageControllerProvider);
+    final session = ref.watch(sessionProvider);
     final authState = ref.watch(authControllerProvider);
     return Stack(
       children: [
@@ -231,7 +233,7 @@ class _CreatePackState extends ConsumerState<CreatePack> {
               onBack: () {
                 context.go("/nav-bar/:1");
               },
-              onValidate: () {
+              onValidate: () async {
                 if (packNameController.text != "" &&
                     priceOfOnePackByUserController.text != "") {
                   ProductEntities myPack = ProductEntities(
@@ -241,6 +243,9 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                     quantity: maxPacksCompletable,
                     futureProduct: false,
                     images: productListPageStates.packComposition![0]["image"],
+                    shopId: session.activeShopId,
+                    userId: session.user?.id,
+                    variant: null,
                     sellingPrice: double.tryParse(
                       priceOfOnePackByUserController.text,
                     ),
@@ -249,7 +254,12 @@ class _CreatePackState extends ConsumerState<CreatePack> {
                     eId:
                         "Pack_${DateTime.fromMicrosecondsSinceEpoch(1640979000000000)}",
                   );
-                  productAction.addProduct(myPack, null, authState.user!.id!);
+                  await productAction.addProduct(
+                    myPack,
+                    null,
+                    null,
+                    authState.user!.id!,
+                  );
                 } else {
                   setState(() {
                     showToast(

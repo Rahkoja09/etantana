@@ -162,12 +162,12 @@ class MediaServiceImpl implements MediaServices {
   }
 
   @override
-  Future<String> uploadMultipleMedia({
+  Future<List<String>> uploadMultipleMedia({
     required List<File> files,
     required String uid,
     required AppMediaType type,
     String? internalPath,
-    String bucketName = 'agency',
+    String bucketName = 'product',
   }) async {
     final List<String> urls = [];
 
@@ -191,7 +191,7 @@ class MediaServiceImpl implements MediaServices {
         throw ApiException(message: "Aucun fichier n'a pu être uploadé");
       }
 
-      return urls.join(',');
+      return urls;
     } on StorageException catch (e) {
       throw StorageExceptions(message: e.message, code: e.statusCode);
     } on ServerException catch (e) {
@@ -300,6 +300,11 @@ class MediaServiceImpl implements MediaServices {
         return FormatMediaType.listStringToMap(
           name: 'shop_$timestamp$suffix$extension',
           path: "shops/$pathWithInternal",
+        );
+      case AppMediaType.variantProduct:
+        return FormatMediaType.listStringToMap(
+          name: 'variant_$timestamp$suffix$extension',
+          path: "products/$pathWithInternal",
         );
     }
   }

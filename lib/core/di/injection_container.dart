@@ -1,4 +1,4 @@
-import 'package:e_tantana/core/app/network/network_info.dart';
+import 'package:e_tantana/core/network/network_info.dart';
 import 'package:e_tantana/core/services/storage_service.dart';
 import 'package:e_tantana/features/delivring/data/repository/delivering_repository_impl.dart';
 import 'package:e_tantana/features/delivring/data/source/delivering_remote_source.dart';
@@ -58,6 +58,11 @@ import 'package:e_tantana/features/feedback/data/source/feedback_remote_source.d
 import 'package:e_tantana/features/feedback/domain/repository/feedback_repository.dart';
 import 'package:e_tantana/features/feedback/domain/usecases/feedback_usecases.dart';
 
+import 'package:e_tantana/features/cart/data/repository/cart_repository_impl.dart';
+import 'package:e_tantana/features/cart/data/source/cart_remote_source.dart';
+import 'package:e_tantana/features/cart/domain/repository/cart_repository.dart';
+import 'package:e_tantana/features/cart/domain/usecases/cart_usecases.dart';
+
 // [IMPORT_ANCHOR]
 final sl = GetIt.instance;
 
@@ -76,6 +81,7 @@ Future<void> init() async {
   _initShop();
   _initUser();
   _initFeedback();
+  _initCart();
   // [INIT_ANCHOR]
 
   _initMap();
@@ -201,4 +207,12 @@ Future<void> _initFeedback() async {
     () => FeedbackRepositoryImpl(sl(), sl()),
   );
   sl.registerLazySingleton(() => FeedbackUsecases(sl()));
+}
+
+Future<void> _initCart() async {
+  sl.registerLazySingleton<CartRemoteSource>(() => CartRemoteSourceImpl(sl()));
+  sl.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton(() => CartUsecases(sl()));
 }
