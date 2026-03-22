@@ -22,7 +22,7 @@ class CartController extends StateNotifier<CartStates> {
     _isLastPage = false;
 
     _setLoadingState(action: action);
-    
+
     state = state.copyWith(
       currentCriteria: criteria,
       carts: [],
@@ -36,26 +36,23 @@ class CartController extends StateNotifier<CartStates> {
       end: _pageSize - 1,
     );
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        if (success.length < _pageSize) _isLastPage = true;
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          carts: success,
-          currentCriteria: criteria,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      if (success.length < _pageSize) _isLastPage = true;
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        carts: success,
+        currentCriteria: criteria,
+        action: action,
+      );
+    });
   }
 
   // --- LAZY LOADING (PAGINATION) ---
   Future<void> loadNextPage() async {
     if (state.isLoading || _isLastPage) return;
 
-    final action = GetCartAction(); 
+    final action = GetCartAction();
     _currentPage++;
     final int start = _currentPage * _pageSize;
     final int end = start + _pageSize - 1;
@@ -93,17 +90,14 @@ class CartController extends StateNotifier<CartStates> {
 
     final res = await _cartUsecases.insertCart(entity);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (success) {
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          carts: [success, ...?state.carts],
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (success) {
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        carts: [success, ...?state.carts],
+        action: action,
+      );
+    });
   }
 
   // --- MISE À JOUR ---
@@ -113,21 +107,21 @@ class CartController extends StateNotifier<CartStates> {
 
     final res = await _cartUsecases.updateCart(entity);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (updatedEntity) {
-        final newList = state.carts?.map((item) {
-          return item.id == updatedEntity.id ? updatedEntity : item;
-        }).toList();
+    res.fold((error) => _setError(error: error, action: action), (
+      updatedEntity,
+    ) {
+      final newList =
+          state.carts?.map((item) {
+            return item.id == updatedEntity.id ? updatedEntity : item;
+          }).toList();
 
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          carts: newList,
-          action: action,
-        );
-      },
-    );
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        carts: newList,
+        action: action,
+      );
+    });
   }
 
   // --- SUPPRESSION ---
@@ -137,18 +131,15 @@ class CartController extends StateNotifier<CartStates> {
 
     final res = await _cartUsecases.deleteCartById(id);
 
-    res.fold(
-      (error) => _setError(error: error, action: action),
-      (_) {
-        final newList = state.carts?.where((i) => i.id != id).toList() ?? [];
-        state = state.copyWith(
-          isLoading: false,
-          isClearError: true,
-          carts: newList,
-          action: action,
-        );
-      },
-    );
+    res.fold((error) => _setError(error: error, action: action), (_) {
+      final newList = state.carts?.where((i) => i.id != id).toList() ?? [];
+      state = state.copyWith(
+        isLoading: false,
+        isClearError: true,
+        carts: newList,
+        action: action,
+      );
+    });
   }
 
   // --- UTILITAIRES INTERNES ---
@@ -169,5 +160,5 @@ class CartController extends StateNotifier<CartStates> {
 // --- PROVIDER ---
 final cartControllerProvider =
     StateNotifierProvider<CartController, CartStates>((ref) {
-  return CartController(sl<CartUsecases>());
-});
+      return CartController(sl<CartUsecases>());
+    });

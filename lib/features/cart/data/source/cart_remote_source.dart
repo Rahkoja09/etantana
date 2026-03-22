@@ -75,6 +75,38 @@ class CartRemoteSourceImpl implements CartRemoteSource {
         if (id != null) {
           query = query.eq("id", id);
         }
+        final chosenVariant = criteria.chosenVariant;
+        if (chosenVariant != null) {
+          query = query.ilike("chosen_variant", "%$chosenVariant%");
+        }
+        final productId = criteria.productId;
+        if (productId != null) {
+          query = query.ilike("product_id", "%$productId%");
+        }
+        final productName = criteria.productName;
+        if (productName != null) {
+          query = query.ilike("product_name", "%$productName%");
+        }
+        final productImage = criteria.productImage;
+        if (productImage != null) {
+          query = query.ilike("product_image", "%$productImage%");
+        }
+        final unitPrice = criteria.unitPrice;
+        if (unitPrice != null) {
+          query = query.eq("unit_price", unitPrice);
+        }
+        final purchasePrice = criteria.purchasePrice;
+        if (purchasePrice != null) {
+          query = query.eq("purchase_price", purchasePrice);
+        }
+        final quantity = criteria.quantity;
+        if (quantity != null) {
+          query = query.eq("quantity", quantity);
+        }
+        final shopId = criteria.shopId;
+        if (shopId != null) {
+          query = query.ilike("shop_id", "%$shopId%");
+        }
         // [FILTERS_ANCHOR]
       }
 
