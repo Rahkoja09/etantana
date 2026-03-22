@@ -5,6 +5,7 @@ import 'package:e_tantana/features/auth/presentation/pages/onboarding_page.dart'
 import 'package:e_tantana/features/auth/presentation/pages/reset_password.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_in.dart';
 import 'package:e_tantana/features/auth/presentation/pages/sign_up.dart';
+import 'package:e_tantana/features/cart/presentation/pages/cart_page.dart';
 import 'package:e_tantana/features/feedback/presentation/pages/feedback_page.dart';
 import 'package:e_tantana/features/nav_bar/presentation/nav_bar.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
@@ -104,6 +105,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'product/create-pack',
             builder: (_, state) => const CreatePack(),
           ),
+          GoRoute(path: 'cart', builder: (_, __) => const CartPage()),
 
           // shope -----------
           GoRoute(

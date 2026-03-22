@@ -4,12 +4,12 @@ import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
+import 'package:e_tantana/features/cart/presentation/controller/cart_session_controller.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/product/presentation/controller/product_list_page_controller.dart';
 import 'package:e_tantana/features/product/presentation/widgets/create_pack_summary_floating.dart';
 import 'package:e_tantana/features/product/presentation/widgets/minimal_product_view.dart';
-import 'package:e_tantana/features/product/presentation/widgets/order_summary_floating_bar.dart';
 import 'package:e_tantana/shared/widget/dialogue/dialogue_delete_action.dart';
 import 'package:e_tantana/shared/widget/input/floating_search_bar.dart';
 import 'package:e_tantana/shared/widget/loading/app_refresh_indicator.dart';
@@ -20,6 +20,7 @@ import 'package:e_tantana/shared/widget/selectableOption/flat_chip_selector.dart
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -36,15 +37,9 @@ class _ProductState extends ConsumerState<Product> {
   int listVersion = 0;
   Timer? _debounce;
   bool isFetching = false;
-
-  // les input ---------
   final TextEditingController _searchController = TextEditingController();
-
   String currentFilter = "Tous";
-
-  // list des critères ---------
   List<String> criterialListSort = ["Tous", "Futurs produits", "Stock zéro"];
-
   int _currentPage = 0;
 
   @override
@@ -53,26 +48,12 @@ class _ProductState extends ConsumerState<Product> {
     _scrollController.addListener(_onScroll);
   }
 
-  // multiple order actions --------
-  void restoreOrderDataProducList() {
-    listVersion++;
-    ref
-        .read(productListPageControllerProvider.notifier)
-        .emptyProductDataToOrder();
-  }
-
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.9) {
       if (!ref.read(productControllerProvider).isLoading) {
         setState(() => _currentPage++);
-        setState(() {
-          isFetching = false;
-        });
         ref.read(productControllerProvider.notifier).loadNextPage(null);
-        setState(() {
-          isFetching = false;
-        });
       }
     }
   }
@@ -87,14 +68,14 @@ class _ProductState extends ConsumerState<Product> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productControllerProvider);
-    final ProductListPageState = ref.watch(productListPageControllerProvider);
+    final productListPageState = ref.watch(productListPageControllerProvider);
     final authState = ref.watch(authControllerProvider);
-    final ProductListPageAction = ref.read(
+    final productListPageAction = ref.read(
       productListPageControllerProvider.notifier,
     );
-    // la list des produit principale --------------------
-    final actualProducts = productState.product ?? [];
+    final cartState = ref.watch(cartSessionProvider);
 
+    final actualProducts = productState.product ?? [];
     final skeletonData = List.generate(
       5,
       (index) => ProductEntities(
@@ -114,129 +95,92 @@ class _ProductState extends ConsumerState<Product> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (ProductListPageState.packComposition != null &&
-                    ProductListPageState.packComposition!.length > 0)
+                // ── Pack summary ─────────────────────────
+                if (productListPageState.packComposition != null &&
+                    productListPageState.packComposition!.isNotEmpty)
                   CreatePackSummaryFloating(
                     onCancel: () {
                       setState(() {
-                        ProductListPageAction.toggleCheckBox();
-                        ProductListPageAction.empltyPackComposition();
+                        productListPageAction.toggleCheckBox();
+                        productListPageAction.empltyPackComposition();
                       });
                     },
-                    onValidate: () {
-                      context.push("/product/create-pack");
-                    },
+                    onValidate: () => context.push("/product/create-pack"),
                     packCompositionLenght:
-                        ProductListPageState.packComposition?.length ?? 0,
+                        productListPageState.packComposition?.length ?? 0,
                   ),
-                if (ProductListPageState.isOrdering)
-                  OrderSummaryFloatingBar(
-                    itemCount:
-                        ProductListPageState.productDataListToOrder!.length,
-                    onCancel: () {
-                      restoreOrderDataProducList();
-                    },
-                    onRestore: () {},
-                    onValidate: () {
-                      context.push("/order/add");
-                    },
-                    totalAmount: calculateTotal(
-                      actualProducts,
-                      ProductListPageState.productDataListToOrder!,
-                    ),
-                  ),
-                if (!ProductListPageState.isOrdering)
-                  Container(
-                    padding: EdgeInsets.all(StylesConstants.spacerContent),
 
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FloatingSearchBar(
-                          controller: _searchController,
-                          onSortTap: () {},
-                          hintText: "Rechercher un produit (par son nom)",
-                          onChanged: (val) {
-                            // On annule le lancement précédent si l'utilisateur tape une autre lettre
-                            if (_debounce?.isActive ?? false)
-                              _debounce!.cancel();
-
-                            // On attend 500ms de silence avant de lancer la recherche
-                            _debounce = Timer(
-                              const Duration(milliseconds: 500),
-                              () {
-                                if (val.isNotEmpty) {
-                                  ref
-                                      .read(productControllerProvider.notifier)
-                                      .researchProduct(
-                                        ProductEntities(
+                // ── Search + filtres ──────────────────────
+                Container(
+                  padding: EdgeInsets.all(StylesConstants.spacerContent),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FloatingSearchBar(
+                        controller: _searchController,
+                        onSortTap: () {},
+                        hintText: "Rechercher un produit",
+                        onChanged: (val) {
+                          if (_debounce?.isActive ?? false) _debounce!.cancel();
+                          _debounce = Timer(
+                            const Duration(milliseconds: 500),
+                            () {
+                              ref
+                                  .read(productControllerProvider.notifier)
+                                  .researchProduct(
+                                    val.isNotEmpty
+                                        ? ProductEntities(
                                           name: val,
-                                          userId: authState.user?.id ?? null,
+                                          userId: authState.user?.id,
+                                        )
+                                        : ProductEntities(
+                                          userId: authState.user?.id,
                                         ),
-                                      );
-                                } else {
-                                  // Si on efface tout, on recharge la liste de base (criterial = null)
-                                  ref
-                                      .read(productControllerProvider.notifier)
-                                      .researchProduct(
-                                        ProductEntities(
-                                          userId: authState.user?.id ?? null,
-                                        ),
-                                      );
-                                }
-                              },
-                            );
-                          },
-                        ),
-
-                        SizedBox(height: StylesConstants.spacerContent),
-                        FlatChipSelector(
-                          options: criterialListSort,
-                          selectedOption: currentFilter,
-                          onSelect: (value) async {
-                            setState(() => currentFilter = value);
-                            switch (value) {
-                              case ("Tous"):
-                                {
-                                  await getProduct();
-                                  break;
-                                }
-                              case ("Futurs produits"):
-                                {
-                                  ref
-                                      .read(productControllerProvider.notifier)
-                                      .researchProduct(
-                                        ProductEntities(
-                                          futureProduct: true,
-                                          userId: authState.user?.id ?? null,
-                                        ),
-                                      );
-                                  break;
-                                }
-                              case ("Stock zéro"):
-                                {
-                                  ref
-                                      .read(productControllerProvider.notifier)
-                                      .researchProduct(
-                                        ProductEntities(
-                                          quantity: 0,
-                                          userId: authState.user?.id ?? null,
-                                        ),
-                                      );
-                                  break;
-                                }
-                              default:
-                                {
-                                  await getProduct();
-                                  break;
-                                }
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                                  );
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: StylesConstants.spacerContent),
+                      FlatChipSelector(
+                        options: criterialListSort,
+                        selectedOption: currentFilter,
+                        onSelect: (value) async {
+                          setState(() => currentFilter = value);
+                          switch (value) {
+                            case "Tous":
+                              await getProduct();
+                              break;
+                            case "Futurs produits":
+                              ref
+                                  .read(productControllerProvider.notifier)
+                                  .researchProduct(
+                                    ProductEntities(
+                                      futureProduct: true,
+                                      userId: authState.user?.id,
+                                    ),
+                                  );
+                              break;
+                            case "Stock zéro":
+                              ref
+                                  .read(productControllerProvider.notifier)
+                                  .researchProduct(
+                                    ProductEntities(
+                                      quantity: 0,
+                                      userId: authState.user?.id,
+                                    ),
+                                  );
+                              break;
+                            default:
+                              await getProduct();
+                          }
+                        },
+                      ),
+                    ],
                   ),
+                ),
 
+                // ── Header liste ──────────────────────────
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: StylesConstants.spacerContent,
@@ -256,15 +200,13 @@ class _ProductState extends ConsumerState<Product> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {
-                          ProductListPageAction.toggleCheckBox();
-                        },
+                        onTap: productListPageAction.toggleCheckBox,
                         child: Icon(
-                          ProductListPageState.checkboxInList
+                          productListPageState.checkboxInList
                               ? HugeIcons.strokeRoundedCheckmarkSquare01
                               : HugeIcons.strokeRoundedCheckList,
                           color:
-                              ProductListPageState.checkboxInList
+                              productListPageState.checkboxInList
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).colorScheme.onSurface
                                       .withValues(alpha: 0.9),
@@ -274,6 +216,8 @@ class _ProductState extends ConsumerState<Product> {
                     ],
                   ),
                 ),
+
+                // ── Liste ─────────────────────────────────
                 Expanded(
                   child: AppRefreshIndicator(
                     onRefresh: getProduct,
@@ -293,50 +237,31 @@ class _ProductState extends ConsumerState<Product> {
                                     isInitialLoading ? null : _scrollController,
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 dragStartBehavior: DragStartBehavior.down,
-                                padding: EdgeInsets.all(
+                                padding: EdgeInsets.fromLTRB(
                                   StylesConstants.spacerContent,
+                                  StylesConstants.spacerContent,
+                                  StylesConstants.spacerContent,
+                                  100.h, // espace pour le FAB panier
                                 ),
                                 itemCount: displayList.length,
                                 itemBuilder: (context, index) {
-                                  if (index == displayList.length &&
-                                      isFetching) {
-                                    return Skeletonizer(
-                                      enabled: true,
-                                      effect: LoadingEffect.getCommonEffect(
-                                        context,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          MinimalProductView(
-                                            selectedQuantity: (quantity) {},
-                                            index: 0,
-                                            onDelete: () {},
-                                            product: displayList[0],
-                                            onEdit: () {},
-                                            onLongPress: () {},
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
                                   if (index >= displayList.length) {
                                     return const SizedBox.shrink();
                                   }
-
                                   final item = displayList[index];
-                                  // il faut assi séparer ca(checkbox et ses enfant) avec les autres (atomic) ------
-                                  bool isThisProductSelected =
-                                      ProductListPageState.packComposition !=
+                                  final isThisProductSelected =
+                                      productListPageState.packComposition !=
                                           null &&
-                                      ProductListPageState.packComposition!.any(
-                                        (element) => element['id'] == item.id,
+                                      productListPageState.packComposition!.any(
+                                        (e) => e['id'] == item.id,
                                       );
 
                                   return Column(
                                     children: [
                                       Row(
                                         children: [
-                                          if (ProductListPageState
+                                          // Checkbox mode pack
+                                          if (productListPageState
                                               .checkboxInList) ...[
                                             SizedBox(
                                               height: 30,
@@ -348,31 +273,30 @@ class _ProductState extends ConsumerState<Product> {
                                                 ),
                                                 value: isThisProductSelected,
                                                 onChanged: (value) {
-                                                  ProductListPageAction.toggleProductInPack(
-                                                    item,
-                                                    value!,
-                                                  );
+                                                  productListPageAction
+                                                      .toggleProductInPack(
+                                                        item,
+                                                        value!,
+                                                      );
                                                 },
                                               ),
                                             ),
-                                            SizedBox(width: 5),
+                                            const SizedBox(width: 5),
                                           ],
 
                                           Expanded(
                                             child: MinimalProductView(
-                                              onLongPress: () {},
-
-                                              selectedQuantity: (quantity) {
-                                                ProductListPageAction.updateProductOrder(
-                                                  item,
-                                                  quantity,
-                                                );
-                                              },
                                               index: index + 1,
+                                              product: item,
+                                              // Mode manage si checkbox actif — sinon cart
+                                              mode:
+                                                  productListPageState
+                                                          .checkboxInList
+                                                      ? ProductViewMode.manage
+                                                      : ProductViewMode.cart,
                                               onDelete: () {
-                                                ProductListPageAction.selectedProduct(
-                                                  item,
-                                                );
+                                                productListPageAction
+                                                    .selectedProduct(item);
                                                 showCustomPopup(
                                                   context: context,
                                                   title: "Supprimer Produit",
@@ -380,7 +304,6 @@ class _ProductState extends ConsumerState<Product> {
                                                   dismissible: true,
                                                   isActionDangerous: true,
                                                   leftButtonTitle: "annuler",
-
                                                   onTapRightBtn: () async {
                                                     await ref
                                                         .read(
@@ -402,33 +325,36 @@ class _ProductState extends ConsumerState<Product> {
                                                             userId:
                                                                 authState
                                                                     .user
-                                                                    ?.id ??
-                                                                null,
+                                                                    ?.id,
                                                           ),
                                                         );
                                                   },
                                                   child: DialogueDeleteAction(
                                                     nameOrID: "${item.name}",
                                                   ),
-
-                                                  rightButtonTitle:
-                                                      "supprimier",
+                                                  rightButtonTitle: "supprimer",
                                                   description:
                                                       'Le produit sera définitivement supprimé.',
                                                 );
                                               },
-                                              product: item,
-                                              onEdit: () {
-                                                context.push(
-                                                  "/product/add/false",
-                                                  extra: item,
-                                                );
+                                              onEdit:
+                                                  () => context.push(
+                                                    "/product/add/false",
+                                                    extra: item,
+                                                  ),
+                                              onLongPress: () {},
+                                              selectedQuantity: (quantity) {
+                                                productListPageAction
+                                                    .updateProductOrder(
+                                                      item,
+                                                      quantity,
+                                                    );
                                               },
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 15),
+                                      SizedBox(height: 15.h),
                                     ],
                                   );
                                 },
@@ -440,7 +366,101 @@ class _ProductState extends ConsumerState<Product> {
             ),
           ),
         ),
+
+        // ── FAB Panier ───────────────────────────────────
+        if (!cartState.isEmpty)
+          Positioned(
+            bottom: 100.h,
+            left: StylesConstants.spacerContent,
+            right: StylesConstants.spacerContent,
+            child: _CartFab(
+              itemCount: cartState.itemCount,
+              totalPrice: cartState.totalPrice,
+              onTap: () => context.push('/cart'),
+            ),
+          ),
       ],
+    );
+  }
+}
+
+// ── Cart FAB ──────────────────────────────────────────────────
+
+class _CartFab extends StatelessWidget {
+  final int itemCount;
+  final double totalPrice;
+  final VoidCallback onTap;
+
+  const _CartFab({
+    required this.itemCount,
+    required this.totalPrice,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: primary,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: primary.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Badge count
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                "$itemCount article${itemCount > 1 ? 's' : ''}",
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            SizedBox(width: 10.w),
+            Text(
+              "Voir le panier",
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              "${totalPrice.toStringAsFixed(0)} Ar",
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(width: 6.w),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 12.sp,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

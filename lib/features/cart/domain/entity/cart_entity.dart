@@ -11,6 +11,7 @@ class CartEntity extends Equatable {
   final Map<String, dynamic>? chosenVariant;
   final int? quantity;
   final String? shopId;
+  double get totalPrice => (unitPrice ?? 0) * (quantity ?? 0);
   // [FIELDS_ANCHOR]
 
   const CartEntity({

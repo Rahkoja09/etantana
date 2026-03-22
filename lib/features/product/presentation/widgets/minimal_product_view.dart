@@ -2,113 +2,135 @@ import 'package:e_tantana/config/constants/app_const.dart';
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/utils/tools/name_more_short.dart';
+import 'package:e_tantana/features/cart/presentation/controller/cart_session_controller.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
+import 'package:e_tantana/features/product/presentation/widgets/variant_picker_sheet.dart';
 import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class MinimalProductView extends StatefulWidget {
+// ── Mode du widget ────────────────────────────────────────────
+enum ProductViewMode {
+  manage, // swipe delete/edit + checkbox pack
+  cart, // bouton + pour ajouter au panier
+}
+
+class MinimalProductView extends ConsumerStatefulWidget {
   final int index;
   final ProductEntities product;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
-  final VoidCallback onLongPress;
-  final ValueChanged<int> selectedQuantity;
+  final ProductViewMode mode;
+
+  // Mode manage uniquement
+  final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
+  final VoidCallback? onLongPress;
+  final ValueChanged<int>? selectedQuantity;
 
   const MinimalProductView({
     super.key,
     required this.index,
     required this.product,
-    required this.onDelete,
-    required this.onEdit,
-    required this.selectedQuantity,
-    required this.onLongPress,
+    this.mode = ProductViewMode.manage,
+    this.onDelete,
+    this.onEdit,
+    this.onLongPress,
+    this.selectedQuantity,
   });
 
   @override
-  State<MinimalProductView> createState() => _MinimalProductViewState();
+  ConsumerState<MinimalProductView> createState() => _MinimalProductViewState();
 }
 
-class _MinimalProductViewState extends State<MinimalProductView> {
+class _MinimalProductViewState extends ConsumerState<MinimalProductView> {
   int quantity = 0;
 
   bool get _isSelected => quantity > 0;
   bool get _outOfStock => (widget.product.quantity ?? 0) <= 0;
   bool get _isPack => widget.product.isPack ?? false;
+  bool get _hasVariants =>
+      widget.product.variant != null && widget.product.variant!.isNotEmpty;
+
+  // Quantité dans le panier pour ce produit
+  int get _cartQuantity {
+    final carts = ref.watch(cartSessionProvider).carts ?? [];
+    return carts
+        .where((e) => e.productId == widget.product.id)
+        .fold(0, (sum, e) => sum + (e.quantity ?? 0));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: Key(widget.product.id.toString()),
-      dismissThresholds: const {
-        DismissDirection.startToEnd: 0.9,
-        DismissDirection.endToStart: 0.9,
-      },
-      dragStartBehavior: DragStartBehavior.down,
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          widget.onDelete();
-        } else {
-          widget.onEdit();
-        }
-        return false;
-      },
-      background: _buildSwipeAction(
-        color: Theme.of(context).colorScheme.error,
-        icon: HugeIcons.strokeRoundedDelete02,
-        alignment: Alignment.centerLeft,
-      ),
-      secondaryBackground: _buildSwipeAction(
-        color: Colors.green.shade500,
-        icon: HugeIcons.strokeRoundedTaskEdit01,
-        alignment: Alignment.centerRight,
-      ),
-      child: GestureDetector(
-        onLongPress: widget.onLongPress,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.all(10.r),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
-            color:
-                _outOfStock
-                    ? Theme.of(
-                      context,
-                    ).colorScheme.error.withValues(alpha: 0.06)
-                    : _isPack
-                    ? Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.05)
-                    : Theme.of(context).colorScheme.surfaceContainerLow,
-            border: Border.all(
-              width: 1,
-              color:
-                  _isSelected
-                      ? Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.3)
-                      : _outOfStock
-                      ? Theme.of(
-                        context,
-                      ).colorScheme.error.withValues(alpha: 0.2)
-                      : Colors.transparent,
-            ),
-          ),
-          child: Row(
-            children: [
-              // Image
-              _buildImage(context),
-              SizedBox(width: 12.w),
-
-              // Infos
-              Expanded(child: _buildInfo(context)),
-            ],
-          ),
+    final child = AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: EdgeInsets.all(10.r),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+        color:
+            _outOfStock
+                ? Theme.of(context).colorScheme.error.withValues(alpha: 0.06)
+                : _isPack
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.05)
+                : Theme.of(context).colorScheme.surfaceContainerLow,
+        border: Border.all(
+          width: 1,
+          color:
+              _cartQuantity > 0
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.4)
+                  : _isSelected
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+                  : _outOfStock
+                  ? Theme.of(context).colorScheme.error.withValues(alpha: 0.2)
+                  : Colors.transparent,
         ),
       ),
+      child: Row(
+        children: [
+          _buildImage(context),
+          SizedBox(width: 12.w),
+          Expanded(child: _buildInfo(context)),
+        ],
+      ),
+    );
+
+    // Mode manage — avec swipe
+    if (widget.mode == ProductViewMode.manage) {
+      return Dismissible(
+        key: Key(widget.product.id.toString()),
+        dismissThresholds: const {
+          DismissDirection.startToEnd: 0.9,
+          DismissDirection.endToStart: 0.9,
+        },
+        dragStartBehavior: DragStartBehavior.down,
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.startToEnd) {
+            widget.onDelete?.call();
+          } else {
+            widget.onEdit?.call();
+          }
+          return false;
+        },
+        background: _buildSwipeAction(
+          color: Theme.of(context).colorScheme.error,
+          icon: HugeIcons.strokeRoundedDelete02,
+          alignment: Alignment.centerLeft,
+        ),
+        secondaryBackground: _buildSwipeAction(
+          color: Colors.green.shade500,
+          icon: HugeIcons.strokeRoundedTaskEdit01,
+          alignment: Alignment.centerRight,
+        ),
+        child: GestureDetector(onLongPress: widget.onLongPress, child: child),
+      );
+    }
+
+    // Mode cart — sans swipe
+    return GestureDetector(
+      onTap: _outOfStock ? null : () => _openVariantPicker(context),
+      child: child,
     );
   }
 
@@ -152,6 +174,28 @@ class _MinimalProductViewState extends State<MinimalProductView> {
             ),
           ),
 
+        // Badge panier — mode cart uniquement
+        if (widget.mode == ProductViewMode.cart && _cartQuantity > 0)
+          Positioned(
+            top: -2,
+            right: -2,
+            child: Container(
+              padding: EdgeInsets.all(4.r),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                "$_cartQuantity",
+                style: TextStyle(
+                  fontSize: 8.sp,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+
         // Badge rupture
         if (_outOfStock)
           Positioned.fill(
@@ -177,7 +221,6 @@ class _MinimalProductViewState extends State<MinimalProductView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Nom + quantity input
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -193,30 +236,49 @@ class _MinimalProductViewState extends State<MinimalProductView> {
               ),
             ),
             SizedBox(width: 8.w),
-            SizedBox(
-              height: 26.h,
-              child: NumberInput(
-                value: 0,
-                onValueChanged: (value) {
-                  setState(() {
-                    quantity = value;
-                    widget.selectedQuantity(value);
-                  });
-                },
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHigh,
-                noBorder: true,
-                minValue: 0,
+
+            // Mode manage → NumberInput
+            if (widget.mode == ProductViewMode.manage)
+              SizedBox(
+                height: 26.h,
+                child: NumberInput(
+                  value: 0,
+                  onValueChanged: (value) {
+                    setState(() {
+                      quantity = value;
+                      widget.selectedQuantity?.call(value);
+                    });
+                  },
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHigh,
+                  noBorder: true,
+                  minValue: 0,
+                ),
               ),
-            ),
+
+            // Mode cart → bouton "+"
+            if (widget.mode == ProductViewMode.cart && !_outOfStock)
+              GestureDetector(
+                onTap: () => _openVariantPicker(context),
+                child: Container(
+                  padding: EdgeInsets.all(5.r),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Icon(
+                    Icons.add_rounded,
+                    size: 14.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
           ],
         ),
         SizedBox(height: 6.h),
 
-        // Prix + stock
         Row(
           children: [
-            // Prix
             Text(
               "${widget.product.sellingPrice} Ar",
               style: TextStyle(
@@ -229,8 +291,6 @@ class _MinimalProductViewState extends State<MinimalProductView> {
               ),
             ),
             SizedBox(width: 10.w),
-
-            // Séparateur
             Container(
               width: 3.w,
               height: 3.h,
@@ -242,8 +302,6 @@ class _MinimalProductViewState extends State<MinimalProductView> {
               ),
             ),
             SizedBox(width: 10.w),
-
-            // Stock
             Row(
               children: [
                 Container(
@@ -270,9 +328,48 @@ class _MinimalProductViewState extends State<MinimalProductView> {
                 ),
               ],
             ),
+
+            // Badge variants — mode cart
+            if (widget.mode == ProductViewMode.cart && _hasVariants) ...[
+              SizedBox(width: 10.w),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  "${widget.product.variant!.length} variants",
+                  style: TextStyle(
+                    fontSize: 9.sp,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ],
+    );
+  }
+
+  // ── Variant Picker ────────────────────────────────────────
+  void _openVariantPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder:
+          (_) => VariantPickerSheet(
+            product: widget.product,
+            onAdd: (cartItem) {
+              ref.read(cartSessionProvider.notifier).addItem(cartItem);
+              Navigator.pop(context);
+            },
+          ),
     );
   }
 
