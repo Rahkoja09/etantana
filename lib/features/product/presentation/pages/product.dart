@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
-import 'package:e_tantana/core/utils/tools/calculate_total_product.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/cart/presentation/controller/cart_session_controller.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';

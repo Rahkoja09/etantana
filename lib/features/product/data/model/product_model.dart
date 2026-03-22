@@ -41,8 +41,8 @@ class ProductModel extends ProductEntities {
       eId: data['e_id'],
       images: data['images'],
       type: data['type'],
-      purchasePrice: data['purchase_price'].toDouble(),
-      sellingPrice: data['selling_price'].toDouble(),
+      purchasePrice: data['purchase_price']?.toDouble(),
+      sellingPrice: data['selling_price']?.toDouble(),
       futureProduct: data["future_product"],
       packComposition:
           data['pack_composition'] != null

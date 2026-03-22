@@ -1,4 +1,4 @@
-import 'package:e_tantana/core/app/actions/app_action.dart';
+import 'package:e_tantana/core/actions/app_action.dart';
 
 /// Base action class for User feature using Sealed Class for Type Safety
 sealed class UserActions implements AppAction {}

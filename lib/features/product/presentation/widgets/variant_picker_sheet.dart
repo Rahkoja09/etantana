@@ -1,16 +1,15 @@
 import 'package:e_tantana/config/constants/app_const.dart';
+import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/features/cart/domain/entity/cart_entity.dart';
 import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
-import 'package:e_tantana/shared/widget/input/number_input.dart';
 import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class VariantPickerSheet extends StatefulWidget {
   final ProductEntities product;
-  final Function(CartEntity) onAdd;
+  final Function(List<CartEntity>) onAdd;
 
   const VariantPickerSheet({
     super.key,
@@ -23,36 +22,39 @@ class VariantPickerSheet extends StatefulWidget {
 }
 
 class _VariantPickerSheetState extends State<VariantPickerSheet> {
-  Map<String, dynamic>? _selectedVariant;
-  int _quantity = 1;
+  // Map index variant → quantité choisie
+  final Map<int, int> _quantities = {};
 
   bool get _hasVariants =>
       widget.product.variant != null && widget.product.variant!.isNotEmpty;
 
-  double get _effectivePrice {
-    if (_selectedVariant?['price'] != null) {
-      return (_selectedVariant!['price'] as num).toDouble();
-    }
-    return widget.product.sellingPrice ?? 0;
-  }
+  // Quantité totale sélectionnée
+  int get _totalQty => _quantities.values.fold(0, (sum, qty) => sum + qty);
 
-  double get _effectivePurchasePrice {
-    return widget.product.purchasePrice ?? 0;
-  }
+  // Total prix
+  double get _totalPrice {
+    if (!_hasVariants) return (widget.product.sellingPrice ?? 0) * _totalQty;
 
-  @override
-  void initState() {
-    super.initState();
-    // Si pas de variants — sélection automatique
-    if (!_hasVariants) _selectedVariant = null;
+    double total = 0;
+    _quantities.forEach((index, qty) {
+      if (qty > 0) {
+        final variant = widget.product.variant![index];
+        final price =
+            variant['price'] != null
+                ? (variant['price'] as num).toDouble()
+                : widget.product.sellingPrice ?? 0;
+        total += price * qty;
+      }
+    });
+    return total;
   }
 
   void _submit() {
-    // Si le produit a des variants — forcer la sélection
-    if (_hasVariants && _selectedVariant == null) {
+    // Aucune sélection
+    if (_totalQty == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Veuillez choisir un variant"),
+          content: const Text("Choisissez au moins un variant"),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -63,21 +65,49 @@ class _VariantPickerSheetState extends State<VariantPickerSheet> {
       return;
     }
 
-    widget.onAdd(
-      CartEntity(
-        productId: widget.product.id,
-        productName: widget.product.name,
-        productImage:
-            _selectedVariant?['image']?.toString().isNotEmpty == true
-                ? _selectedVariant!['image']
-                : widget.product.images,
-        unitPrice: _effectivePrice,
-        purchasePrice: _effectivePurchasePrice,
-        quantity: _quantity,
-        chosenVariant: _selectedVariant,
-        shopId: widget.product.shopId,
-      ),
-    );
+    final List<CartEntity> items = [];
+
+    if (_hasVariants) {
+      _quantities.forEach((index, qty) {
+        if (qty > 0) {
+          final variant = widget.product.variant![index];
+          final price =
+              variant['price'] != null
+                  ? (variant['price'] as num).toDouble()
+                  : widget.product.sellingPrice ?? 0;
+          items.add(
+            CartEntity(
+              productId: widget.product.id,
+              productName: widget.product.name,
+              productImage:
+                  variant['image']?.toString().isNotEmpty == true
+                      ? variant['image']
+                      : widget.product.images,
+              unitPrice: price,
+              purchasePrice: widget.product.purchasePrice,
+              quantity: qty,
+              chosenVariant: variant,
+              shopId: widget.product.shopId,
+            ),
+          );
+        }
+      });
+    } else {
+      // Pas de variants — produit simple
+      items.add(
+        CartEntity(
+          productId: widget.product.id,
+          productName: widget.product.name,
+          productImage: widget.product.images,
+          unitPrice: widget.product.sellingPrice,
+          purchasePrice: widget.product.purchasePrice,
+          quantity: _quantities[0] ?? 1,
+          shopId: widget.product.shopId,
+        ),
+      );
+    }
+
+    widget.onAdd(items);
   }
 
   @override
@@ -96,7 +126,7 @@ class _VariantPickerSheetState extends State<VariantPickerSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Handle ──────────────────────────────────────
+          // ── Handle ────────────────────────────────────
           Center(
             child: Container(
               width: 36.w,
@@ -109,7 +139,7 @@ class _VariantPickerSheetState extends State<VariantPickerSheet> {
           ),
           SizedBox(height: 20.h),
 
-          // ── Header produit ───────────────────────────────
+          // ── Header produit ─────────────────────────────
           Row(
             children: [
               ClipRRect(
@@ -140,11 +170,10 @@ class _VariantPickerSheetState extends State<VariantPickerSheet> {
                     ),
                     SizedBox(height: 2.h),
                     Text(
-                      "${_effectivePrice.toStringAsFixed(0)} Ar",
+                      "${widget.product.sellingPrice?.toStringAsFixed(0)} Ar",
                       style: TextStyle(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w700,
-                        color: primary,
+                        fontSize: 12.sp,
+                        color: onSurface.withValues(alpha: 0.45),
                       ),
                     ),
                   ],
@@ -152,158 +181,267 @@ class _VariantPickerSheetState extends State<VariantPickerSheet> {
               ),
             ],
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 20.h),
 
-          // ── Sélection variant ────────────────────────────
+          // ── Variants ──────────────────────────────────
           if (_hasVariants) ...[
             Text(
-              "Choisir un variant *",
+              "Choisir les variants",
               style: TextStyles.bodyMedium(
                 context: context,
                 fontWeight: FontWeight.w700,
               ),
             ),
             SizedBox(height: 10.h),
-            Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
-              children:
-                  widget.product.variant!.map((variant) {
-                    final isSelected = _selectedVariant == variant;
-                    final variantQty = variant['quantity'] as int? ?? 0;
-                    final outOfStock = variantQty <= 0;
 
-                    return GestureDetector(
-                      onTap:
-                          outOfStock
-                              ? null
-                              : () =>
-                                  setState(() => _selectedVariant = variant),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 8.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              outOfStock
-                                  ? onSurface.withValues(alpha: 0.04)
-                                  : isSelected
-                                  ? primary
-                                  : primary.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color:
-                                outOfStock
-                                    ? onSurface.withValues(alpha: 0.1)
-                                    : isSelected
-                                    ? primary
-                                    : primary.withValues(alpha: 0.2),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Image miniature si disponible
-                            if (variant['image'] != null &&
-                                variant['image'].toString().isNotEmpty) ...[
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: SizedBox(
-                                  width: 40.r,
-                                  height: 40.r,
-                                  child: ImageViewer(
-                                    borderRadius: 6,
-                                    imageFileOrLink: variant['image'],
+            // Liste verticale scrollable si beaucoup de variants
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 260.h),
+              child: SingleChildScrollView(
+                child: Column(
+                  children:
+                      widget.product.variant!.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final variant = entry.value;
+                        final qty = _quantities[index] ?? 0;
+                        final variantQty = variant['quantity'] as int? ?? 0;
+                        final outOfStock = variantQty <= 0;
+                        final isSelected = qty > 0;
+                        final price =
+                            variant['price'] != null
+                                ? (variant['price'] as num).toDouble()
+                                : null;
+
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 150),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 10.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  outOfStock
+                                      ? onSurface.withValues(alpha: 0.03)
+                                      : isSelected
+                                      ? primary.withValues(alpha: 0.06)
+                                      : Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainer,
+                              borderRadius: BorderRadius.circular(
+                                StylesConstants.borderRadius,
+                              ),
+                              border: Border.all(
+                                color:
+                                    outOfStock
+                                        ? onSurface.withValues(alpha: 0.06)
+                                        : isSelected
+                                        ? primary.withValues(alpha: 0.3)
+                                        : Colors.transparent,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                // Image miniature
+                                if (variant['image'] != null &&
+                                    variant['image'].toString().isNotEmpty) ...[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(6),
+                                    child: SizedBox(
+                                      width: 36.r,
+                                      height: 36.r,
+                                      child: ImageViewer(
+                                        borderRadius: 6,
+                                        imageFileOrLink: variant['image'],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                ],
+
+                                // Infos variant
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            variant['name']?.toString() ?? "-",
+                                            style: TextStyle(
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w700,
+                                              color:
+                                                  outOfStock
+                                                      ? onSurface.withValues(
+                                                        alpha: 0.3,
+                                                      )
+                                                      : onSurface,
+                                            ),
+                                          ),
+                                          if (variant['variant_type'] != null &&
+                                              variant['variant_type'] !=
+                                                  '-') ...[
+                                            SizedBox(width: 6.w),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 5.w,
+                                                vertical: 1.h,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: primary.withValues(
+                                                  alpha: 0.1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Text(
+                                                variant['variant_type']
+                                                    .toString(),
+                                                style: TextStyle(
+                                                  fontSize: 9.sp,
+                                                  color: primary,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Row(
+                                        children: [
+                                          // Property
+                                          if (variant['property'] != null &&
+                                              variant['property'] != '-')
+                                            Text(
+                                              variant['property'].toString(),
+                                              style: TextStyle(
+                                                fontSize: 10.sp,
+                                                color: onSurface.withValues(
+                                                  alpha:
+                                                      outOfStock ? 0.2 : 0.45,
+                                                ),
+                                              ),
+                                            ),
+                                          if (variant['property'] != null &&
+                                              variant['property'] != '-')
+                                            SizedBox(width: 8.w),
+
+                                          // Prix spécifique
+                                          if (price != null)
+                                            Text(
+                                              "${price.toStringAsFixed(0)} Ar",
+                                              style: TextStyle(
+                                                fontSize: 10.sp,
+                                                fontWeight: FontWeight.w700,
+                                                color:
+                                                    outOfStock
+                                                        ? onSurface.withValues(
+                                                          alpha: 0.2,
+                                                        )
+                                                        : primary,
+                                              ),
+                                            ),
+
+                                          // Stock
+                                          if (!outOfStock) ...[
+                                            SizedBox(width: 8.w),
+                                            Text(
+                                              "stock: $variantQty",
+                                              style: TextStyle(
+                                                fontSize: 9.sp,
+                                                color: onSurface.withValues(
+                                                  alpha: 0.3,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+
+                                          if (outOfStock)
+                                            Text(
+                                              "Rupture",
+                                              style: TextStyle(
+                                                fontSize: 10.sp,
+                                                color:
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.error,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              SizedBox(height: 6.h),
-                            ],
-                            Text(
-                              variant['name']?.toString() ?? "-",
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w700,
-                                color:
-                                    outOfStock
-                                        ? onSurface.withValues(alpha: 0.3)
-                                        : isSelected
-                                        ? Colors.white
-                                        : primary,
-                              ),
-                            ),
-                            if (variant['property'] != null &&
-                                variant['property'] != '-')
-                              Text(
-                                variant['property'].toString(),
-                                style: TextStyle(
-                                  fontSize: 10.sp,
-                                  color:
-                                      outOfStock
-                                          ? onSurface.withValues(alpha: 0.2)
-                                          : isSelected
-                                          ? Colors.white.withValues(alpha: 0.8)
-                                          : onSurface.withValues(alpha: 0.5),
-                                ),
-                              ),
-                            Text(
-                              outOfStock ? "Rupture" : "Qté: $variantQty",
-                              style: TextStyle(
-                                fontSize: 9.sp,
-                                color:
-                                    outOfStock
-                                        ? Theme.of(context).colorScheme.error
-                                        : isSelected
-                                        ? Colors.white.withValues(alpha: 0.7)
-                                        : onSurface.withValues(alpha: 0.4),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-            ),
-            SizedBox(height: 20.h),
-          ],
 
-          // ── Quantité ─────────────────────────────────────
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Quantité",
-                style: TextStyles.bodyMedium(
-                  context: context,
-                  fontWeight: FontWeight.w700,
+                                // Mini NumberInput à droite
+                                if (!outOfStock)
+                                  _MiniNumberInput(
+                                    value: qty,
+                                    max: variantQty,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        if (val == 0) {
+                                          _quantities.remove(index);
+                                        } else {
+                                          _quantities[index] = val;
+                                        }
+                                      });
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
                 ),
               ),
-              NumberInput(
-                value: _quantity,
-                minValue: 1,
-                onValueChanged: (val) => setState(() => _quantity = val),
-              ),
-            ],
-          ),
-          SizedBox(height: 24.h),
+            ),
+          ] else ...[
+            // ── Produit sans variant — quantité simple ──
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Quantité",
+                  style: TextStyles.bodyMedium(
+                    context: context,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                _MiniNumberInput(
+                  value: _quantities[0] ?? 1,
+                  max: widget.product.quantity ?? 999,
+                  onChanged:
+                      (val) =>
+                          setState(() => _quantities[0] = val == 0 ? 1 : val),
+                ),
+              ],
+            ),
+          ],
 
-          // ── Total + bouton ajouter ────────────────────────
+          SizedBox(height: 20.h),
+
+          // ── Total + bouton ajouter ─────────────────────
           Row(
             children: [
+              // Total
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Total",
                     style: TextStyle(
-                      fontSize: 11.sp,
+                      fontSize: 10.sp,
                       color: onSurface.withValues(alpha: 0.4),
                     ),
                   ),
                   Text(
-                    "${(_effectivePrice * _quantity).toStringAsFixed(0)} Ar",
+                    "${_totalPrice.toStringAsFixed(0)} Ar",
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w800,
@@ -313,27 +451,134 @@ class _VariantPickerSheetState extends State<VariantPickerSheet> {
                 ],
               ),
               SizedBox(width: 16.w),
+
+              // Bouton
               Expanded(
                 child: FilledButton(
-                  onPressed: _submit,
+                  onPressed: _totalQty > 0 ? _submit : null,
                   style: FilledButton.styleFrom(
                     backgroundColor: primary,
+                    disabledBackgroundColor: onSurface.withValues(alpha: 0.1),
                     padding: EdgeInsets.symmetric(vertical: 14.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: Text(
-                    "Ajouter au panier",
+                    _totalQty > 0
+                        ? "Ajouter $_totalQty article${_totalQty > 1 ? 's' : ''}"
+                        : "Ajouter au panier",
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color:
+                          _totalQty > 0
+                              ? Colors.white
+                              : onSurface.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  MINI NUMBER INPUT — compact, fait pour les listes
+// ─────────────────────────────────────────────────────────────
+
+class _MiniNumberInput extends StatelessWidget {
+  final int value;
+  final int max;
+  final ValueChanged<int> onChanged;
+
+  const _MiniNumberInput({
+    required this.value,
+    required this.max,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final canDecrement = value > 0;
+    final canIncrement = value < max;
+
+    return Container(
+      height: 30.h,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Moins
+          GestureDetector(
+            onTap: canDecrement ? () => onChanged(value - 1) : null,
+            child: Container(
+              width: 28.w,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color:
+                    canDecrement
+                        ? primary.withValues(alpha: 0.15)
+                        : Colors.transparent,
+                borderRadius: const BorderRadius.horizontal(
+                  left: Radius.circular(8),
+                ),
+              ),
+              child: Icon(
+                Icons.remove_rounded,
+                size: 13.sp,
+                color:
+                    canDecrement ? primary : onSurface.withValues(alpha: 0.2),
+              ),
+            ),
+          ),
+
+          // Valeur
+          SizedBox(
+            width: 28.w,
+            child: Center(
+              child: Text(
+                "$value",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                  color: value > 0 ? primary : onSurface.withValues(alpha: 0.4),
+                ),
+              ),
+            ),
+          ),
+
+          // Plus
+          GestureDetector(
+            onTap: canIncrement ? () => onChanged(value + 1) : null,
+            child: Container(
+              width: 28.w,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color:
+                    canIncrement
+                        ? primary.withValues(alpha: 0.15)
+                        : Colors.transparent,
+                borderRadius: const BorderRadius.horizontal(
+                  right: Radius.circular(8),
+                ),
+              ),
+              child: Icon(
+                Icons.add_rounded,
+                size: 13.sp,
+                color:
+                    canIncrement ? primary : onSurface.withValues(alpha: 0.2),
+              ),
+            ),
           ),
         ],
       ),

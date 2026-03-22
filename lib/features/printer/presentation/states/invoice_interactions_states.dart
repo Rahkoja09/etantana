@@ -9,6 +9,11 @@ class InvoiceInteractionsStates {
   final OrderEntities? order;
   final double deliveryCost;
   final double grandTotal;
+  final String? shopName;
+  final String? shopPhone;
+  final String? shopSocialLink;
+  final String? shopLogo;
+  final String? shopSlogan;
 
   const InvoiceInteractionsStates({
     this.deliveryCost = 0.0,
@@ -16,6 +21,11 @@ class InvoiceInteractionsStates {
     this.orderList,
     this.order,
     this.totalProducts = 0.0,
+    this.shopName,
+    this.shopPhone,
+    this.shopSocialLink,
+    this.shopLogo,
+    this.shopSlogan,
   });
 
   InvoiceInteractionsStates copyWith({
@@ -24,6 +34,11 @@ class InvoiceInteractionsStates {
     OrderEntities? order,
     double? deliveryCost,
     double? grandTotal,
+    String? shopName,
+    String? shopPhone,
+    String? shopSocialLink,
+    String? shopLogo,
+    String? shopSlogan,
   }) {
     return InvoiceInteractionsStates(
       order: order ?? this.order,
@@ -31,6 +46,11 @@ class InvoiceInteractionsStates {
       deliveryCost: deliveryCost ?? this.deliveryCost,
       grandTotal: grandTotal ?? this.grandTotal,
       totalProducts: totalProducts ?? this.totalProducts,
+      shopName: shopName ?? this.shopName,
+      shopPhone: shopPhone ?? this.shopPhone,
+      shopSocialLink: shopSocialLink ?? this.shopSocialLink,
+      shopLogo: shopLogo ?? this.shopLogo,
+      shopSlogan: shopSlogan ?? this.shopSlogan,
     );
   }
 }

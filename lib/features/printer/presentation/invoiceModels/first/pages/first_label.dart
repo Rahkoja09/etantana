@@ -68,7 +68,7 @@ class FirstLabel extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(border: Border.all(width: 3, color: color)),
           child: Text(
-            "Prix: ${totalProducts.toInt()} Ar + ${delivery.toInt()} Ar frais de liv.",
+            "À payer: ${totalProducts.toInt()} Ar + ${delivery.toInt()} Ar frais de livraison",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: "Nonito",

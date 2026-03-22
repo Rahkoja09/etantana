@@ -19,7 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 
 import 'package:e_tantana/core/error/exceptions.dart';
-import 'package:e_tantana/core/app/network/network_info.dart';
+import 'package:e_tantana/core/network/network_info.dart';
 import 'package:e_tantana/core/utils/tools/isUrl.dart';
 import 'package:e_tantana/shared/media/media_services.dart';
 
@@ -212,7 +212,7 @@ class MediaServiceImpl implements MediaServices {
         video: videoPath,
         imageFormat: ImageFormat.JPEG,
         maxWidth: 200,
-        quality: 30,
+        quality: 5,
       );
 
       if (bytes == null) return null;
@@ -312,21 +312,21 @@ class MediaServiceImpl implements MediaServices {
   @override
   Future<File> takeScreenshot(
     BuildContext context,
-    String id,
-    ScreenshotController screenshotController,
-    Widget widget,
+    String orderId,
+    ScreenshotController controller,
+    Widget invoiceWidget,
   ) async {
-    final Uint8List imageBytes = await screenshotController.captureFromWidget(
-      widget,
+    final image = await controller.captureFromWidget(
+      invoiceWidget,
       context: context,
-      delay: const Duration(milliseconds: 100),
+      pixelRatio: 2.0,
+      targetSize: const Size(380, double.infinity),
     );
 
-    final directory = await getTemporaryDirectory();
-    final String fileName = 'facture_$id.png';
-    final File imageFile = File('${directory.path}/$fileName');
-    await imageFile.writeAsBytes(imageBytes);
-    return imageFile;
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/invoice_$orderId.png');
+    await file.writeAsBytes(image);
+    return file;
   }
 
   @override

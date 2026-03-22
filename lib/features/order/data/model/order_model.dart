@@ -84,7 +84,7 @@ class OrderModel extends OrderEntities {
       'client_name': clientName,
       'client_tel': clientTel,
       'client_adrs': clientAdrs,
-      'details': variant,
+      'variant': variant,
       'delivery_costs': deliveryCosts,
       'delivery_date': deliveryDate?.toIso8601String(),
       'shop_id': shopId,

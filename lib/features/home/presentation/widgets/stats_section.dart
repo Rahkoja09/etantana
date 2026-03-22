@@ -55,7 +55,8 @@ class _StatsSectionState extends ConsumerState<StatsSection> {
     });
     return Skeletonizer(
       enabled: dashboardState.isLoading,
-      ignoreContainers: true,
+      ignoreContainers: false,
+      containersColor: Theme.of(context).colorScheme.surfaceContainer,
       effect: LoadingEffect.getCommonEffect(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

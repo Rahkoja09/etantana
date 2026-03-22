@@ -365,8 +365,10 @@ class _MinimalProductViewState extends ConsumerState<MinimalProductView> {
       builder:
           (_) => VariantPickerSheet(
             product: widget.product,
-            onAdd: (cartItem) {
-              ref.read(cartSessionProvider.notifier).addItem(cartItem);
+            onAdd: (cartItems) {
+              for (final item in cartItems) {
+                ref.read(cartSessionProvider.notifier).addItem(item);
+              }
               Navigator.pop(context);
             },
           ),

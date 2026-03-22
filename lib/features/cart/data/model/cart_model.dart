@@ -13,6 +13,7 @@ class CartModel extends CartEntity {
     super.quantity,
     super.shopId,
     super.chosenVariant,
+    super.user_id,
     // [CONSTRUCTOR_ANCHOR]
   });
 
@@ -34,6 +35,7 @@ class CartModel extends CartEntity {
           data['chosen_variant'] != null
               ? Map<String, dynamic>.from(data['chosen_variant'] as Map)
               : null,
+      user_id: data['user_id'] as String?,
       // [FROM_MAP_ANCHOR]
     );
   }
@@ -50,6 +52,7 @@ class CartModel extends CartEntity {
       'quantity': quantity,
       'shop_id': shopId,
       'chosen_variant': chosenVariant,
+      'user_id': user_id,
       // [TO_MAP_ANCHOR]
     };
   }
@@ -66,6 +69,7 @@ class CartModel extends CartEntity {
       quantity: entity.quantity,
       shopId: entity.shopId,
       chosenVariant: entity.chosenVariant,
+      user_id: entity.user_id,
       // [FROM_ENTITY_ANCHOR]
     );
   }

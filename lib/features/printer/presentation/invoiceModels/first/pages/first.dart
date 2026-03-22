@@ -58,12 +58,6 @@ class First extends InvoiceTemplate {
     String societyQrCodeSendWhere = "Facebook",
     String societySlogan = "Manome ny tsara indrindra ho anao",
   }) {
-    return FirstFooter(
-      societyName: societyName,
-      societyPhoneNumber: societyPhoneNumber,
-      societyQrCodeLinkOrderFile: societyQrCodeLinkOrderFile,
-      societySlogan: societySlogan,
-      societyQrCodeSendWhere: societyQrCodeSendWhere,
-    );
+    return FirstFooter(invoiceData: invoiceData);
   }
 }

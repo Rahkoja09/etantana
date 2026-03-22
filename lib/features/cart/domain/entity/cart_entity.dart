@@ -1,3 +1,4 @@
+import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:equatable/equatable.dart';
 
 class CartEntity extends Equatable {
@@ -12,6 +13,7 @@ class CartEntity extends Equatable {
   final int? quantity;
   final String? shopId;
   double get totalPrice => (unitPrice ?? 0) * (quantity ?? 0);
+  final String? user_id;
   // [FIELDS_ANCHOR]
 
   const CartEntity({
@@ -25,6 +27,7 @@ class CartEntity extends Equatable {
     this.chosenVariant,
     this.quantity,
     this.shopId,
+    this.user_id,
     // [CONSTRUCTOR_ANCHOR]
   });
 
@@ -39,6 +42,7 @@ class CartEntity extends Equatable {
     Map<String, dynamic>? chosenVariant,
     int? quantity,
     String? shopId,
+    String? user_id,
     // [COPYWITH_PARAMS_ANCHOR]
   }) {
     return CartEntity(
@@ -52,8 +56,21 @@ class CartEntity extends Equatable {
       chosenVariant: chosenVariant ?? this.chosenVariant,
       quantity: quantity ?? this.quantity,
       shopId: shopId ?? this.shopId,
+      user_id: user_id ?? this.user_id,
       // [COPYWITH_RETURN_ANCHOR]
     );
+  }
+
+  MapData toOrderFormat() {
+    return {
+      "id": productId,
+      "quantity": quantity ?? 1,
+      "unit_price": unitPrice,
+      "product_name": productName,
+      "purchase_price": purchasePrice,
+      "shop_id": shopId,
+      "chosen_variant": chosenVariant,
+    };
   }
 
   @override
@@ -68,6 +85,7 @@ class CartEntity extends Equatable {
     chosenVariant,
     quantity,
     shopId,
+    user_id,
     // [PROPS_ANCHOR]
   ];
 }

@@ -58,7 +58,8 @@ class StockPrediction extends ConsumerWidget {
     return Skeletonizer(
       enabled: isLoading,
       effect: LoadingEffect.getCommonEffect(context),
-      ignoreContainers: true,
+      ignoreContainers: false,
+      containersColor: Theme.of(context).colorScheme.surfaceContainer,
       justifyMultiLineText: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

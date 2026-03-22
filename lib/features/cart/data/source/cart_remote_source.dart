@@ -107,6 +107,10 @@ class CartRemoteSourceImpl implements CartRemoteSource {
         if (shopId != null) {
           query = query.ilike("shop_id", "%$shopId%");
         }
+        final user_id = criteria.user_id;
+        if (user_id != null) {
+          query = query.ilike("user_id", "%$user_id%");
+        }
         // [FILTERS_ANCHOR]
       }
 

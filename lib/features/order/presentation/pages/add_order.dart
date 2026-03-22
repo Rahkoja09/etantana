@@ -1,15 +1,27 @@
-import 'package:e_tantana/core/enums/order_status.dart';
+import 'package:e_tantana/config/constants/styles_constants.dart';
+import 'package:e_tantana/config/theme/text_styles.dart';
 import 'package:e_tantana/core/app/session/session_controller.dart';
+import 'package:e_tantana/core/enums/order_status.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
+import 'package:e_tantana/features/cart/domain/entity/cart_entity.dart';
+import 'package:e_tantana/features/cart/presentation/controller/cart_session_controller.dart';
 import 'package:e_tantana/features/delivring/presentation/controller/delivering_controller.dart';
-import 'package:e_tantana/features/product/presentation/controller/product_list_page_controller.dart';
+import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
+import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
+import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
+import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
 import 'package:e_tantana/features/stockPrediction/presentation/controller/stock_prediction_controller.dart';
+import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
+import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
+import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
 import 'package:e_tantana/shared/widget/input/date_input.dart';
-import 'package:e_tantana/shared/widget/input/input_number_only_minus.dart';
+import 'package:e_tantana/shared/widget/input/simple_input.dart';
 import 'package:e_tantana/shared/widget/input/swith_selector.dart';
-import 'package:e_tantana/shared/widget/others/mini_text_card.dart';
-import 'package:e_tantana/shared/widget/others/price_viewer.dart';
+import 'package:e_tantana/shared/widget/loading/loading.dart';
+import 'package:e_tantana/shared/widget/mediaView/image_viewer.dart';
 import 'package:e_tantana/shared/widget/others/separator_background.dart';
+import 'package:e_tantana/shared/widget/text/show_input_error.dart';
+import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
 import 'package:e_tantana/shared/widget/title/title_with_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,95 +29,39 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-import 'package:e_tantana/config/constants/styles_constants.dart';
-import 'package:e_tantana/core/utils/typedef/typedefs.dart';
-import 'package:e_tantana/features/home/presentation/controller/dashboard_controller.dart';
-import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
-import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
-import 'package:e_tantana/features/order/presentation/widget/multiple_product_view_order.dart';
-import 'package:e_tantana/features/order/presentation/widget/select_product.dart';
-import 'package:e_tantana/features/product/domain/entities/product_entities.dart';
-import 'package:e_tantana/features/product/presentation/controller/product_controller.dart';
-import 'package:e_tantana/shared/widget/appBar/simple_appbar.dart';
-import 'package:e_tantana/shared/widget/button/bottom_container_button.dart';
-import 'package:e_tantana/shared/widget/input/custom_drop_down.dart';
-import 'package:e_tantana/shared/widget/input/item_manager_section.dart';
-import 'package:e_tantana/shared/widget/input/simple_input.dart';
-import 'package:e_tantana/shared/widget/loading/loading.dart';
-import 'package:e_tantana/shared/widget/title/medium_title_with_degree.dart';
-import 'package:e_tantana/shared/widget/text/show_input_error.dart';
-
-// ignore: must_be_immutable
 class AddOrder extends ConsumerStatefulWidget {
-  AddOrder({super.key});
+  const AddOrder({super.key});
 
   @override
   ConsumerState<AddOrder> createState() => _AddOrderState();
 }
 
 class _AddOrderState extends ConsumerState<AddOrder> {
-  int qteProduit = 1;
-  List<Map<String, dynamic>> _variants = [];
   DeliveryStatus? selectedStatus;
-  List<ProductEntities?>? selectedProductEntity;
-  String deliveryCity = "Antananarivo";
   DateTime? deliveryDate;
-  TextEditingController clientName = TextEditingController();
-  TextEditingController clientTel = TextEditingController();
-  TextEditingController clientAdrs = TextEditingController();
-  TextEditingController fraisDeLiv = TextEditingController();
+  String deliveryCity = "Antananarivo";
   String countryCallCode = "+261";
 
-  @override
-  void initState() {
-    super.initState();
-    if (ref.read(productListPageControllerProvider).productEntititesToOrder !=
-        null) {
-      selectedProductEntity =
-          ref.read(productListPageControllerProvider).productEntititesToOrder;
-    }
-    if (ref
-            .read(productListPageControllerProvider)
-            .productEntititesToOrder
-            ?.length ==
-        1) {
-      qteProduit =
-          ref
-              .read(productListPageControllerProvider)
-              .productDataListToOrder?[0]["quantity"] ??
-          1;
-    }
-  }
+  final TextEditingController clientName = TextEditingController();
+  final TextEditingController clientTel = TextEditingController();
+  final TextEditingController clientAdrs = TextEditingController();
+  final TextEditingController fraisDeLiv = TextEditingController();
 
-  // les ereur -------------
+  String? errorCart;
+  String? errorStatus;
   String? errorClientTel;
   String? errorAdrsClient;
   String? errorDeliveryCosts;
   String? errorDeliveryDate;
-  String? errorProdName;
-  String? errorProdQty;
-  String? errorStatus;
 
-  Future<void> updateHomeDashboard() async {
-    await ref
-        .read(dashboardStatsControllerProvider.notifier)
-        .getDashboardStats();
-  }
-
-  bool _validateFields() {
+  bool _validateFields(List<CartEntity> carts) {
     setState(() {
-      // Validation Produit ----------
-
-      errorProdName =
-          selectedProductEntity == null ? "Veuillez choisir un produit" : null;
-
-      errorStatus = selectedStatus == null ? "Le status est obligatoire" : null;
-
-      // Validation Client --------------
+      errorCart = carts.isEmpty ? "Le panier est vide" : null;
+      errorStatus = selectedStatus == null ? "Le statut est obligatoire" : null;
       errorDeliveryDate =
           deliveryDate == null ? "Veuillez choisir la date de livraison" : null;
       errorClientTel =
-          clientTel.text.isEmpty ? "Le Numéro client est obligatoire" : null;
+          clientTel.text.isEmpty ? "Le numéro client est obligatoire" : null;
       errorAdrsClient =
           clientAdrs.text.isEmpty ? "L'adresse client est obligatoire" : null;
       errorDeliveryCosts =
@@ -113,9 +69,7 @@ class _AddOrderState extends ConsumerState<AddOrder> {
               ? "Les frais de livraison sont obligatoires"
               : null;
     });
-
-    return errorProdName == null &&
-        errorProdQty == null &&
+    return errorCart == null &&
         errorStatus == null &&
         errorClientTel == null &&
         errorAdrsClient == null &&
@@ -123,393 +77,212 @@ class _AddOrderState extends ConsumerState<AddOrder> {
         errorDeliveryDate == null;
   }
 
-  double calculateTotal(
-    List<ProductEntities?> actualProducts,
-    List<MapData> orderListe,
-  ) {
-    double total = 0;
-    for (var item in orderListe) {
-      final String currentId = item["id"];
-      final int quantity = item["quantity"];
-      for (var product in actualProducts) {
-        if (product!.id == currentId) {
-          final price = (product.sellingPrice ?? 0).toDouble();
-          setState(() {
-            total += price * quantity;
-          });
-          break;
-        }
-      }
-    }
-
-    return total;
+  @override
+  void dispose() {
+    clientName.dispose();
+    clientTel.dispose();
+    clientAdrs.dispose();
+    fraisDeLiv.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final orderState = ref.watch(orderControllerProvider);
     final orderAction = ref.read(orderControllerProvider.notifier);
-    final productAction = ref.read(productControllerProvider.notifier);
-    final deliveryAction = ref.read(deliveringControllerProvider.notifier);
     final authState = ref.watch(authControllerProvider);
     final shopId = ref.watch(sessionProvider).activeShopId;
-    final productListPageStates = ref.watch(productListPageControllerProvider);
-    final productListPageAction = ref.read(
-      productListPageControllerProvider.notifier,
-    );
-    final stockPredictionAction = ref.read(
-      stockPredictionControllerProvider.notifier,
-    );
+    final carts = ref.watch(cartSessionProvider).carts ?? [];
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: SimpleAppbar(
         title: "Créer une commande",
-        onBack: () {
-          context.go("/nav-bar/:1");
-        },
+        onBack: () => context.pop(),
       ),
       body: Stack(
         children: [
-          Padding(
+          SingleChildScrollView(
             padding: EdgeInsets.all(StylesConstants.spacerContent),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (selectedProductEntity != null &&
-                          selectedProductEntity!.isEmpty ||
-                      selectedProductEntity!.length == 1)
-                    SeparatorBackground(
-                      child: SelectProduct(
-                        selectedProduct:
-                            selectedProductEntity?.length == 1
-                                ? selectedProductEntity![0]
-                                : null,
-                        onChanged: (selectedProduct) {
-                          setState(() {
-                            selectedProductEntity = [selectedProduct];
-                            productListPageAction.updateProductOrder(
-                              selectedProduct!,
-                              qteProduit,
-                            );
-                          });
-                        },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _CartSummarySection(carts: carts),
+                ShowInputError(message: errorCart),
+                SizedBox(height: 10.h),
+
+                SeparatorBackground(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TitleWithIcon(
+                        boldTitle: true,
+                        icon: Icons.shopping_bag,
+                        title: "Détails de la commande",
+                        themeColor: Theme.of(context).colorScheme.primary,
                       ),
-                    ),
-                  if (selectedProductEntity != null &&
-                      selectedProductEntity!.length > 1) ...[
-                    Container(
-                      padding: EdgeInsets.all(StylesConstants.spacerContent),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          StylesConstants.borderRadius,
-                        ),
-                        border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.2),
-                          width: 0.7,
-                        ),
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: 0.08),
-                            Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: 0.1),
-                            Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: 0.20),
-                            Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: 0.30),
-                          ],
-                        ),
+                      SizedBox(height: 20.h),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 1,
+                        title: "Statut de la commande",
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      SwithSelector(
+                        themeColor: Theme.of(context).colorScheme.primary,
+                        options: DeliveryStatus.values,
+                        initialValue: DeliveryStatus.pending,
+                        labelBuilder: (status) => status.label,
+                        onChanged:
+                            (val) => setState(() => selectedStatus = val),
+                      ),
+                      ShowInputError(message: errorStatus),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10.h),
+
+                SeparatorBackground(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TitleWithIcon(
+                        boldTitle: true,
+                        icon: Icons.person,
+                        title: "Informations client",
+                        themeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      SizedBox(height: 20.h),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 1,
+                        title: "Nom Client",
+                      ),
+                      SimpleInput(
+                        textHint: "ex: Rakoto",
+                        iconData: HugeIcons.strokeRoundedId,
+                        textEditControlleur: clientName,
+                        maxLines: 1,
+                      ),
+                      SizedBox(height: 20.h),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 1,
+                        title: "N. Téléphone Client",
+                      ),
+                      Row(
                         children: [
-                          MediumTitleWithDegree(
-                            showDegree: false,
-                            title: "Détails du panier",
+                          Expanded(
+                            flex: 3,
+                            child: CustomDropdown(
+                              textHint: "+261",
+                              iconData: HugeIcons.strokeRoundedContactBook,
+                              items: ["+261", "+33", "+1"],
+                              value: countryCallCode,
+                              onChanged:
+                                  (val) => setState(
+                                    () => countryCallCode = val ?? "+261",
+                                  ),
+                            ),
                           ),
-                          Row(
-                            children: [
-                              MiniTextCard(
-                                text:
-                                    "${calculateTotal(selectedProductEntity!, productListPageStates.productDataListToOrder!)} Ar",
-                                icon: HugeIcons.strokeRoundedMoney03,
-                              ),
-                              SizedBox(width: 5),
-                              MiniTextCard(
-                                text:
-                                    "${productListPageStates.productEntititesToOrder?.length} Articles",
-                                icon: HugeIcons.strokeRoundedShoppingCart01,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 30),
-                          MediumTitleWithDegree(
-                            showDegree: false,
-                            title: "Les Produits",
-                          ),
-                          MultipleProductViewOrder(
-                            productsToOrder: selectedProductEntity!,
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            flex: 5,
+                            child: SimpleInput(
+                              textHint: "ex: 343032386",
+                              iconData: HugeIcons.strokeRoundedCall02,
+                              textEditControlleur: clientTel,
+                              maxLines: 1,
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-
-                  ShowInputError(message: errorProdName),
-
-                  SizedBox(height: 10.h),
-
-                  SeparatorBackground(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TitleWithIcon(
-                          boldTitle: true,
-                          icon: Icons.shopping_bag,
-                          title: "Détails de la commande",
-                          themeColor: Theme.of(context).colorScheme.primary,
-                        ),
-                        SizedBox(height: 20.h),
-
-                        if (productListPageStates.productEntititesToOrder ==
-                                null ||
-                            productListPageStates.productEntititesToOrder == 1)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: InputNumberOnlyMinus(
-                                  minimumValue: 0,
-                                  onValueChanged: (newQuantity) {
-                                    qteProduit = newQuantity;
-                                    productListPageAction.updateProductOrder(
-                                      productListPageStates
-                                          .productEntititesToOrder![0],
-                                      newQuantity,
-                                    );
-                                  },
-                                  title: "Quantité(s)",
-                                  showDegree: false,
-                                  showTitle: true,
-                                  initialValue: qteProduit.toInt(),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: PriceViewer(
-                                  showTitle: true,
-                                  title: "Prix unitaire",
-                                  showDegree: false,
-                                  moneySign: "Ar",
-                                  price:
-                                      selectedProductEntity?[0]?.sellingPrice ??
-                                      0.0,
-                                ),
-                              ),
-                            ],
+                      ShowInputError(message: errorClientTel),
+                      SizedBox(height: 20.h),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 1,
+                        title: "Adresse de Livraison",
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomDropdown(
+                              value: deliveryCity,
+                              textHint: "Ville",
+                              iconData: HugeIcons.strokeRoundedMaps,
+                              items: [
+                                "Antananarivo",
+                                "Fianarantsoa",
+                                "Toamasina",
+                                "Antsirabe",
+                                "Diego",
+                                "Mahajanga",
+                              ],
+                              onChanged:
+                                  (val) => setState(
+                                    () => deliveryCity = val ?? "Antananarivo",
+                                  ),
+                            ),
                           ),
-
-                        ShowInputError(message: errorProdQty),
-
-                        SizedBox(height: 20.h),
-                        MediumTitleWithDegree(
-                          showDegree: true,
-                          degree: 2,
-                          title: "Status de la commande",
-                        ),
-                        SwithSelector(
-                          themeColor: Theme.of(context).colorScheme.primary,
-                          options: DeliveryStatus.values,
-                          initialValue: DeliveryStatus.pending,
-                          labelBuilder: (status) => status.label,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedStatus = newValue;
-                            });
-                          },
-                        ),
-
-                        ShowInputError(message: errorStatus),
-
-                        SizedBox(height: 20.h),
-                        MediumTitleWithDegree(
-                          showDegree: true,
-                          degree: 2,
-                          title: "Détails",
-                        ),
-                        ItemManagerSection(
-                          onChanged: (variants, images) {
-                            setState(() {
-                              _variants = variants;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: SimpleInput(
+                              textHint: "ex: Analakely",
+                              iconData: HugeIcons.strokeRoundedMapsLocation01,
+                              textEditControlleur: clientAdrs,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      ShowInputError(message: errorAdrsClient),
+                    ],
                   ),
+                ),
+                SizedBox(height: 10.h),
 
-                  SizedBox(height: 10.h),
-
-                  SeparatorBackground(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TitleWithIcon(
-                          boldTitle: true,
-                          icon: Icons.person,
-                          title: "Informations client",
-                          themeColor: Theme.of(context).colorScheme.primary,
-                        ),
-                        SizedBox(height: 20.h),
-
-                        MediumTitleWithDegree(
-                          showDegree: true,
-                          degree: 1,
-                          title: "Nom Client",
-                        ),
-                        SimpleInput(
-                          textHint: "ex: Rakoto",
-                          iconData: HugeIcons.strokeRoundedId,
-                          textEditControlleur: clientName,
-                          maxLines: 1,
-                        ),
-
-                        SizedBox(height: 20.h),
-                        MediumTitleWithDegree(
-                          showDegree: true,
-                          degree: 1,
-                          title: "N. Téléphone Client",
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: CustomDropdown(
-                                textHint: "+261",
-                                iconData: HugeIcons.strokeRoundedContactBook,
-                                items: ["+261", "..."],
-                                onChanged: (contryCallCode) {
-                                  setState(() {
-                                    countryCallCode = countryCallCode;
-                                  });
-                                },
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              flex: 5,
-                              child: SimpleInput(
-                                textHint: "ex: 343032386 (sans 0)",
-                                iconData: HugeIcons.strokeRoundedCall02,
-                                textEditControlleur: clientTel,
-                                maxLines: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        ShowInputError(message: errorClientTel),
-
-                        SizedBox(height: 20.h),
-                        MediumTitleWithDegree(
-                          showDegree: true,
-                          degree: 1,
-                          title: "Adresse de Livraison",
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: CustomDropdown(
-                                value: deliveryCity,
-                                textHint: "ville",
-                                iconData: HugeIcons.strokeRoundedMaps,
-                                items: [
-                                  "Antananarivo",
-                                  "Fianarantsoa",
-                                  "Toamasina",
-                                  "Antsirabe",
-                                  'Diego',
-                                  "Mahajanga",
-                                ],
-                                onChanged: (selectedCity) {
-                                  setState(() {
-                                    deliveryCity = selectedCity!;
-                                  });
-                                },
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              flex: 1,
-                              child: SimpleInput(
-                                textHint: "ex: Analakely",
-                                iconData: HugeIcons.strokeRoundedMapsLocation01,
-                                textEditControlleur: clientAdrs,
-                                maxLines: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        ShowInputError(message: errorAdrsClient),
-                      ],
-                    ),
+                SeparatorBackground(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TitleWithIcon(
+                        boldTitle: true,
+                        icon: Icons.delivery_dining_sharp,
+                        title: "Logistiques",
+                        themeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      SizedBox(height: 20.h),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 1,
+                        title: "Frais de Livraison",
+                      ),
+                      SimpleInput(
+                        textHint: "ex: 4000",
+                        iconData: HugeIcons.strokeRoundedDeliveryTruck02,
+                        textEditControlleur: fraisDeLiv,
+                        maxLines: 1,
+                      ),
+                      ShowInputError(message: errorDeliveryCosts),
+                      SizedBox(height: 20.h),
+                      MediumTitleWithDegree(
+                        showDegree: true,
+                        degree: 1,
+                        title: "Date de Livraison",
+                      ),
+                      DateInput(
+                        iconData: HugeIcons.strokeRoundedCalendarAdd01,
+                        textHint: "Date de livraison",
+                        isRange: false,
+                        onDateSelected:
+                            (date) => setState(() => deliveryDate = date),
+                      ),
+                      ShowInputError(message: errorDeliveryDate),
+                    ],
                   ),
-
-                  SizedBox(height: 10.h),
-
-                  SeparatorBackground(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TitleWithIcon(
-                          boldTitle: true,
-                          icon: Icons.delivery_dining_sharp,
-                          title: "Logistiques",
-                          themeColor: Theme.of(context).colorScheme.primary,
-                        ),
-                        SizedBox(height: 20.h),
-                        MediumTitleWithDegree(
-                          showDegree: true,
-                          degree: 1,
-                          title: "Frais de Livraison",
-                        ),
-                        SimpleInput(
-                          textHint: "ex: 4000",
-                          iconData: HugeIcons.strokeRoundedDeliveryTruck02,
-                          textEditControlleur: fraisDeLiv,
-                          maxLines: 1,
-                        ),
-                        ShowInputError(message: errorDeliveryCosts),
-                        SizedBox(height: 20.h),
-                        MediumTitleWithDegree(
-                          showDegree: true,
-                          degree: 1,
-                          title: "Date de Livraison",
-                        ),
-                        DateInput(
-                          iconData: HugeIcons.strokeRoundedCalendarAdd01,
-                          textHint: "Date de livraison",
-                          isRange: false,
-                          onDateSelected: (selectedDate) {
-                            setState(() {
-                              deliveryDate = selectedDate;
-                            });
-                          },
-                        ),
-                        ShowInputError(message: errorDeliveryDate),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30.h),
-                ],
-              ),
+                ),
+                SizedBox(height: 100.h),
+              ],
             ),
           ),
           if (orderState.isLoading) Loading(),
@@ -517,64 +290,203 @@ class _AddOrderState extends ConsumerState<AddOrder> {
       ),
 
       bottomNavigationBar: BottomContainerButton(
-        nextBtnText: "Créer",
-        onBack: () => context.go("/nav-bar/:1"),
+        nextBtnText: "Créer la commande",
+        onBack: () => context.pop(),
         onValidate: () async {
-          if (_validateFields()) {
-            final firstProduct = selectedProductEntity?.firstOrNull;
+          if (!_validateFields(carts)) return;
 
-            if (firstProduct == null) {
-              setState(() => errorProdName = "Veuillez choisir un produit");
-              return;
-            }
+          final productsAndQuantities =
+              carts.map((e) => e.toOrderFormat()).toList();
+          final totalQty = carts.fold(0, (sum, e) => sum + (e.quantity ?? 0));
 
-            if (productListPageStates.productDataListToOrder != null &&
-                productListPageStates.productDataListToOrder!.length > 1) {
-              qteProduit = 0;
-              for (var order in productListPageStates.productDataListToOrder!) {
-                qteProduit += (order["quantity"] as num).toInt();
-              }
-            }
+          final orderData = OrderEntities(
+            clientAdrs: "${deliveryCity.trim()} - ${clientAdrs.text.trim()}",
+            clientName: clientName.text.trim(),
+            clientTel: "$countryCallCode${clientTel.text.trim()}",
+            deliveryCosts: double.tryParse(fraisDeLiv.text.trim()),
+            shopId: shopId,
+            userId: authState.user?.id,
+            productsAndQuantities: productsAndQuantities,
+            quantity: totalQty,
+            status: selectedStatus,
+            deliveryDate: deliveryDate,
+          );
 
-            final orderData = OrderEntities(
-              clientAdrs: "${deliveryCity.trim()} - ${clientAdrs.text.trim()}",
-              clientName: clientName.text.trim(),
-              clientTel: " ${countryCallCode.trim()}${clientTel.text.trim()}",
-              deliveryCosts: double.tryParse(fraisDeLiv.text.trim()),
-              shopId: shopId,
-              userId: authState.user?.id,
-              variant: [],
+          await orderAction.placeCompleteOrder(orderData);
+          ref.read(cartSessionProvider.notifier).clear();
 
-              /// modifier ici apres ------
+          await Future.wait([
+            ref.read(productControllerProvider.notifier).researchProduct(null),
+            ref
+                .read(deliveringControllerProvider.notifier)
+                .searchDelivering(null),
+            ref.read(stockPredictionControllerProvider.notifier).refreshHome(),
+            ref
+                .read(dashboardStatsControllerProvider.notifier)
+                .getDashboardStats(),
+          ]);
 
-              /// mdofier ici pour pouvoir accepter variants
-              productsAndQuantities:
-                  productListPageStates.productDataListToOrder,
-              quantity: qteProduit,
-              status: selectedStatus,
-              deliveryDate: deliveryDate,
-            );
-
-            await orderAction.placeCompleteOrder(orderData);
-            productListPageAction.emptyProductDataToOrder();
-            await productAction.researchProduct(null);
-            await deliveryAction.searchDelivering(null);
-            await stockPredictionAction.refreshHome();
-
-            // réinitialiser les inputs -------------
-            qteProduit = 0;
-            _variants = [];
-            selectedStatus = null;
-            selectedProductEntity;
-            clientName.text = "";
-            clientTel.text = "";
-            clientAdrs.text = "";
-            fraisDeLiv.text = "";
-          } else {
-            debugPrint("Formulaire invalide");
-          }
+          if (mounted) context.pop();
         },
       ),
     );
+  }
+}
+
+class _CartSummarySection extends StatelessWidget {
+  final List<CartEntity> carts;
+  const _CartSummarySection({required this.carts});
+
+  double get _total => carts.fold(0, (sum, item) => sum + item.totalPrice);
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
+    if (carts.isEmpty) {
+      return Container(
+        padding: EdgeInsets.all(16.r),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.shopping_cart_outlined,
+              color: Theme.of(context).colorScheme.error,
+              size: 18.sp,
+            ),
+            SizedBox(width: 10.w),
+            Text(
+              "Aucun produit dans le panier",
+              style: TextStyle(
+                fontSize: 13.sp,
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: EdgeInsets.all(StylesConstants.spacerContent),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(StylesConstants.borderRadius),
+        border: Border.all(color: primary.withValues(alpha: 0.15)),
+        gradient: LinearGradient(
+          colors: [
+            primary.withValues(alpha: 0.04),
+            primary.withValues(alpha: 0.08),
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Panier",
+                style: TextStyles.bodyMedium(
+                  context: context,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                "${_total.toStringAsFixed(0)} Ar",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w800,
+                  color: primary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          ...carts.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: SizedBox(
+                      width: 36.r,
+                      height: 36.r,
+                      child: ImageViewer(
+                        borderRadius: 6,
+                        imageFileOrLink: item.productImage,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.productName ?? "",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (item.chosenVariant != null)
+                          Text(
+                            _buildVariantLabel(item.chosenVariant!),
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              color: primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "× ${item.quantity}",
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      Text(
+                        "${item.totalPrice.toStringAsFixed(0)} Ar",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w700,
+                          color: onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _buildVariantLabel(Map<String, dynamic> v) {
+    final name = v['name']?.toString() ?? '';
+    final property = v['property']?.toString();
+    if (property != null && property != '-' && property.isNotEmpty)
+      return "$name • $property";
+    return name;
   }
 }

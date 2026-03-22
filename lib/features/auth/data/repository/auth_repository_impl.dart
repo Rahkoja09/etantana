@@ -13,7 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 // {{auth_repo_impl_imports_anchor}}
 import 'package:e_tantana/core/error/exceptions.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/app/network/network_info.dart';
+import 'package:e_tantana/core/network/network_info.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/auth/data/source/auth_remote_source.dart';
 import 'package:e_tantana/features/auth/domain/entity/auth_entity.dart';

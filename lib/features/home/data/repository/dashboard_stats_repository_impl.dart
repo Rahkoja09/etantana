@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:e_tantana/core/error/exceptions.dart';
 import 'package:e_tantana/core/error/failures.dart';
-import 'package:e_tantana/core/app/network/network_info.dart';
+import 'package:e_tantana/core/network/network_info.dart';
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/home/data/dataSrouce/dashboard_stats_data_source.dart';
 import 'package:e_tantana/features/home/domain/entities/dashboard_stats_entities.dart';

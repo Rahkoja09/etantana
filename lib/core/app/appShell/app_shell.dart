@@ -1,5 +1,5 @@
 import 'package:e_tantana/core/app/initialiser/app_initiliser.dart';
-import 'package:e_tantana/core/app/mainErrorListener/success_error_listener.dart';
+import 'package:e_tantana/core/mainErrorListener/success_error_listener.dart';
 import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/features/auth/presentation/controller/auth_controller.dart';
 import 'package:e_tantana/features/auth/presentation/pages/onboarding_page.dart';

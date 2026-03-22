@@ -4,8 +4,14 @@ import 'package:flutter/material.dart';
 class SimpleAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback onBack;
+  final Widget? trailing;
 
-  const SimpleAppbar({super.key, required this.title, required this.onBack});
+  const SimpleAppbar({
+    super.key,
+    required this.title,
+    required this.onBack,
+    this.trailing,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 8);
@@ -33,6 +39,7 @@ class SimpleAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         onPressed: onBack,
       ),
+      actions: [trailing ?? SizedBox.shrink()],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:e_tantana/config/constants/styles_constants.dart';
 import 'package:e_tantana/config/theme/text_styles.dart';
+import 'package:e_tantana/core/app/session/session_controller.dart';
 import 'package:e_tantana/core/di/injection_container.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/order/presentation/controller/order_controller.dart';
@@ -38,6 +39,13 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
   void initState() {
     super.initState();
     _deliveryCosts = widget.order.deliveryCosts ?? 0.0;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final activeShop = ref.read(sessionProvider).activeShop;
+      ref
+          .read(interactionInvoiceDataNotifierProvider.notifier)
+          .initOrder(widget.order, activeShop: activeShop);
+    });
   }
 
   @override
@@ -48,16 +56,14 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
     return Scaffold(
       appBar: SimpleAppbar(
         title: "Facturation commande",
-        onBack: () {
-          context.go("/nav-bar/:2");
-        },
+        onBack: () => context.go("/nav-bar/:2"),
       ),
       body: Stack(
         children: [
           _buildGridBackground(),
           Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 0),
               child: InteractiveViewer(
                 panEnabled: true,
                 scaleEnabled: true,
@@ -68,7 +74,6 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
               ),
             ),
           ),
-
           Positioned(
             bottom: 10.h,
             left: 10.w,
@@ -111,9 +116,8 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
               HugeIcons.strokeRoundedEdit01,
               "Modifier",
               iconColor: Colors.amber,
-              () {
-                _showEditPricesDialog(widget.order.deliveryCosts!.toString());
-              },
+              () =>
+                  _showEditPricesDialog(widget.order.deliveryCosts!.toString()),
             ),
             VerticalCustomDivider(
               height: 20,
@@ -157,22 +161,18 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
               ),
             ],
-
             _buildToolbarButton(
               HugeIcons.strokeRoundedPrinter,
               "Imprimer",
               iconColor: Colors.blue,
-              () {
-                medias.screenshotAndShareMedia(
-                  context,
-                  order.id!,
-                  order.clientName!,
-                  _screenshotController,
-                  invoiceModel,
-                );
-              },
+              () => medias.screenshotAndShareMedia(
+                context,
+                order.id!,
+                order.clientName!,
+                _screenshotController,
+                invoiceModel,
+              ),
             ),
-
             if (widget.order.invoiceLink != null) ...[
               VerticalCustomDivider(
                 height: 20,
@@ -185,13 +185,11 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
                 HugeIcons.strokeRoundedWhatsapp,
                 "Envoyer",
                 iconColor: Colors.green,
-                () {
-                  medias.sendInvoiceWhatsApp(
-                    phoneNumber: order.clientTel!,
-                    message: MessageTemplate.generateOrderConfirmation(order),
-                    originalUrl: order.invoiceLink,
-                  );
-                },
+                () => medias.sendInvoiceWhatsApp(
+                  phoneNumber: order.clientTel!,
+                  message: MessageTemplate.generateOrderConfirmation(order),
+                  originalUrl: order.invoiceLink,
+                ),
               ),
             ],
           ],
@@ -202,7 +200,6 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
 
   Widget _buildToolbarButton(
     IconData icon,
-
     String label,
     VoidCallback onPressed, {
     Color? iconColor,
@@ -218,7 +215,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
             size: 24,
             color: iconColor ?? Theme.of(context).colorScheme.onSurface,
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             label,
             style: TextStyles.bodySmall(context: context, fontSize: 10),
@@ -237,9 +234,10 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
     );
 
     showCustomPopup(
-      title: "Ajouter les tarifs",
+      title: "Modifier les frais",
       context: context,
       isError: false,
+      description: 'Modifier les frais de livraison',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,13 +279,7 @@ class _PrinterViewState extends ConsumerState<PrinterView> {
           ),
         ],
       ),
-      description: 'Prix unitaire prod. & frais de livraison',
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
 
@@ -296,13 +288,11 @@ class GridPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.grey.withValues(alpha: 0.8)
-          ..strokeWidth = 1.0;
-
+          ..color = Colors.grey.withValues(alpha: 0.15)
+          ..strokeWidth = 0.5;
     for (double x = 0; x < size.width; x += 20) {
       canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
     }
-
     for (double y = 0; y < size.height; y += 20) {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }

@@ -1,6 +1,7 @@
 import 'package:e_tantana/core/utils/typedef/typedefs.dart';
 import 'package:e_tantana/features/order/domain/entities/order_entities.dart';
 import 'package:e_tantana/features/printer/presentation/states/invoice_interactions_states.dart';
+import 'package:e_tantana/features/shop/domain/entity/shop_entity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class InteractionInvoiceDataProvider
@@ -10,7 +11,7 @@ class InteractionInvoiceDataProvider
     return const InvoiceInteractionsStates();
   }
 
-  void initOrder(OrderEntities order) {
+  void initOrder(OrderEntities order, {ShopEntity? activeShop}) {
     final orderList = order.productsAndQuantities ?? [];
 
     double totalProducts = 0.0;
@@ -27,30 +28,32 @@ class InteractionInvoiceDataProvider
       totalProducts: totalProducts,
       deliveryCost: delivery,
       grandTotal: totalProducts + delivery,
+      shopName: activeShop?.shopName,
+      shopPhone: activeShop?.phoneContact,
+      shopSocialLink: activeShop?.socialLink,
+      shopLogo: activeShop?.shopLogo,
+      shopSlogan: activeShop?.slogan,
+    );
+  }
+
+  void setDeliveryCost(double value) {
+    state = state.copyWith(
+      deliveryCost: value,
+      grandTotal: state.totalProducts + value,
     );
   }
 
   void setTotal(List<MapData> orderList) {
     double totalProducts = 0.0;
-    for (int i = 0; i < orderList.length; i++) {
+    for (final item in orderList) {
       totalProducts +=
-          orderList[i]["unit_price"] * (orderList[i]["quantity"] ?? 1);
+          (item["unit_price"] as num?)?.toDouble() ??
+          0 * ((item["quantity"] as num?)?.toInt() ?? 1);
     }
-    state = state.copyWith(totalProducts: totalProducts);
-  }
-
-  void setGrandTotal(List<MapData> orderList, double deliveryCosts) {
-    double totalProducts = 0.0;
-    for (int i = 0; i < orderList.length; i++) {
-      totalProducts +=
-          orderList[i]["unit_price"] * (orderList[i]["quantity"] ?? 1);
-    }
-    final double grandTotal = totalProducts + deliveryCosts;
-    state = state.copyWith(grandTotal: grandTotal);
-  }
-
-  void setDeliveryCost(double value) {
-    state = state.copyWith(deliveryCost: value);
+    state = state.copyWith(
+      totalProducts: totalProducts,
+      grandTotal: totalProducts + state.deliveryCost,
+    );
   }
 
   void setOrder(OrderEntities order) {
@@ -64,7 +67,5 @@ class InteractionInvoiceDataProvider
 
 final interactionInvoiceDataNotifierProvider =
     NotifierProvider<InteractionInvoiceDataProvider, InvoiceInteractionsStates>(
-      () {
-        return InteractionInvoiceDataProvider();
-      },
+      () => InteractionInvoiceDataProvider(),
     );
